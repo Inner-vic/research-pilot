@@ -1,0 +1,253 @@
+{
+  "schema": "sdm-authority-policy/v1",
+  "schema_version": "1.2.0",
+  "signature_algorithm": "Ed25519",
+  "public_key_encoding": "canonical-PEM",
+  "signature_encoding": "strict-unpadded-base64",
+  "validation_time": "consumed_at",
+  "attestation_schema": "schemas/authority-attestation.schema.json",
+  "subject_fields": [
+    "action",
+    "governed_ids",
+    "digests",
+    "extensions.dev.bmad.sdm.provenance",
+    "role",
+    "principal_id",
+    "key_digest",
+    "issued_at",
+    "expires_at",
+    "nonce",
+    "expected_revision"
+  ],
+  "constraint_execution": {
+    "mode": "closed-world",
+    "authority": [
+      "distinct-principal-ids",
+      "evaluator-owner-disjoint-from-implementation-authors",
+      "principal-not-experiment-author",
+      "principal-not-implementation-author",
+      "principal-not-sole-evidence-author",
+      "reviewer-not-experiment-author",
+      "signer-not-data-split-approver",
+      "signer-not-implementation-author"
+    ],
+    "coordinator": [
+      "all-children-accounted",
+      "child-dispositions-complete",
+      "complete-accounting",
+      "external-anchor-required",
+      "no-active-dependency-or-explicit-pinned-policy",
+      "no-never-rule-bypass",
+      "non-material-only",
+      "observed-facts-only",
+      "old-and-new-engine-digests-bound",
+      "pre-run-only",
+      "reciprocal-links",
+      "scope-exact"
+    ]
+  },
+  "provenance": {
+    "extension": "dev.bmad.sdm.provenance",
+    "schema": "sdm-authority-provenance/v1",
+    "record_fields": [
+      "domain",
+      "artifact_id",
+      "instance_key",
+      "artifact_digest",
+      "authors"
+    ],
+    "required_domains": {
+      "readiness.approve": {
+        "by_step": {
+          "7": [
+            "experiment"
+          ],
+          "19": [
+            "experiment",
+            "implementation",
+            "evidence",
+            "evaluator-owner",
+            "data-split-approver"
+          ]
+        }
+      },
+      "freeze.approve": {
+        "always": [
+          "experiment"
+        ]
+      },
+      "decision.D05": {
+        "always": [
+          "experiment",
+          "implementation",
+          "evidence",
+          "evaluator-owner",
+          "data-split-approver"
+        ]
+      }
+    }
+  },
+  "actions": [
+    {
+      "action": "readiness.approve",
+      "roles": [
+        "independent-protocol-reviewer"
+      ],
+      "minimum": 1,
+      "constraints": [
+        "principal-not-experiment-author",
+        "principal-not-sole-evidence-author",
+        "signer-not-implementation-author",
+        "signer-not-data-split-approver",
+        "evaluator-owner-disjoint-from-implementation-authors"
+      ]
+    },
+    {
+      "action": "freeze.approve",
+      "roles": [
+        "research-owner",
+        "independent-protocol-reviewer"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "reviewer-not-experiment-author"
+      ]
+    },
+    {
+      "action": "amendment.approve",
+      "roles": [
+        "research-owner",
+        "protocol-authority"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "pre-run-only",
+        "non-material-only"
+      ]
+    },
+    {
+      "action": "deviation.accept",
+      "roles": [
+        "run-coordinator",
+        "independent-scientific-reviewer"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "observed-facts-only"
+      ]
+    },
+    {
+      "action": "experiment.supersede",
+      "roles": [
+        "research-owner",
+        "protocol-authority"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "reciprocal-links"
+      ]
+    },
+    {
+      "action": "lifecycle.cancel",
+      "roles": [
+        "product-owner",
+        "research-owner"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "child-dispositions-complete"
+      ]
+    },
+    {
+      "action": "exception.grant",
+      "roles": [
+        "exception-authority",
+        "independent-risk-reviewer"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "scope-exact",
+        "no-never-rule-bypass"
+      ]
+    },
+    {
+      "action": "decision.D05",
+      "roles": [
+        "scientific-reviewer"
+      ],
+      "minimum": 1,
+      "constraints": [
+        "principal-not-implementation-author",
+        "principal-not-sole-evidence-author",
+        "signer-not-data-split-approver",
+        "evaluator-owner-disjoint-from-implementation-authors",
+        "complete-accounting"
+      ]
+    },
+    {
+      "action": "decision.supersede",
+      "roles": [
+        "scientific-reviewer",
+        "governance-authority"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids"
+      ]
+    },
+    {
+      "action": "baseline.deprecate",
+      "roles": [
+        "baseline-governance-authority"
+      ],
+      "minimum": 1,
+      "constraints": [
+        "no-active-dependency-or-explicit-pinned-policy"
+      ]
+    },
+    {
+      "action": "engine.migrate",
+      "roles": [
+        "governance-authority",
+        "control-plane-owner"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "old-and-new-engine-digests-bound"
+      ]
+    },
+    {
+      "action": "lifecycle.close",
+      "roles": [
+        "closure-authority",
+        "research-owner"
+      ],
+      "minimum": 2,
+      "constraints": [
+        "distinct-principal-ids",
+        "all-children-accounted",
+        "external-anchor-required"
+      ]
+    }
+  ],
+  "trust_snapshot": {
+    "content_digest_required": true,
+    "public_key_bytes_pinned": true,
+    "revocation_rule": "reject if effective_at <= consumed_at",
+    "later_expiry_or_rotation": "does-not-invalidate-history"
+  },
+  "redaction": [
+    "private_keys",
+    "credentials",
+    "hidden_labels",
+    "evaluator_content",
+    "signed_url_query_values"
+  ]
+}

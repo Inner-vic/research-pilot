@@ -1,0 +1,31 @@
+{
+  "schema": "sdm-paired-execution/v1", "platform_mode": "live",
+  "plan_ref": {"path": null, "digest": null}, "authorization_ref": {"path": null, "digest": null},
+  "adapter": {"path": null, "digest": null},
+  "monitoring": {
+    "poll_seconds": 15, "call_timeout_seconds": 10, "cleanup_reserve_seconds": 120,
+    "stop_retry_seconds": 15, "max_stop_attempts": 3, "health_required": true,
+    "health_max_age_seconds": 30, "health_start_grace_seconds": 60, "stall_seconds": 300,
+    "stop_flags": ["nan", "inf", "collapse", "oom", "nccl", "fatal"]
+  },
+  "adapter_settings": {
+    "schema": "sdm-lpai-paired-adapter/v1", "project": null, "namespace": null, "owner": null,
+    "job_name_policy": "exact", "allocation_mode": "fields", "release_mode": null,
+    "list_item_envelope": null, "release_qualification_ref": null,
+    "cli": null, "cli_digest": null, "project_hooks": {"path": null, "digest": null}, "hook_settings": {},
+    "page_size": 50, "max_lookup_pages": 4, "phase_map": {},
+    "fields": {
+      "component": {"uid": null, "namespace": null}, "start": {"uid": null}, "list": {"items": null, "total": null},
+      "task": {"uid": null, "name": null, "namespace": null, "owner": null, "component_uid": null,
+               "request_marker": null, "status": null, "gpus": null, "hourly_cost": null}
+    },
+    "arms": {
+      "control": {"component_uid": null, "component_name": null,
+                  "task_info": {"problem_statement": null, "solution_approach": null, "expected_result": null,
+                                "expected_duration": null, "expected_duration_desc": null}},
+      "treatment": {"component_uid": null, "component_name": null,
+                    "task_info": {"problem_statement": null, "solution_approach": null, "expected_result": null,
+                                  "expected_duration": null, "expected_duration_desc": null}}
+    }
+  }
+}

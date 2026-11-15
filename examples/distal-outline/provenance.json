@@ -1,0 +1,78 @@
+{
+  "schema": "sdm-public-case-provenance/v1",
+  "dataset_record": "https://zenodo.org/records/11186597",
+  "snapshot_date": "2026-11-13",
+  "result_evidence": [
+    {
+      "id": "trial-01",
+      "original_result_sha256": "b36644ad12d9eb168bc6072422a8da85103c82adb745c1b6cdcddcc283e7b65c",
+      "original_ready_sha256": "dcf8abb60f7480f34d554a10979e80172847a5eef646f8b7797bceb7fbdc1c80"
+    },
+    {
+      "id": "trial-02",
+      "original_result_sha256": "da6084152bae0e5dfa1fa46e821ee661c94041314db3024b891432f7b6c1d1da",
+      "original_ready_sha256": "70bd5c912a64211d143b4e74a760c119e0de5510035985048d8cd689f2ac830e"
+    },
+    {
+      "id": "trial-03",
+      "original_result_sha256": "2ff24c853d3aa719efa19a55588078021561d5ed2e67f6c1b17b8356de0c8298",
+      "original_ready_sha256": "8e2db0f7e29397bf4658784207f31dc432325e837261a117efa8def0590147e8"
+    },
+    {
+      "id": "trial-04",
+      "original_result_sha256": "fbe0754d64924ee7f0720dab4057aa6f39d3f50bd190ac588381bb52f41b1f31",
+      "original_ready_sha256": "9c33a80557a367ddf31fbd2f6b76445b1a60b89c94f35ce7a0fb51370382c783"
+    },
+    {
+      "id": "trial-05",
+      "original_result_sha256": "8fe2919500aea1e5e67b699761ec81fc4feee08707f1438a77c90f1a5c555a59",
+      "original_ready_sha256": "4449cd9363c06a88c8193579c51206ec7653a092560a491b07e71e68bd2b1078"
+    },
+    {
+      "id": "trial-06",
+      "original_result_sha256": "2acfe91576736fd2c645d5a0f8c9bf1ccab6539077fc855340a0d7bdb9f4e320",
+      "original_ready_sha256": "39dfef272f06d7f0d4515eb046afb21c2fa984ac01d45fde5aca7f2a2d8ee95e"
+    },
+    {
+      "id": "trial-07",
+      "original_result_sha256": "2e5f6b2c042aa88929ce85e56b2d8e60e89c0b5eee1db3d5e503061013ca2727",
+      "original_ready_sha256": "52f1c380476b1c039d353ef1f71fad76cb566952bedc9db5bfe81236e3ae127a"
+    },
+    {
+      "id": "trial-08",
+      "original_result_sha256": "027c5d354f7fb8c1c7fae056aecd24379e33fe0c074c8e802868bb46572f7b9c",
+      "original_ready_sha256": "e85e0bc08b5f4f8f6d9f1bc6d263b608522a6d267746c6a1f8fba5cb7f788c4a"
+    },
+    {
+      "id": "trial-09",
+      "original_result_sha256": "f15da3f4535811b6e629f47be9748e3fc9c69c65043db2a67868817737cc3038",
+      "original_ready_sha256": "9ef29e43d20e8e790a12abd9a8f467818fe2586d4e452145ddefbce682a311a9"
+    },
+    {
+      "id": "trial-10",
+      "original_result_sha256": "f369524266e43310d25dd388d9c680869180074555d1d9e91306d0e8ddd9b926",
+      "original_ready_sha256": "bfc004ec76698d8ba4b2687162db0034ad3c444d31b4ee4043fba2f290f435ae"
+    },
+    {
+      "id": "trial-11",
+      "original_result_sha256": "644c4a98285f15e46d7911e5a48c1d5c20506291e8a6eccae9023ef85eb4a778",
+      "original_ready_sha256": "02559c18515ccf1037b8ec4decb58893521042f992ae54d2faee2621bd9fa434"
+    },
+    {
+      "id": "trial-12",
+      "original_result_sha256": "0690292a1b8c47e0c9064f1b2a1dc9f499e4994fe2fc3f02d2f7916044508956",
+      "original_ready_sha256": "e168b5ec5156e0c1a5e9e59bbc37f6f6ca52abf662da6f2aa6efc95957fa93cf"
+    },
+    {
+      "id": "trial-13",
+      "original_result_sha256": "73006a2d6dec3301e87b13eab825d2b9cba3d02b41e33ccb73db08eb555ef394",
+      "original_ready_sha256": "f3beebc891ba70cb5e851e12ff6ad4bbcb4b53ead3f1a70c5ca56f364078f816"
+    },
+    {
+      "id": "trial-14",
+      "original_result_sha256": "960c525e3c5e8e2457d80c4c19797bca64bca95eb71a27c94c8cf8c81563afe4",
+      "original_ready_sha256": "8c8debe4cfcd94e3811084378d446db88668db173151c3142235ee31e21c66fd"
+    }
+  ],
+  "note": "仅公开原始产物摘要用于核对；原任务UID、机器路径与平台回执不入仓库。"
+}

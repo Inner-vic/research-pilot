@@ -1,0 +1,7 @@
+[agent]
+code = "research-planner"
+name = "Research Planner Agent"
+title = "ML Research Planning Agent"
+icon = "🔬"
+description = "Turns product intent into falsifiable research questions without changing governed outcomes."
+agent_type = "stateless"

@@ -1,0 +1,1629 @@
+{
+  "schema": "sdm-artifact-catalog/v1",
+  "schema_version": "1.0.0",
+  "catalog_count": 38,
+  "supporting_catalog": "supporting-artifact-catalog.json",
+  "default_schema": "schemas/artifact.schema.json",
+  "owned_schema_bindings": [
+    {
+      "artifact_ids": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12",
+        "G13"
+      ],
+      "owner_skill": "sdm-create-ml-contract",
+      "path": "sdm-create-ml-contract/assets/contract-record.schema.json",
+      "digest": "sha256:60a084941f6a55b5df768d6c4eb9f2d4c277b359f89dcabf619001acaf57ad41"
+    },
+    {
+      "artifact_ids": [
+        "B01",
+        "B02",
+        "B03",
+        "B04"
+      ],
+      "owner_skill": "sdm-lock-baseline",
+      "path": "sdm-lock-baseline/assets/baseline.schema.json",
+      "digest": "sha256:9f37b55b25fdc5320f997a1885493d65c6d21c0457f92ec0ee4b296d564a2bab"
+    },
+    {
+      "artifact_ids": [
+        "E01",
+        "E03",
+        "E04",
+        "E06",
+        "E07"
+      ],
+      "owner_skill": "sdm-create-experiment-spec",
+      "path": "sdm-create-experiment-spec/assets/experiment-spec.schema.json",
+      "digest": "sha256:a169a2d8a6582c2ca49966de55149ff613b656d95c6f5d17ade10ca69afd4a2d"
+    },
+    {
+      "artifact_ids": [
+        "E02"
+      ],
+      "owner_skill": "sdm-ml-readiness",
+      "path": "sdm-ml-readiness/assets/readiness-report.schema.json",
+      "digest": "sha256:9a9d7ae069cf32a8d604d6a94088c2961f820b43a7c7955f715a4ee01f0bc4fd"
+    },
+    {
+      "artifact_ids": [
+        "E05"
+      ],
+      "owner_skill": "sdm-build-context-pack",
+      "path": "sdm-build-context-pack/assets/context-pack.schema.json",
+      "digest": "sha256:594abb7368c8d5e37a49b27bdf2c5f3cf46b1f003c69d4844e8c0b7d72678315"
+    },
+    {
+      "artifact_ids": [
+        "D01",
+        "D02",
+        "D03",
+        "D04"
+      ],
+      "owner_skill": "sdm-evidence-review",
+      "path": "sdm-evidence-review/assets/evidence-bundle.schema.json",
+      "digest": "sha256:a6482e2ee89ac25c32d5cc5acc675b16324b7791351aa264f3120ee491146d81"
+    },
+    {
+      "artifact_ids": [
+        "D05"
+      ],
+      "owner_skill": "sdm-scientific-decision",
+      "path": "sdm-scientific-decision/assets/decision-record.schema.json",
+      "digest": "sha256:a2435f786335a49e583a0c772d698573015fd039890a3c714a868249b34c90e9"
+    }
+  ],
+  "owned_template_bindings": [
+    {
+      "artifact_ids": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12",
+        "G13"
+      ],
+      "owner_skill": "sdm-create-ml-contract",
+      "path": "sdm-create-ml-contract/assets/contract-bundle.template.json",
+      "digest": "sha256:b4798a80ae0593adb6a4a30d6ddc75316063a3ba55722c9d430a8d053d97c735"
+    },
+    {
+      "artifact_ids": [
+        "E01",
+        "E03",
+        "E04",
+        "E06",
+        "E07"
+      ],
+      "owner_skill": "sdm-create-experiment-spec",
+      "path": "sdm-create-experiment-spec/assets/experiment.template.json",
+      "digest": "sha256:69483a28a462341af3ce03ae5c0a1da2fc218a25974971ebe1324bd3a4c19148"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "G01",
+      "name": "ML Constitution",
+      "tier": "project",
+      "format": "Markdown",
+      "required": "always",
+      "owner": "ML Governance Committee",
+      "consumers": [
+        "all-workflows",
+        "all-agents"
+      ],
+      "applicability": "all workspaces",
+      "instance_key": "governance_version",
+      "cardinality": "one-active-many-historical",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published",
+      "source_of_truth": "protected repository governance",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.governance-principles",
+      "lifecycle_steps": [
+        1,
+        2,
+        3,
+        7,
+        8,
+        20
+      ]
+    },
+    {
+      "id": "G02",
+      "name": "ML Contract Bundle",
+      "tier": "project",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Contract Stewards",
+      "consumers": [
+        "all-contracts",
+        "experiment",
+        "run",
+        "evidence"
+      ],
+      "applicability": "all workspaces",
+      "instance_key": "contract_bundle_version",
+      "cardinality": "one-active-many-historical",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository contract",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.contract-bundle",
+      "lifecycle_steps": [
+        3,
+        6,
+        7,
+        8,
+        13,
+        14
+      ]
+    },
+    {
+      "id": "G03",
+      "name": "Data Contract",
+      "tier": "project",
+      "format": "YAML+Schema",
+      "required": "always",
+      "owner": "Data Contract Steward",
+      "consumers": [
+        "readiness",
+        "run-materializer",
+        "evidence"
+      ],
+      "applicability": "all datasets",
+      "instance_key": "dataset_contract_id+version",
+      "cardinality": "one-or-more",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository plus data-platform receipts",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_for_external_receipts": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.data-contract",
+      "lifecycle_steps": [
+        3,
+        5,
+        7,
+        8,
+        14,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "G04",
+      "name": "Geometry Contract",
+      "tier": "project",
+      "format": "YAML+golden-artifacts",
+      "required": "point-cloud/vision",
+      "owner": "Geometry Contract Steward",
+      "consumers": [
+        "implementation",
+        "preflight",
+        "evidence"
+      ],
+      "applicability": "geometry-bearing systems",
+      "instance_key": "geometry_domain+version",
+      "cardinality": "one-per-domain",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository plus golden artifact store",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "covers_golden_artifacts": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.geometry-contract",
+      "lifecycle_steps": [
+        3,
+        9,
+        10,
+        11,
+        12,
+        13,
+        18,
+        19
+      ]
+    },
+    {
+      "id": "G05",
+      "name": "Calibration Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "point-cloud/vision",
+      "owner": "Calibration Steward",
+      "consumers": [
+        "data",
+        "run",
+        "evidence"
+      ],
+      "applicability": "calibrated sensors",
+      "instance_key": "calibration_domain+version",
+      "cardinality": "one-per-domain",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.calibration-contract",
+      "lifecycle_steps": [
+        3,
+        7,
+        14,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "G06",
+      "name": "Synchronization Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "multi-sensor",
+      "owner": "Synchronization Steward",
+      "consumers": [
+        "data",
+        "run",
+        "evidence"
+      ],
+      "applicability": "multi-sensor systems",
+      "instance_key": "synchronization_domain+version",
+      "cardinality": "one-per-domain",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.synchronization-contract",
+      "lifecycle_steps": [
+        3,
+        7,
+        14,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "G07",
+      "name": "Label Ontology",
+      "tier": "project",
+      "format": "YAML/JSON",
+      "required": "always",
+      "owner": "Label Governance Steward",
+      "consumers": [
+        "data-platform",
+        "experiment",
+        "evaluation"
+      ],
+      "applicability": "labeled data",
+      "instance_key": "ontology_id+version",
+      "cardinality": "one-or-more",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or split-pinned",
+      "source_of_truth": "protected repository plus data-platform",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_for_platform_receipts": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.label-ontology",
+      "lifecycle_steps": [
+        3,
+        7,
+        14,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "G08",
+      "name": "Augmentation Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Data/Model Steward",
+      "consumers": [
+        "experiment",
+        "training",
+        "evidence"
+      ],
+      "applicability": "training pipelines",
+      "instance_key": "augmentation_policy+version",
+      "cardinality": "one-or-more",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.augmentation-contract",
+      "lifecycle_steps": [
+        3,
+        6,
+        7,
+        14,
+        15,
+        18
+      ]
+    },
+    {
+      "id": "G09",
+      "name": "Model Interface/Tensor Contract",
+      "tier": "project",
+      "format": "YAML+runtime-validator",
+      "required": "always",
+      "owner": "Model Interface Steward",
+      "consumers": [
+        "implementation",
+        "preflight",
+        "training"
+      ],
+      "applicability": "all models",
+      "instance_key": "interface_id+version",
+      "cardinality": "one-per-interface",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository plus validator digest",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "covers_runtime_validator": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.tensor-contract",
+      "lifecycle_steps": [
+        3,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15
+      ]
+    },
+    {
+      "id": "G10",
+      "name": "Evaluation Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Evaluation Steward",
+      "consumers": [
+        "baseline",
+        "experiment",
+        "evaluation",
+        "decision"
+      ],
+      "applicability": "all evaluated channels",
+      "instance_key": "evaluator_id+version",
+      "cardinality": "one-or-more",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository plus locked evaluator digest",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.evaluation-contract",
+      "lifecycle_steps": [
+        3,
+        5,
+        6,
+        7,
+        8,
+        16,
+        18,
+        20
+      ]
+    },
+    {
+      "id": "G11",
+      "name": "Robustness Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "formal research evaluation",
+      "owner": "Robustness Steward",
+      "consumers": [
+        "robustness"
+      ],
+      "applicability": "promotable formal experiments",
+      "instance_key": "robustness_suite+version",
+      "cardinality": "one-or-more",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or experiment-pinned",
+      "source_of_truth": "protected repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.robustness-contract",
+      "lifecycle_steps": [
+        3,
+        7,
+        17,
+        18
+      ]
+    },
+    {
+      "id": "G12",
+      "name": "Deployment Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "research-stage deployment constraints when applicable",
+      "owner": "Deployment Steward",
+      "consumers": [],
+      "applicability": "research parity and runtime constraints before scientific decision",
+      "instance_key": "deployment_target+version",
+      "cardinality": "one-per-target",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or transition-pinned",
+      "source_of_truth": "protected repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.deployment-contract",
+      "lifecycle_steps": [
+        3
+      ]
+    },
+    {
+      "id": "G13",
+      "name": "Traceability Contract",
+      "tier": "project",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Governance Steward",
+      "consumers": [
+        "all-workflows",
+        "T01"
+      ],
+      "applicability": "all workspaces",
+      "instance_key": "traceability_policy_version",
+      "cardinality": "one-active-many-historical",
+      "mutable_stage": "draft",
+      "immutable_boundary": "published or workspace-pinned",
+      "source_of_truth": "protected repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "publish"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.traceability-contract",
+      "lifecycle_steps": [
+        1,
+        3,
+        7,
+        8,
+        14,
+        18,
+        20
+      ]
+    },
+    {
+      "id": "B01",
+      "name": "Baseline Spec",
+      "tier": "baseline",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Baseline Owner",
+      "consumers": [
+        "baseline-review",
+        "experiment",
+        "regression"
+      ],
+      "applicability": "each baseline",
+      "instance_key": "baseline_id+version",
+      "cardinality": "one-per-version",
+      "mutable_stage": "draft",
+      "immutable_boundary": "locked",
+      "source_of_truth": "governed workspace/repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "lock"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.baseline-spec",
+      "lifecycle_steps": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "B02",
+      "name": "Baseline Lock Record",
+      "tier": "baseline",
+      "format": "JSON",
+      "required": "formal experiment",
+      "owner": "Independent Baseline Reviewer",
+      "consumers": [
+        "readiness",
+        "freeze",
+        "regression"
+      ],
+      "applicability": "formal baselines",
+      "instance_key": "baseline_id+lock_id",
+      "cardinality": "one-or-more",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.baseline-lock",
+      "lifecycle_steps": [
+        5,
+        7,
+        8
+      ]
+    },
+    {
+      "id": "B03",
+      "name": "Baseline Reproduction Record",
+      "tier": "baseline",
+      "format": "YAML/JSON",
+      "required": "formal experiment",
+      "owner": "Baseline Owner + Independent Reviewer",
+      "consumers": [
+        "readiness",
+        "freeze",
+        "decision"
+      ],
+      "applicability": "each formal reproduction",
+      "instance_key": "baseline_id+reproduction_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "external Git/Jenkins/ML receipts",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.baseline-reproduction",
+      "lifecycle_steps": [
+        5,
+        7,
+        8,
+        20
+      ]
+    },
+    {
+      "id": "B04",
+      "name": "Baseline Deprecation Record",
+      "tier": "baseline",
+      "format": "YAML",
+      "required": "conditional",
+      "owner": "Baseline Governance Authority",
+      "consumers": [
+        "readiness",
+        "decision",
+        "closure"
+      ],
+      "applicability": "deprecated baselines",
+      "instance_key": "baseline_id+deprecation_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.baseline-deprecation",
+      "lifecycle_steps": [
+        4,
+        5,
+        7,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "E01",
+      "name": "Experiment Spec",
+      "tier": "experiment",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Experiment Agent + Research Owner",
+      "consumers": [
+        "readiness",
+        "freeze",
+        "engineering",
+        "run",
+        "evidence",
+        "decision"
+      ],
+      "applicability": "each experiment",
+      "instance_key": "experiment_id+version",
+      "cardinality": "one-current-many-historical",
+      "mutable_stage": "draft",
+      "immutable_boundary": "freeze",
+      "source_of_truth": "governed workspace/repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "candidate_exclusions": [
+          "status",
+          "candidate_digest",
+          "frozen_digest",
+          "frozen_at",
+          "freeze_attestations",
+          "event_revision"
+        ]
+      },
+      "signature_rules": {
+        "required_at": "freeze"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.experiment-spec",
+      "lifecycle_steps": [
+        6,
+        7,
+        8,
+        9,
+        13,
+        14,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "E02",
+      "name": "Experiment Readiness Report",
+      "tier": "experiment",
+      "format": "JSON",
+      "required": "formal experiment",
+      "owner": "Independent Reviewer",
+      "consumers": [
+        "freeze"
+      ],
+      "applicability": "formal experiment protocol",
+      "instance_key": "experiment_id+readiness_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.protocol-readiness",
+      "lifecycle_steps": [
+        7,
+        8
+      ]
+    },
+    {
+      "id": "E03",
+      "name": "Search/HPO Spec",
+      "tier": "experiment",
+      "format": "YAML",
+      "required": "HPO conditional",
+      "owner": "Research Owner",
+      "consumers": [
+        "readiness",
+        "HPO",
+        "selection",
+        "confirmation"
+      ],
+      "applicability": "experiments using HPO",
+      "instance_key": "experiment_id+search_id",
+      "cardinality": "one-per-search",
+      "mutable_stage": "draft",
+      "immutable_boundary": "experiment freeze",
+      "source_of_truth": "governed workspace/repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "freeze"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.search-spec",
+      "lifecycle_steps": [
+        6,
+        7,
+        8,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "E04",
+      "name": "Run Plan",
+      "tier": "experiment",
+      "format": "YAML",
+      "required": "formal experiment",
+      "owner": "Research Owner",
+      "consumers": [
+        "run-materializer",
+        "evidence",
+        "decision"
+      ],
+      "applicability": "each experiment",
+      "instance_key": "experiment_id+run_plan_id",
+      "cardinality": "one-or-more",
+      "mutable_stage": "draft",
+      "immutable_boundary": "experiment freeze",
+      "source_of_truth": "governed workspace/repository",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "freeze"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.run-plan",
+      "lifecycle_steps": [
+        6,
+        7,
+        8,
+        14,
+        15,
+        18,
+        20
+      ]
+    },
+    {
+      "id": "E05",
+      "name": "Pipeline Spec",
+      "tier": "execution",
+      "format": "Jenkinsfile/compiled-IR",
+      "required": "always",
+      "owner": "Engineering Workflow",
+      "consumers": [
+        "implementation",
+        "run",
+        "evaluation"
+      ],
+      "applicability": "each execution channel",
+      "instance_key": "pipeline_id+revision",
+      "cardinality": "one-or-more",
+      "mutable_stage": "engineering",
+      "immutable_boundary": "merged revision pinned by Run",
+      "source_of_truth": "source-control and Jenkins receipts",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_for_external_receipts": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.pipeline-spec",
+      "lifecycle_steps": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "E06",
+      "name": "Amendment",
+      "tier": "experiment",
+      "format": "YAML",
+      "required": "conditional",
+      "owner": "Research Owner + Authority",
+      "consumers": [
+        "readiness",
+        "run",
+        "evidence",
+        "decision"
+      ],
+      "applicability": "accepted pre-Run non-material changes",
+      "instance_key": "experiment_id+amendment_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.amendment",
+      "lifecycle_steps": [
+        8,
+        13,
+        14,
+        18,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "E07",
+      "name": "Protocol Deviation",
+      "tier": "experiment/run",
+      "format": "JSON",
+      "required": "conditional",
+      "owner": "Run Coordinator + Authority",
+      "consumers": [
+        "evidence",
+        "decision",
+        "successor"
+      ],
+      "applicability": "observed departure after affected Run dispatch/start",
+      "instance_key": "experiment_id+deviation_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger plus platform facts",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.protocol-deviation",
+      "lifecycle_steps": [
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "R01",
+      "name": "Immutable Run Manifest",
+      "tier": "run",
+      "format": "canonical JSON",
+      "required": "always",
+      "owner": "Run Materializer",
+      "consumers": [
+        "training",
+        "evaluation",
+        "evidence"
+      ],
+      "applicability": "every Run",
+      "instance_key": "run_id",
+      "cardinality": "exactly-one-per-run",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": false
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.run-manifest",
+      "lifecycle_steps": [
+        14,
+        15,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "R02",
+      "name": "Resolved Configuration",
+      "tier": "run",
+      "format": "YAML",
+      "required": "always",
+      "owner": "Run Materializer",
+      "consumers": [
+        "training",
+        "evaluation",
+        "replay"
+      ],
+      "applicability": "every Run",
+      "instance_key": "run_id",
+      "cardinality": "exactly-one-per-run",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": false
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.resolved-configuration",
+      "lifecycle_steps": [
+        14,
+        15,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "R03",
+      "name": "Runtime Environment Manifest",
+      "tier": "run",
+      "format": "JSON",
+      "required": "always",
+      "owner": "ML Execution Platform",
+      "consumers": [
+        "replay",
+        "evidence",
+        "decision"
+      ],
+      "applicability": "every Attempt",
+      "instance_key": "run_id+attempt_id",
+      "cardinality": "one-per-attempt",
+      "mutable_stage": "none",
+      "immutable_boundary": "receipt ingestion",
+      "source_of_truth": "ML execution platform receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.runtime-environment",
+      "lifecycle_steps": [
+        15,
+        16,
+        18,
+        20
+      ]
+    },
+    {
+      "id": "R04",
+      "name": "Dataset Manifest",
+      "tier": "data-artifact",
+      "format": "JSON",
+      "required": "always",
+      "owner": "Data Platform",
+      "consumers": [
+        "run",
+        "evaluation",
+        "evidence"
+      ],
+      "applicability": "every Run dataset",
+      "instance_key": "dataset_id+version",
+      "cardinality": "one-or-more-per-run",
+      "mutable_stage": "none",
+      "immutable_boundary": "receipt ingestion",
+      "source_of_truth": "data platform receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.dataset-manifest",
+      "lifecycle_steps": [
+        3,
+        7,
+        14,
+        15,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "R05",
+      "name": "Split Manifest",
+      "tier": "data-artifact",
+      "format": "JSON",
+      "required": "always",
+      "owner": "Data Platform",
+      "consumers": [
+        "run",
+        "evaluation",
+        "evidence"
+      ],
+      "applicability": "every formal split",
+      "instance_key": "split_id+version",
+      "cardinality": "one-per-run-plan",
+      "mutable_stage": "none",
+      "immutable_boundary": "receipt ingestion",
+      "source_of_truth": "data platform receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.split-manifest",
+      "lifecycle_steps": [
+        3,
+        7,
+        8,
+        14,
+        15,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "R06",
+      "name": "Calibration Manifest",
+      "tier": "calibration-artifact",
+      "format": "JSON",
+      "required": "point-cloud/vision",
+      "owner": "Data Platform",
+      "consumers": [
+        "run",
+        "evaluation",
+        "evidence"
+      ],
+      "applicability": "calibrated Runs",
+      "instance_key": "calibration_id+version",
+      "cardinality": "one-or-more-per-run",
+      "mutable_stage": "none",
+      "immutable_boundary": "receipt ingestion",
+      "source_of_truth": "data platform receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.calibration-manifest",
+      "lifecycle_steps": [
+        3,
+        7,
+        14,
+        15,
+        16,
+        18
+      ]
+    },
+    {
+      "id": "R07",
+      "name": "Actual Run Record",
+      "tier": "run",
+      "format": "DB-object+JSON-snapshot",
+      "required": "always",
+      "owner": "ML Execution Platform",
+      "consumers": [
+        "evaluation",
+        "evidence",
+        "decision"
+      ],
+      "applicability": "every Attempt",
+      "instance_key": "run_id+attempt_id",
+      "cardinality": "one-terminal-snapshot-per-attempt",
+      "mutable_stage": "platform execution",
+      "immutable_boundary": "terminal receipt ingestion",
+      "source_of_truth": "ML execution platform DB plus signed snapshot",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.actual-run-record",
+      "lifecycle_steps": [
+        15,
+        16,
+        18,
+        20
+      ]
+    },
+    {
+      "id": "R08",
+      "name": "Artifact Index",
+      "tier": "run",
+      "format": "JSON",
+      "required": "always",
+      "owner": "ML Execution Platform",
+      "consumers": [
+        "evaluation",
+        "evidence"
+      ],
+      "applicability": "every terminal Attempt",
+      "instance_key": "run_id+attempt_id",
+      "cardinality": "one-per-attempt",
+      "mutable_stage": "platform execution",
+      "immutable_boundary": "terminal receipt ingestion",
+      "source_of_truth": "artifact store plus signed receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "covers_indexed_artifacts": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.artifact-index",
+      "lifecycle_steps": [
+        15,
+        16,
+        17,
+        18
+      ]
+    },
+    {
+      "id": "D01",
+      "name": "Evidence Bundle Index",
+      "tier": "evidence",
+      "format": "JSON",
+      "required": "formal experiment",
+      "owner": "Evidence Agent",
+      "consumers": [
+        "independent-review",
+        "decision"
+      ],
+      "applicability": "each evidence review",
+      "instance_key": "experiment_id+evidence_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "build",
+      "immutable_boundary": "review submission",
+      "source_of_truth": "governed workspace plus immutable receipts",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "covers_bundle": true
+      },
+      "signature_rules": {
+        "required_at": "review"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.evidence-index",
+      "lifecycle_steps": [
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "D02",
+      "name": "Evidence Summary",
+      "tier": "evidence",
+      "format": "Markdown",
+      "required": "formal experiment",
+      "owner": "Evidence Agent",
+      "consumers": [
+        "independent-review",
+        "decision"
+      ],
+      "applicability": "each evidence bundle",
+      "instance_key": "evidence_id",
+      "cardinality": "one-per-bundle",
+      "mutable_stage": "build",
+      "immutable_boundary": "review submission",
+      "source_of_truth": "governed workspace",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "review"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.evidence-summary",
+      "lifecycle_steps": [
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "D03",
+      "name": "Statistical Analysis",
+      "tier": "evidence",
+      "format": "JSON+Markdown",
+      "required": "comparison experiment",
+      "owner": "Evidence Agent",
+      "consumers": [
+        "statistical-review",
+        "decision"
+      ],
+      "applicability": "comparative formal experiments",
+      "instance_key": "evidence_id+analysis_id",
+      "cardinality": "one-or-more",
+      "mutable_stage": "build",
+      "immutable_boundary": "review submission",
+      "source_of_truth": "locked evaluation receipts plus governed analysis",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "review"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.statistical-analysis",
+      "lifecycle_steps": [
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "D04",
+      "name": "Failure Case Index",
+      "tier": "evidence",
+      "format": "JSON",
+      "required": "perception experiment",
+      "owner": "Evidence Agent",
+      "consumers": [
+        "failure-review",
+        "decision",
+        "research-summary"
+      ],
+      "applicability": "perception/formal experiments",
+      "instance_key": "evidence_id+failure_index_id",
+      "cardinality": "one-or-more",
+      "mutable_stage": "build",
+      "immutable_boundary": "review submission",
+      "source_of_truth": "locked evaluation artifacts",
+      "uri_rules": {
+        "required": true,
+        "immutable_references": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "review"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.failure-case-index",
+      "lifecycle_steps": [
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "D05",
+      "name": "Scientific Decision Record",
+      "tier": "decision",
+      "format": "Markdown+YAML-frontmatter",
+      "required": "always",
+      "owner": "Scientific Reviewer",
+      "consumers": [
+        "successor",
+        "archive"
+      ],
+      "applicability": "fully accounted experiment",
+      "instance_key": "experiment_id+decision_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation then external anchor acceptance",
+      "source_of_truth": "event ledger and governed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.scientific-decision",
+      "lifecycle_steps": [
+        20,
+        21
+      ]
+    },
+    {
+      "id": "T01",
+      "name": "Traceability Index",
+      "tier": "cross-layer",
+      "format": "derived graph+JSON export",
+      "required": "always",
+      "owner": "Lifecycle Projection",
+      "consumers": [
+        "all-gates",
+        "audit",
+        "closure"
+      ],
+      "applicability": "all workspaces",
+      "instance_key": "workspace_id+ledger_head",
+      "cardinality": "one-derived-per-revision",
+      "mutable_stage": "never directly editable",
+      "immutable_boundary": "derived snapshot export",
+      "source_of_truth": "authenticated event/artifact graph",
+      "uri_rules": {
+        "required": false,
+        "derived_only": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required_for_export": true
+      },
+      "signature_rules": {
+        "derived_from_authenticated_events": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "artifact.traceability-graph",
+      "lifecycle_steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    }
+  ]
+}

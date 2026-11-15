@@ -1,0 +1,446 @@
+{
+    "$id": "https://schemas.bmad.dev/sdm/context-pack.persisted.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "digest": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+        },
+        "sourceResult": {
+            "additionalProperties": false,
+            "properties": {
+                "producer_principal_id": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "result_digest": {
+                    "$ref": "#/$defs/digest"
+                }
+            },
+            "required": [
+                "result_digest",
+                "producer_principal_id"
+            ],
+            "type": "object"
+        },
+        "sourceResults": {
+            "additionalProperties": false,
+            "properties": {
+                "git.branch-change-request": {
+                    "$ref": "#/$defs/sourceResult"
+                },
+                "git.change-review-status": {
+                    "$ref": "#/$defs/sourceResult"
+                },
+                "git.merge-status": {
+                    "$ref": "#/$defs/sourceResult"
+                },
+                "ml.deterministic-acceptance": {
+                    "$ref": "#/$defs/sourceResult"
+                },
+                "ml.implementation-checks": {
+                    "$ref": "#/$defs/sourceResult"
+                },
+                "ml.post-implementation-preflight": {
+                    "$ref": "#/$defs/sourceResult"
+                }
+            },
+            "type": "object"
+        },
+        "engineeringProvenance": {
+            "additionalProperties": false,
+            "properties": {
+                "change_request_identity": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "change_revision": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "change_tree_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "diff_evidence_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "frozen_experiment_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "merged_revision": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "merged_tree_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "pipeline_definition_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "pipeline_identity": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "repository_identity": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "schema": {
+                    "const": "sdm-engineering-provenance/v1"
+                },
+                "source_results": {
+                    "$ref": "#/$defs/sourceResults"
+                }
+            },
+            "required": [
+                "schema",
+                "repository_identity",
+                "change_request_identity",
+                "change_revision",
+                "change_tree_digest",
+                "frozen_experiment_digest",
+                "diff_evidence_digest",
+                "pipeline_identity",
+                "pipeline_definition_digest",
+                "source_results"
+            ],
+            "type": "object"
+        },
+        "resolvedConfiguration": {
+            "additionalProperties": false,
+            "properties": {
+                "config_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "defaults": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "digest": {
+                                "$ref": "#/$defs/digest"
+                            },
+                            "ref": {
+                                "minLength": 1,
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "ref",
+                            "digest"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "forbidden_overrides": {
+                    "maxItems": 0,
+                    "type": "array"
+                },
+                "override_origins": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "origin": {
+                                "minLength": 1,
+                                "type": "string"
+                            },
+                            "path": {
+                                "minLength": 1,
+                                "type": "string"
+                            },
+                            "value_digest": {
+                                "$ref": "#/$defs/digest"
+                            }
+                        },
+                        "required": [
+                            "path",
+                            "origin",
+                            "value_digest"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "resolution_trace_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "resolved_values": {
+                    "minProperties": 1,
+                    "type": "object"
+                },
+                "run_id": {
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "structured_config_schema_digest": {
+                    "$ref": "#/$defs/digest"
+                },
+                "unknown_keys": {
+                    "maxItems": 0,
+                    "type": "array"
+                }
+            },
+            "required": [
+                "run_id",
+                "resolved_values",
+                "defaults",
+                "override_origins",
+                "structured_config_schema_digest",
+                "unknown_keys",
+                "forbidden_overrides",
+                "resolution_trace_digest",
+                "config_digest"
+            ],
+            "type": "object"
+        }
+    },
+    "oneOf": [
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "E05"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "author_principal_ids": {},
+                        "channel": {},
+                        "definition_digest": {},
+                        "diff_evidence_digest": {},
+                        "engineering_provenance": {
+                            "$ref": "#/$defs/engineeringProvenance"
+                        },
+                        "frozen_experiment_digest": {},
+                        "pipeline_identity": {},
+                        "revision": {},
+                        "source_control_result_digest": {},
+                        "source_control_revision": {}
+                    },
+                    "required": [
+                        "pipeline_identity",
+                        "revision",
+                        "definition_digest",
+                        "channel",
+                        "author_principal_ids",
+                        "source_control_revision",
+                        "source_control_result_digest",
+                        "frozen_experiment_digest",
+                        "diff_evidence_digest",
+                        "engineering_provenance"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "S05"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "acceptance_ids": {},
+                        "allowed_paths": {},
+                        "dependencies": {},
+                        "story_id": {}
+                    },
+                    "required": [
+                        "story_id",
+                        "acceptance_ids",
+                        "allowed_paths",
+                        "dependencies"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "S06"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "allowed_context": {},
+                        "allowed_paths": {},
+                        "forbidden_context": {},
+                        "source_digests": {},
+                        "story_id": {}
+                    },
+                    "required": [
+                        "story_id",
+                        "allowed_paths",
+                        "allowed_context",
+                        "forbidden_context",
+                        "source_digests"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "S07"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "approval_receipts": {},
+                        "author_principal_ids": {},
+                        "change_request": {},
+                        "ci_receipt": {},
+                        "engineering_provenance": {
+                            "$ref": "#/$defs/engineeringProvenance"
+                        },
+                        "findings": {},
+                        "reviewers": {},
+                        "source_control_result_digest": {},
+                        "source_control_revision": {}
+                    },
+                    "required": [
+                        "change_request",
+                        "reviewers",
+                        "findings",
+                        "approval_receipts",
+                        "ci_receipt",
+                        "author_principal_ids",
+                        "source_control_revision",
+                        "source_control_result_digest",
+                        "engineering_provenance"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "S08"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "acceptance_ids": {},
+                        "author_principal_ids": {},
+                        "ci_receipt": {},
+                        "engineering_provenance": {
+                            "$ref": "#/$defs/engineeringProvenance"
+                        },
+                        "git_receipt": {},
+                        "revision": {},
+                        "source_control_result_digest": {},
+                        "source_control_revision": {},
+                        "tree_digest": {}
+                    },
+                    "required": [
+                        "revision",
+                        "tree_digest",
+                        "acceptance_ids",
+                        "git_receipt",
+                        "ci_receipt",
+                        "author_principal_ids",
+                        "source_control_revision",
+                        "source_control_result_digest",
+                        "engineering_provenance"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "S09"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "engineering_provenance": {
+                            "$ref": "#/$defs/engineeringProvenance"
+                        },
+                        "experiment_digest": {},
+                        "finite": {},
+                        "geometry": {},
+                        "receipt": {},
+                        "resolved_configurations": {
+                            "items": {
+                                "$ref": "#/$defs/resolvedConfiguration"
+                            },
+                            "minItems": 1,
+                            "type": "array"
+                        },
+                        "resolved_configurations_digest": {
+                            "$ref": "#/$defs/digest"
+                        },
+                        "resume": {},
+                        "revision": {},
+                        "tensor": {},
+                        "tiny": {}
+                    },
+                    "required": [
+                        "experiment_digest",
+                        "revision",
+                        "geometry",
+                        "tensor",
+                        "finite",
+                        "tiny",
+                        "resume",
+                        "receipt",
+                        "engineering_provenance",
+                        "resolved_configurations",
+                        "resolved_configurations_digest"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        }
+    ],
+    "properties": {
+        "artifact_type": {
+            "enum": [
+                "E05",
+                "S05",
+                "S06",
+                "S07",
+                "S08",
+                "S09"
+            ]
+        },
+        "content": {
+            "type": "object"
+        }
+    },
+    "required": [
+        "artifact_type",
+        "content"
+    ],
+    "title": "Context Pack Persisted Artifact Contract",
+    "type": "object"
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.bmad.dev/sdm/handoff-result.schema.json",
+  "title": "SDM Platform Handoff Result (S13)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "result_id", "request_id", "operation", "binding_identity", "binding_skill_digest", "adapter_contract_digest", "workspace_id", "workspace_revision", "gate", "step", "subjects", "idempotency_key", "dispatch_correlation", "producer_identity", "producer_principal_id", "producer_attestation", "terminal_status", "evidence", "receipt_digest", "completed_at"],
+  "properties": {
+    "schema": {"const": "sdm-handoff-result/v1"},
+    "result_id": {"type": "string", "pattern": "^RES-[A-Za-z0-9][A-Za-z0-9._-]{5,127}$"},
+    "request_id": {"type": "string", "pattern": "^REQ-[A-Za-z0-9][A-Za-z0-9._-]{5,127}$"},
+    "operation": {"type": "string"},
+    "binding_identity": {"type": "string", "minLength": 1},
+    "binding_skill_digest": {"$ref": "#/$defs/digest"},
+    "adapter_contract_digest": {"$ref": "#/$defs/digest"},
+    "workspace_id": {"type": "string", "minLength": 1},
+    "workspace_revision": {"type": "integer", "minimum": 0},
+    "gate": {"type": "string", "minLength": 1},
+    "step": {"type": "integer", "minimum": 1, "maximum": 21},
+    "subjects": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1}},
+    "idempotency_key": {"$ref": "#/$defs/digest"},
+    "dispatch_correlation": {"type": "string", "minLength": 1, "maxLength": 512},
+    "producer_identity": {"type": "string", "minLength": 1},
+    "producer_principal_id": {"type": "string", "minLength": 1},
+    "producer_attestation": {"$ref": "authority-attestation.schema.json"},
+    "terminal_status": {"enum": ["successful", "failed", "cancelled"]},
+    "evidence": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}, "value": {}}}},
+    "receipt_digest": {"$ref": "#/$defs/digest"},
+    "completed_at": {"$ref": "#/$defs/timestamp"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"}
+  }
+}

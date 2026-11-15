@@ -1,0 +1,675 @@
+{
+  "schema": "sdm-supporting-artifact-catalog/v1",
+  "schema_version": "1.0.0",
+  "catalog_count": 16,
+  "default_schema": "schemas/artifact.schema.json",
+  "owned_schema_bindings": [
+    {
+      "artifact_ids": [
+        "S04"
+      ],
+      "owner_skill": "sdm-ml-readiness",
+      "path": "sdm-ml-readiness/assets/readiness-report.schema.json",
+      "digest": "sha256:9a9d7ae069cf32a8d604d6a94088c2961f820b43a7c7955f715a4ee01f0bc4fd"
+    },
+    {
+      "artifact_ids": [
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09"
+      ],
+      "owner_skill": "sdm-build-context-pack",
+      "path": "sdm-build-context-pack/assets/context-pack.schema.json",
+      "digest": "sha256:594abb7368c8d5e37a49b27bdf2c5f3cf46b1f003c69d4844e8c0b7d72678315"
+    },
+    {
+      "artifact_ids": [
+        "S10"
+      ],
+      "owner_skill": "sdm-evidence-review",
+      "path": "sdm-evidence-review/assets/evidence-bundle.schema.json",
+      "digest": "sha256:a6482e2ee89ac25c32d5cc5acc675b16324b7791351aa264f3120ee491146d81"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "S01",
+      "name": "Product Requirement/JIRA Evidence",
+      "tier": "intent",
+      "format": "JSON envelope",
+      "required": "always",
+      "owner": "Product Owner",
+      "consumers": [
+        "research-planner",
+        "T01"
+      ],
+      "applicability": "each lifecycle",
+      "instance_key": "requirement_id",
+      "cardinality": "one-or-more",
+      "mutable_stage": "open requirement",
+      "immutable_boundary": "experiment linkage",
+      "source_of_truth": "product system receipt/link",
+      "uri_rules": {
+        "required": true,
+        "immutable_reference": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_for_external_receipt": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.product-requirement",
+      "lifecycle_steps": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "S02",
+      "name": "Research Brief",
+      "tier": "intent",
+      "format": "Markdown+JSON frontmatter",
+      "required": "always",
+      "owner": "Research Planner",
+      "consumers": [
+        "contracts",
+        "experiment",
+        "T01"
+      ],
+      "applicability": "each experiment lineage",
+      "instance_key": "research_brief_id",
+      "cardinality": "one-current-many-historical",
+      "mutable_stage": "draft",
+      "immutable_boundary": "experiment draft accepted",
+      "source_of_truth": "governed workspace",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "acceptance"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.research-brief",
+      "lifecycle_steps": [
+        2,
+        3,
+        6,
+        21
+      ]
+    },
+    {
+      "id": "S03",
+      "name": "BMAD Product Brief/PRD/Architecture Links",
+      "tier": "planning",
+      "format": "JSON index of exact kind/uri/digest/revision links",
+      "required": "always",
+      "owner": "BMAD Planner",
+      "consumers": [
+        "research",
+        "experiment-spec",
+        "engineering",
+        "T01"
+      ],
+      "applicability": "each lifecycle",
+      "instance_key": "workspace_id+planning_revision",
+      "cardinality": "one-current-many-historical",
+      "mutable_stage": "planning",
+      "immutable_boundary": "experiment freeze",
+      "source_of_truth": "pinned BMAD dependency outputs",
+      "uri_rules": {
+        "required": true,
+        "scheme": "bmad",
+        "normalized": true,
+        "query_fragment_forbidden": true,
+        "floating_revision_forbidden": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "per_link": true
+      },
+      "signature_rules": {
+        "required": false
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.bmad-links",
+      "lifecycle_steps": [
+        1,
+        2,
+        6,
+        9
+      ]
+    },
+    {
+      "id": "S04",
+      "name": "Planning Readiness Trio",
+      "tier": "planning",
+      "format": "JSON",
+      "required": "SDM-scoped sprint planning",
+      "owner": "ML Readiness",
+      "consumers": [
+        "bmad-sprint-planning"
+      ],
+      "applicability": "active SDM workspace planning",
+      "instance_key": "workspace_id+planning_revision",
+      "cardinality": "one-per-planning-revision",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "governed workspace",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.planning-readiness-trio",
+      "lifecycle_steps": [
+        7
+      ]
+    },
+    {
+      "id": "S05",
+      "name": "Engineering Stories",
+      "tier": "engineering",
+      "format": "Markdown/YAML",
+      "required": "implementation",
+      "owner": "BMAD Planner",
+      "consumers": [
+        "coding",
+        "review",
+        "acceptance"
+      ],
+      "applicability": "each implementation",
+      "instance_key": "experiment_id+story_id",
+      "cardinality": "one-or-more",
+      "mutable_stage": "backlog",
+      "immutable_boundary": "story acceptance",
+      "source_of_truth": "governed BMAD planning artifacts",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required_at": "acceptance"
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.engineering-stories",
+      "lifecycle_steps": [
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "S06",
+      "name": "Coding Context Pack",
+      "tier": "engineering",
+      "format": "JSON/Markdown bundle",
+      "required": "implementation",
+      "owner": "Build Context Workflow",
+      "consumers": [
+        "Coding Agent"
+      ],
+      "applicability": "each Story execution",
+      "instance_key": "story_id+context_revision",
+      "cardinality": "one-or-more",
+      "mutable_stage": "planning",
+      "immutable_boundary": "coding dispatch",
+      "source_of_truth": "governed workspace and pinned artifacts",
+      "uri_rules": {
+        "required": true,
+        "portable": true,
+        "contained_paths_only": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true,
+        "covers_bundle": true
+      },
+      "signature_rules": {
+        "required": false
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.context-pack",
+      "lifecycle_steps": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": "S07",
+      "name": "Code Review Record",
+      "tier": "engineering",
+      "format": "JSON",
+      "required": "implementation",
+      "owner": "Human + Review Agent",
+      "consumers": [
+        "implementation-acceptance"
+      ],
+      "applicability": "each change request",
+      "instance_key": "change_request_id+review_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "review",
+      "immutable_boundary": "review terminal",
+      "source_of_truth": "governed record plus Git/Jenkins receipts",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.code-review",
+      "lifecycle_steps": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "S08",
+      "name": "Implementation Acceptance",
+      "tier": "engineering",
+      "format": "JSON",
+      "required": "implementation",
+      "owner": "Lifecycle Coordinator",
+      "consumers": [
+        "preflight",
+        "run-materializer"
+      ],
+      "applicability": "each accepted implementation revision",
+      "instance_key": "experiment_id+implementation_revision",
+      "cardinality": "one-per-revision",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger plus Git/Jenkins receipts",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.implementation-acceptance",
+      "lifecycle_steps": [
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "id": "S09",
+      "name": "Post-Implementation Preflight",
+      "tier": "engineering",
+      "format": "JSON",
+      "required": "before Run materialization",
+      "owner": "Lifecycle Coordinator",
+      "consumers": [
+        "run-materializer"
+      ],
+      "applicability": "each frozen experiment/implementation pair",
+      "instance_key": "experiment_id+implementation_revision+preflight_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "receipt ingestion",
+      "source_of_truth": "Jenkins platform receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.post-implementation-preflight",
+      "lifecycle_steps": [
+        13,
+        14
+      ]
+    },
+    {
+      "id": "S10",
+      "name": "Independent Review Report",
+      "tier": "evidence",
+      "format": "JSON/Markdown",
+      "required": "formal evidence",
+      "owner": "Independent Reviewers",
+      "consumers": [
+        "scientific-decision"
+      ],
+      "applicability": "each evidence bundle",
+      "instance_key": "evidence_id+review_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "review",
+      "immutable_boundary": "review terminal",
+      "source_of_truth": "governed workspace",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.independent-review",
+      "lifecycle_steps": [
+        19,
+        20
+      ]
+    },
+    {
+      "id": "S12",
+      "name": "Platform Request",
+      "tier": "handoff",
+      "format": "canonical JSON",
+      "required": "excluded platform operation",
+      "owner": "Lifecycle Coordinator",
+      "consumers": [
+        "configured platform Skill",
+        "handoff replay"
+      ],
+      "applicability": "each logical excluded operation",
+      "instance_key": "request_id",
+      "cardinality": "one-immutable-per-logical-request",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and immutable packet",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "binding_digest_required": true
+      },
+      "schema": "schemas/handoff-request.schema.json",
+      "semantic_validator": "support.handoff-request",
+      "lifecycle_steps": [
+        3,
+        5,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        17,
+        20
+      ]
+    },
+    {
+      "id": "S13",
+      "name": "Platform Result/Receipt",
+      "tier": "handoff",
+      "format": "canonical JSON",
+      "required": "excluded platform operation result",
+      "owner": "Configured Platform Skill",
+      "consumers": [
+        "gate evaluator",
+        "evidence",
+        "T01"
+      ],
+      "applicability": "each delivered platform request",
+      "instance_key": "request_id+result_id",
+      "cardinality": "at-most-one-accepted-terminal-per-request",
+      "mutable_stage": "none",
+      "immutable_boundary": "ingestion",
+      "source_of_truth": "configured platform Skill receipt",
+      "uri_rules": {
+        "required": true,
+        "immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/handoff-result.schema.json",
+      "semantic_validator": "support.handoff-result",
+      "lifecycle_steps": [
+        3,
+        5,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        17,
+        20
+      ]
+    },
+    {
+      "id": "S14",
+      "name": "Authority Attestation",
+      "tier": "governance",
+      "format": "canonical JSON+Ed25519",
+      "required": "authority-gated action",
+      "owner": "Authorized Principal",
+      "consumers": [
+        "authority evaluator",
+        "replay",
+        "T01"
+      ],
+      "applicability": "every authority-gated transition",
+      "instance_key": "attestation_id",
+      "cardinality": "one-or-more-per-action",
+      "mutable_stage": "none",
+      "immutable_boundary": "consumption",
+      "source_of_truth": "signed subject plus pinned trust snapshot",
+      "uri_rules": {
+        "required": false,
+        "embedded_or_immutable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true,
+        "algorithm": "Ed25519"
+      },
+      "schema": "schemas/authority-attestation.schema.json",
+      "semantic_validator": "support.authority-attestation",
+      "lifecycle_steps": [
+        5,
+        7,
+        8,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "S15",
+      "name": "Governed Exception",
+      "tier": "governance",
+      "format": "JSON",
+      "required": "conditional",
+      "owner": "Exception Authority",
+      "consumers": [
+        "affected gates",
+        "closure",
+        "T01"
+      ],
+      "applicability": "explicitly permitted exception only",
+      "instance_key": "exception_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and signed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.exception",
+      "lifecycle_steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "S16",
+      "name": "Cancellation Record",
+      "tier": "lifecycle",
+      "format": "JSON",
+      "required": "conditional",
+      "owner": "Cancellation Authority",
+      "consumers": [
+        "child accounting",
+        "closure",
+        "T01"
+      ],
+      "applicability": "cancelled lifecycle/object",
+      "instance_key": "subject_id+cancellation_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation",
+      "source_of_truth": "event ledger and signed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.cancellation",
+      "lifecycle_steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "S17",
+      "name": "Archive/Closure Record",
+      "tier": "lifecycle",
+      "format": "JSON",
+      "required": "closure",
+      "owner": "Closure Authority",
+      "consumers": [
+        "audit",
+        "T01"
+      ],
+      "applicability": "terminal lifecycle closure",
+      "instance_key": "workspace_id+closure_id",
+      "cardinality": "ID-keyed-many",
+      "mutable_stage": "none",
+      "immutable_boundary": "creation then external anchor acceptance",
+      "source_of_truth": "event ledger and signed artifact",
+      "uri_rules": {
+        "required": true,
+        "portable": true
+      },
+      "digest_rules": {
+        "algorithm": "sha256",
+        "required": true
+      },
+      "signature_rules": {
+        "required": true
+      },
+      "schema": "schemas/artifact.schema.json",
+      "semantic_validator": "support.archive-closure",
+      "lifecycle_steps": [
+        21
+      ]
+    }
+  ]
+}

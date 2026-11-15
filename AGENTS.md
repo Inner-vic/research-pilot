@@ -1,0 +1,3 @@
+# ResearchPilot
+
+Read README.md and docs/ARCHITECTURE.md for the product. Source is skills/bmad-ml and skills/sdm-module; SDM is the internal core. Use the project Skill entry for guided onboarding. Setup never authorizes training. Use the installed OFFICIAL LPAI Skill and actual scope. Preserve active frozen runs, Context, task Guards and unknown effects; new fixes use new versions. ML runs remotely. Do not commit credentials, local state, data or model weights. Record product changes in docs/CHANGELOG.md. Web UI projects the original records and delegates controls; do not build a second experiment engine.

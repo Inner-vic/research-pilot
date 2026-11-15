@@ -1,0 +1,4501 @@
+{
+  "schema": "sdm-platform-operations/v1",
+  "schema_version": "1.0.0",
+  "dispatch_semantics": "at-least-once",
+  "binding_resolution": ".agents/skills/<configured-identity>/SKILL.md",
+  "manual_evidence_bypass": false,
+  "coordinator_executes_binding": false,
+  "evidence_schema_profiles": {
+    "identity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[^\\x00-\\x1f\\x7f]+$"
+    },
+    "digest": {
+      "type": "string",
+      "format": "sha256"
+    },
+    "digest_or_not_applicable": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "sha256"
+        },
+        {
+          "const": "not-applicable"
+        }
+      ]
+    },
+    "ledger_anchor": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "sha256"
+        },
+        {
+          "const": "genesis"
+        }
+      ]
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 2048
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "terminal_success": {
+      "const": "successful"
+    },
+    "boolean": {
+      "type": "boolean"
+    },
+    "number": {
+      "type": "number"
+    },
+    "seed": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "identity_array": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "identity_array_allow_empty": {
+      "type": "array",
+      "maxItems": 100000,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "counts": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 10000,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+      },
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "evidence_uri": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          }
+        }
+      }
+    },
+    "dataset_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset_identity",
+        "version",
+        "instance_key",
+        "immutable_uri",
+        "content_digest",
+        "schema_digest",
+        "shard_digests",
+        "record_count"
+      ],
+      "properties": {
+        "dataset_identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "instance_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "immutable_uri": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "content_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "schema_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "shard_digests": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100000,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "sha256"
+          }
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "split_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "split_identity",
+        "version",
+        "instance_key",
+        "immutable_uri",
+        "dataset_content_digest",
+        "membership_digest",
+        "partition_digests",
+        "grouping_key",
+        "hidden_access_policy"
+      ],
+      "properties": {
+        "split_identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "instance_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "immutable_uri": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "dataset_content_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "membership_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "partition_digests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "train",
+            "validation",
+            "test"
+          ],
+          "properties": {
+            "train": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "validation": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "test": {
+              "type": "string",
+              "format": "sha256"
+            }
+          }
+        },
+        "grouping_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "hidden_access_policy": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 32,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "patternProperties": {
+            "^.+$": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "calibration_manifest_nullable": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calibration_identity",
+            "version",
+            "instance_key",
+            "immutable_uri",
+            "content_digest",
+            "validity"
+          ],
+          "properties": {
+            "calibration_identity": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "instance_key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "immutable_uri": {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 2048
+            },
+            "content_digest": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "validity": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "from",
+                    "to"
+                  ],
+                  "properties": {
+                    "from": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "to": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "mode",
+                    "dataset_content_digest",
+                    "membership_digest",
+                    "calibration_content_digest"
+                  ],
+                  "properties": {
+                    "mode": {
+                      "const": "snapshot"
+                    },
+                    "dataset_content_digest": {
+                      "type": "string",
+                      "format": "sha256"
+                    },
+                    "membership_digest": {
+                      "type": "string",
+                      "format": "sha256"
+                    },
+                    "calibration_content_digest": {
+                      "type": "string",
+                      "format": "sha256"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "digest_diff": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "old_digest",
+          "new_digest"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "old_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "new_digest": {
+            "type": "string",
+            "format": "sha256"
+          }
+        }
+      }
+    },
+    "digest_map": {
+      "type": "object",
+      "maxProperties": 100000,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      },
+      "patternProperties": {
+        "^.+$": {
+          "type": "string",
+          "format": "sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "review_status": {
+      "enum": [
+        "approved",
+        "changes-requested",
+        "pending",
+        "rejected"
+      ]
+    },
+    "merge_status": {
+      "enum": [
+        "merged",
+        "not-merged",
+        "closed",
+        "conflict"
+      ]
+    },
+    "runtime_environment": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "environment_instance_identity",
+            "container_image_digest",
+            "container_image_signature_digest",
+            "operating_system",
+            "driver",
+            "cuda",
+            "libraries",
+            "gpu",
+            "cpu",
+            "kernel",
+            "distributed_topology",
+            "dependency_lock_digest",
+            "environment_variables",
+            "power_mode"
+          ],
+          "properties": {
+            "schema": {
+              "const": "sdm-runtime-environment/v1"
+            },
+            "environment_instance_identity": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "container_image_digest": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "container_image_signature_digest": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "operating_system": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "architecture"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "driver": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "version"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cuda": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "toolkit_version",
+                "runtime_version"
+              ],
+              "properties": {
+                "toolkit_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runtime_version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "libraries": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 10000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "version",
+                  "artifact_digest"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "artifact_digest": {
+                    "type": "string",
+                    "format": "sha256"
+                  }
+                }
+              }
+            },
+            "gpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "model",
+                "count",
+                "memory_bytes",
+                "compute_capability"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "memory_bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "compute_capability": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "architecture",
+                "model",
+                "logical_cores"
+              ],
+              "properties": {
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "logical_cores": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "kernel": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "release"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "release": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "distributed_topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "node_count",
+                "world_size",
+                "processes_per_node",
+                "interconnect"
+              ],
+              "properties": {
+                "backend": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "node_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "world_size": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "processes_per_node": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "interconnect": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "dependency_lock_digest": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "environment_variables": {
+              "type": "array",
+              "maxItems": 10000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "value_digest"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "value_digest": {
+                    "type": "string",
+                    "format": "sha256"
+                  }
+                }
+              }
+            },
+            "power_mode": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "environment_instance_identity",
+            "container_image_digest",
+            "container_image_signature_digest",
+            "operating_system",
+            "driver",
+            "cuda",
+            "libraries",
+            "gpu",
+            "cpu",
+            "kernel",
+            "distributed_topology",
+            "dependency_lock_digest",
+            "environment_variables",
+            "power_mode",
+            "image_provenance"
+          ],
+          "properties": {
+            "schema": {
+              "const": "sdm-devspace-runtime-environment/v1"
+            },
+            "environment_instance_identity": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "container_image_digest": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                {
+                  "const": "not-provided"
+                }
+              ]
+            },
+            "container_image_signature_digest": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                {
+                  "const": "not-provided"
+                }
+              ]
+            },
+            "operating_system": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "architecture"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "driver": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "version"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cuda": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "toolkit_version",
+                "runtime_version"
+              ],
+              "properties": {
+                "toolkit_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runtime_version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "libraries": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 10000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "version",
+                  "artifact_digest"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "artifact_digest": {
+                    "type": "string",
+                    "format": "sha256"
+                  }
+                }
+              }
+            },
+            "gpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "model",
+                "count",
+                "memory_bytes",
+                "compute_capability"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "memory_bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "compute_capability": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "architecture",
+                "model",
+                "logical_cores"
+              ],
+              "properties": {
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "logical_cores": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "kernel": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "release"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "release": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "distributed_topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "node_count",
+                "world_size",
+                "processes_per_node",
+                "interconnect"
+              ],
+              "properties": {
+                "backend": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "node_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "world_size": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "processes_per_node": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "interconnect": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "dependency_lock_digest": {
+              "type": "string",
+              "format": "sha256"
+            },
+            "environment_variables": {
+              "type": "array",
+              "maxItems": 10000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "value_digest"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "value_digest": {
+                    "type": "string",
+                    "format": "sha256"
+                  }
+                }
+              }
+            },
+            "power_mode": {
+              "type": "string",
+              "minLength": 1
+            },
+            "image_provenance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "purpose",
+                "namespace",
+                "space_uid",
+                "image_reference",
+                "platform_spec_digest",
+                "content_status",
+                "signature_status"
+              ],
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "space_uid": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "image_reference": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "backend": {
+                  "const": "lpai-devspace"
+                },
+                "purpose": {
+                  "const": "diagnostic-only"
+                },
+                "platform_spec_digest": {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                "content_status": {
+                  "enum": [
+                    "resolved",
+                    "not-provided"
+                  ]
+                },
+                "signature_status": {
+                  "enum": [
+                    "verified",
+                    "not-provided"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "tolerance_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "summary"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      }
+    },
+    "geometry_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "geometry",
+        "tensor",
+        "finite",
+        "tiny",
+        "resume"
+      ],
+      "properties": {
+        "geometry": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "tensor": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "finite": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "tiny": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "resume": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        }
+      }
+    },
+    "structured_configuration": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 10000,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/value"
+        }
+      },
+      "additionalProperties": false,
+      "$defs": {
+        "value": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "array",
+              "maxItems": 100000,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            {
+              "type": "object",
+              "maxProperties": 10000,
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "patternProperties": {
+                "^.+$": {
+                  "$ref": "#/$defs/value"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
+    "resolved_configurations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "run_id",
+          "resolved_values",
+          "defaults",
+          "override_origins",
+          "structured_config_schema_digest",
+          "unknown_keys",
+          "forbidden_overrides",
+          "resolution_trace_digest"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "resolved_values": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 10000,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "patternProperties": {
+              "^.+$": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            "additionalProperties": false
+          },
+          "defaults": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "digest"
+              ],
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "format": "uri",
+                  "maxLength": 2048
+                },
+                "digest": {
+                  "type": "string",
+                  "format": "sha256"
+                }
+              }
+            }
+          },
+          "override_origins": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "origin",
+                "value_digest"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "value_digest": {
+                  "type": "string",
+                  "format": "sha256"
+                }
+              }
+            }
+          },
+          "structured_config_schema_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "unknown_keys": {
+            "type": "array",
+            "maxItems": 10000,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "forbidden_overrides": {
+            "type": "array",
+            "maxItems": 10000,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "resolution_trace_digest": {
+            "type": "string",
+            "format": "sha256"
+          }
+        }
+      },
+      "$defs": {
+        "value": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "array",
+              "maxItems": 100000,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            {
+              "type": "object",
+              "maxProperties": 10000,
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "patternProperties": {
+                "^.+$": {
+                  "$ref": "#/$defs/value"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
+    "selection_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selected_configuration_digest",
+        "selected_objective_value",
+        "selection_rule_digest"
+      ],
+      "properties": {
+        "selected_configuration_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "selected_objective_value": {
+          "type": "number"
+        },
+        "selection_rule_digest": {
+          "type": "string",
+          "format": "sha256"
+        }
+      }
+    },
+    "trial_records": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "run_id",
+          "attempt_id",
+          "run_manifest_digest",
+          "frozen_spec_digest",
+          "data_digest",
+          "split_digest",
+          "phase",
+          "configuration",
+          "configuration_digest",
+          "partition_digest",
+          "seed",
+          "objective_metric",
+          "objective_value",
+          "environment_plan",
+          "environment_plan_digest",
+          "environment_manifest",
+          "environment_digest",
+          "terminal_status",
+          "validity",
+          "system_failure",
+          "started_at",
+          "completed_at",
+          "resource_use",
+          "artifacts",
+          "artifact_completeness"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attempt_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "run_manifest_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "frozen_spec_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "data_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "split_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "phase": {
+            "enum": [
+              "search",
+              "recheck",
+              "confirmation"
+            ]
+          },
+          "configuration": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 10000,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "patternProperties": {
+              "^.+$": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            "additionalProperties": false
+          },
+          "configuration_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "partition_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "seed": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              }
+            ]
+          },
+          "objective_metric": {
+            "type": "string",
+            "minLength": 1
+          },
+          "objective_value": {
+            "type": "number"
+          },
+          "environment_plan": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema",
+              "environment_instance_identity",
+              "expected_runtime_image_digest",
+              "expected_runtime_profile",
+              "expected_runtime_profile_digest"
+            ],
+            "properties": {
+              "schema": {
+                "const": "sdm-runtime-environment-plan/v1"
+              },
+              "environment_instance_identity": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expected_runtime_image_digest": {
+                "type": "string",
+                "format": "sha256"
+              },
+              "expected_runtime_profile": {
+                "type": "object",
+                "minProperties": 1,
+                "maxProperties": 10000,
+                "propertyNames": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "patternProperties": {
+                  "^.+$": {
+                    "$ref": "#/$defs/value"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "expected_runtime_profile_digest": {
+                "type": "string",
+                "format": "sha256"
+              }
+            }
+          },
+          "environment_plan_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "environment_manifest": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 10000,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "patternProperties": {
+              "^.+$": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            "additionalProperties": false
+          },
+          "environment_digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "terminal_status": {
+            "enum": [
+              "successful",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "validity": {
+            "enum": [
+              "valid",
+              "invalid",
+              "incomplete"
+            ]
+          },
+          "system_failure": {
+            "type": "boolean"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resource_use": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 10000,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "patternProperties": {
+              "^.+$": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "artifacts": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "uri",
+                "digest"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uri": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "digest": {
+                  "type": "string",
+                  "format": "sha256"
+                }
+              }
+            }
+          },
+          "artifact_completeness": {
+            "type": "boolean"
+          }
+        }
+      },
+      "$defs": {
+        "value": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "array",
+              "maxItems": 100000,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            {
+              "type": "object",
+              "maxProperties": 10000,
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1
+              },
+              "patternProperties": {
+                "^.+$": {
+                  "$ref": "#/$defs/value"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
+    "resource_use": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 10000,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "patternProperties": {
+        "^.+$": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "uri",
+          "digest"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          },
+          "digest": {
+            "type": "string",
+            "format": "sha256"
+          },
+          "model_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          }
+        }
+      }
+    },
+    "attempt_status": {
+      "enum": [
+        "successful",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "attempt_validity": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "enum": [
+            "valid",
+            "invalid",
+            "incomplete"
+          ]
+        }
+      ]
+    },
+    "evidence_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "results",
+        "limitations",
+        "missingness",
+        "deviations"
+      ],
+      "properties": {
+        "results": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "limitations": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "missingness": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "deviations": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        }
+      }
+    },
+    "statistical_analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "comparisons",
+        "effect_sizes",
+        "uncertainty",
+        "power",
+        "multiplicity"
+      ],
+      "properties": {
+        "comparisons": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "effect_sizes": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "uncertainty": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "power": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "multiplicity": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        }
+      }
+    },
+    "failure_case_index": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taxonomy",
+        "cases",
+        "artifact_digests",
+        "coverage"
+      ],
+      "properties": {
+        "taxonomy": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "cases": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "artifact_digests": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        },
+        "coverage": {
+          "not": {
+            "enum": [
+              null,
+              "",
+              [],
+              {}
+            ]
+          }
+        }
+      }
+    },
+    "scientific_facts": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 100000,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/value"
+        }
+      },
+      "additionalProperties": false,
+      "$defs": {
+        "value": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "array",
+              "maxItems": 100000,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            },
+            {
+              "type": "object",
+              "maxProperties": 10000,
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "patternProperties": {
+                "^.+$": {
+                  "$ref": "#/$defs/value"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
+    "robustness_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "scientific_facts"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ]
+        },
+        "scientific_facts": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 100000,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "patternProperties": {
+            "^.+$": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "execution_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_id",
+        "execution_attempt_id",
+        "code_revision",
+        "repository_identity",
+        "dataset_version",
+        "dataset_uid",
+        "data_evidence_digest",
+        "resolved_config_digest",
+        "dataset_scope_digest",
+        "observation_digest",
+        "execution_kind",
+        "qualification_status",
+        "collection_complete",
+        "actual_report",
+        "issues",
+        "prior_findings",
+        "data_evidence",
+        "execution_scope",
+        "authorization_digest",
+        "execution_provider"
+      ],
+      "properties": {
+        "execution_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "execution_attempt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "repository_identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dataset_uid": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_evidence_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "resolved_config_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "dataset_scope_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "observation_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "execution_kind": {
+          "enum": [
+            "run",
+            "evaluate"
+          ]
+        },
+        "qualification_status": {
+          "const": "diagnostic-only-unqualified"
+        },
+        "collection_complete": {
+          "const": true
+        },
+        "actual_report": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 8388608
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "prior_findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "data_evidence": {
+          "type": "object",
+          "required": [
+            "workspace",
+            "record_digests",
+            "receipts"
+          ],
+          "properties": {
+            "workspace": {
+              "type": "string"
+            },
+            "record_digests": {
+              "type": "object",
+              "properties": {
+                "R04": {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                "R05": {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                "R06": {
+                  "type": "string",
+                  "format": "sha256"
+                }
+              },
+              "required": [
+                "R04",
+                "R05"
+              ],
+              "additionalProperties": false
+            },
+            "receipts": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "required": [
+                  "request_id",
+                  "operation",
+                  "result_digest"
+                ],
+                "properties": {
+                  "request_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "operation": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "result_digest": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "execution_scope": {
+          "const": "branch-diagnostic"
+        },
+        "authorization_digest": {
+          "type": "string",
+          "format": "sha256"
+        },
+        "execution_provider": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "normal_execution_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_digest",
+        "authorization_digest",
+        "resource_uid",
+        "component_uid",
+        "execution_kind",
+        "evidence_kind",
+        "execution_scope",
+        "observation_digest",
+        "actual_report"
+      ],
+      "properties": {
+        "plan_digest": {
+          "type": "string",
+          "minLength": 1,
+          "format": "sha256"
+        },
+        "authorization_digest": {
+          "type": "string",
+          "minLength": 1,
+          "format": "sha256"
+        },
+        "resource_uid": {
+          "type": "string",
+          "minLength": 1
+        },
+        "component_uid": {
+          "type": "string",
+          "minLength": 1
+        },
+        "execution_kind": {
+          "enum": [
+            "run",
+            "evaluate"
+          ]
+        },
+        "evidence_kind": {
+          "enum": [
+            "project-execution",
+            "cpu-simulation"
+          ]
+        },
+        "execution_scope": {
+          "const": "normal-training"
+        },
+        "observation_digest": {
+          "type": "string",
+          "minLength": 1,
+          "format": "sha256"
+        },
+        "actual_report": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8388608
+        }
+      }
+    }
+  },
+  "domains": [
+    {
+      "domain": "data-platform",
+      "binding_key": "data_platform_skill",
+      "operations": [
+        {
+          "name": "data.labeling-status",
+          "required_evidence": [
+            "dataset_identity",
+            "label_ontology_identity",
+            "immutable_uri",
+            "content_digest",
+            "policy_version",
+            "label_counts",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "dataset_identity",
+              "label_ontology_identity",
+              "policy_version"
+            ],
+            "uri": [
+              "immutable_uri"
+            ],
+            "digest": [
+              "content_digest"
+            ],
+            "counts": [
+              "label_counts"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "3": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "data.quality-check",
+          "required_evidence": [
+            "dataset_identity",
+            "split_identity",
+            "calibration_identity_when_applicable",
+            "dataset_manifest",
+            "dataset_manifest_digest",
+            "split_manifest",
+            "split_manifest_digest",
+            "calibration_manifest_when_applicable",
+            "calibration_manifest_digest_when_applicable",
+            "evaluator_digest",
+            "baseline_lock_digest",
+            "immutable_uri",
+            "content_digest",
+            "policy_version",
+            "counts",
+            "findings",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "dataset_identity",
+              "split_identity",
+              "calibration_identity_when_applicable",
+              "policy_version"
+            ],
+            "dataset_manifest": [
+              "dataset_manifest"
+            ],
+            "digest": [
+              "dataset_manifest_digest",
+              "split_manifest_digest",
+              "evaluator_digest",
+              "content_digest"
+            ],
+            "split_manifest": [
+              "split_manifest"
+            ],
+            "calibration_manifest_nullable": [
+              "calibration_manifest_when_applicable"
+            ],
+            "digest_or_not_applicable": [
+              "calibration_manifest_digest_when_applicable",
+              "baseline_lock_digest"
+            ],
+            "uri": [
+              "immutable_uri"
+            ],
+            "counts": [
+              "counts"
+            ],
+            "findings": [
+              "findings"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "3": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              },
+              "7": {
+                "required": [
+                  "dataset_manifest_digest",
+                  "split_manifest_digest",
+                  "calibration_manifest_digest_when_applicable",
+                  "evaluator_digest",
+                  "baseline_lock_digest"
+                ],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "domain": "source-control-platform",
+      "binding_key": "source_control_platform_skill",
+      "operations": [
+        {
+          "name": "git.snapshot",
+          "required_evidence": [
+            "repository_identity",
+            "revision",
+            "tree_digest",
+            "resolved_config_digest",
+            "snapshot_at",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "revision"
+            ],
+            "digest": [
+              "tree_digest",
+              "resolved_config_digest",
+              "operation_receipt_digest"
+            ],
+            "timestamp": [
+              "snapshot_at"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [],
+                "required_any": [
+                  "baseline_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "git.branch-change-request",
+          "required_evidence": [
+            "repository_identity",
+            "branch_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "commit_author_principal_ids",
+            "diff_scope_complete",
+            "git_path_diff",
+            "resolved_config_diff",
+            "contract_ref_diff",
+            "artifact_digest_diff",
+            "required_equal_ref_digests",
+            "frozen_variable_digests",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "branch_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "operation_receipt_digest"
+            ],
+            "identity_array": [
+              "commit_author_principal_ids"
+            ],
+            "boolean": [
+              "diff_scope_complete"
+            ],
+            "digest_diff": [
+              "git_path_diff",
+              "resolved_config_diff",
+              "contract_ref_diff",
+              "artifact_digest_diff"
+            ],
+            "digest_map": [
+              "required_equal_ref_digests",
+              "frozen_variable_digests"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "10": {
+                "required": [
+                  "frozen_experiment_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "git.change-review-status",
+          "required_evidence": [
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "approvals",
+            "review_status",
+            "commit_author_principal_ids",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "operation_receipt_digest"
+            ],
+            "identity_array": [
+              "approvals",
+              "commit_author_principal_ids"
+            ],
+            "review_status": [
+              "review_status"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "11": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "git.merge-status",
+          "required_evidence": [
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "merged_revision",
+            "merged_tree_digest",
+            "merge_status",
+            "commit_author_principal_ids",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity",
+              "merged_revision"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "merged_tree_digest",
+              "operation_receipt_digest"
+            ],
+            "merge_status": [
+              "merge_status"
+            ],
+            "identity_array": [
+              "commit_author_principal_ids"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "12": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "git.tag-frozen-spec",
+          "required_evidence": [
+            "repository_identity",
+            "revision",
+            "tree_digest",
+            "tag_identity",
+            "frozen_spec_digest",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "revision",
+              "tag_identity"
+            ],
+            "digest": [
+              "tree_digest",
+              "frozen_spec_digest",
+              "operation_receipt_digest"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "8": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "git.anchor-ledger-head",
+          "required_evidence": [
+            "repository_identity",
+            "workspace_identity",
+            "operation_id",
+            "bound_provisional_ledger_head",
+            "prior_trusted_anchor",
+            "external_head_identity",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "workspace_identity",
+              "operation_id",
+              "external_head_identity"
+            ],
+            "digest": [
+              "bound_provisional_ledger_head",
+              "operation_receipt_digest"
+            ],
+            "ledger_anchor": [
+              "prior_trusted_anchor"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "default": {
+              "required": [
+                "artifact_id"
+              ],
+              "required_any": []
+            }
+          }
+        },
+        {
+          "name": "git.read-current-ledger-anchor",
+          "required_evidence": [
+            "repository_identity",
+            "workspace_identity",
+            "external_head_identity",
+            "current_ledger_anchor",
+            "observed_at",
+            "operation_receipt_uri",
+            "operation_receipt_digest",
+            "terminal_status"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "repository_identity",
+              "workspace_identity",
+              "external_head_identity"
+            ],
+            "digest": [
+              "current_ledger_anchor",
+              "operation_receipt_digest"
+            ],
+            "timestamp": [
+              "observed_at"
+            ],
+            "uri": [
+              "operation_receipt_uri"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "default": {
+              "required": [
+                "artifact_id"
+              ],
+              "required_any": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "domain": "ci-platform",
+      "binding_key": "ci_platform_skill",
+      "operations": [
+        {
+          "name": "jenkins.baseline-reproduction",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "baseline_identity",
+            "revision",
+            "tree_digest",
+            "resolved_config_digest",
+            "dataset_manifest_digest",
+            "split_manifest_digest",
+            "calibration_manifest_digest_when_applicable",
+            "evaluator_digest",
+            "runtime_environment_manifest",
+            "runtime_environment_digest",
+            "run_id",
+            "attempt_id",
+            "checkpoint_uri",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "metrics_digest",
+            "tolerance_result",
+            "started_at",
+            "completed_at",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "baseline_identity",
+              "revision",
+              "run_id",
+              "attempt_id"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "tree_digest",
+              "resolved_config_digest",
+              "dataset_manifest_digest",
+              "split_manifest_digest",
+              "evaluator_digest",
+              "runtime_environment_digest",
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "metrics_digest",
+              "artifact_receipt_digest"
+            ],
+            "digest_or_not_applicable": [
+              "calibration_manifest_digest_when_applicable"
+            ],
+            "runtime_environment": [
+              "runtime_environment_manifest"
+            ],
+            "uri": [
+              "checkpoint_uri",
+              "artifact_receipt_uri"
+            ],
+            "tolerance_result": [
+              "tolerance_result"
+            ],
+            "timestamp": [
+              "started_at",
+              "completed_at"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [],
+                "required_any": [
+                  "baseline_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.contract-preflight",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "contract_digests",
+            "revision",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "revision"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "artifact_receipt_digest"
+            ],
+            "digest_map": [
+              "contract_digests"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "7": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.freeze-receipt",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "candidate_spec_digest",
+            "revision",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "revision"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "candidate_spec_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "8": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.implementation-checks",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "11": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.deterministic-acceptance",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "merged_revision",
+            "merged_tree_digest",
+            "acceptance_ids",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity",
+              "merged_revision"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "merged_tree_digest",
+              "artifact_receipt_digest"
+            ],
+            "identity_array": [
+              "acceptance_ids"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "12": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.post-implementation-preflight",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "merged_revision",
+            "merged_tree_digest",
+            "geometry_tensor_finite_tiny_resume_results",
+            "resolved_configurations",
+            "resolved_configurations_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity",
+              "merged_revision"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "merged_tree_digest",
+              "resolved_configurations_digest",
+              "artifact_receipt_digest"
+            ],
+            "geometry_results": [
+              "geometry_tensor_finite_tiny_resume_results"
+            ],
+            "resolved_configurations": [
+              "resolved_configurations"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "13": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest",
+                  "merged_revision",
+                  "merged_tree_digest"
+                ],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.execution-orchestration",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "run_id",
+            "attempt_id",
+            "run_manifest_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "run_id",
+              "attempt_id"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "run_manifest_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "15": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "run_manifest_digest",
+                  "expected_runtime_image_digest",
+                  "expected_runtime_profile_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "jenkins.evaluation-orchestration",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "run_id",
+            "attempt_id",
+            "selected_checkpoint_attempt_id",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "training_r07_digest",
+            "training_r08_digest",
+            "evaluator_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "run_id",
+              "attempt_id",
+              "selected_checkpoint_attempt_id"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "training_r07_digest",
+              "training_r08_digest",
+              "evaluator_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "16": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "run_manifest_digest",
+                  "expected_runtime_image_digest",
+                  "expected_runtime_profile_digest",
+                  "selected_checkpoint_attempt_id",
+                  "checkpoint_digest",
+                  "model_artifact_digest",
+                  "training_r07_digest",
+                  "training_r08_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "domain": "ml-execution-platform",
+      "binding_key": "ml_execution_platform_skill",
+      "operations": [
+        {
+          "name": "ml.baseline-reproduction",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "baseline_identity",
+            "revision",
+            "tree_digest",
+            "resolved_config_digest",
+            "dataset_manifest_digest",
+            "split_manifest_digest",
+            "calibration_manifest_digest_when_applicable",
+            "evaluator_digest",
+            "runtime_environment_manifest",
+            "runtime_environment_digest",
+            "run_id",
+            "attempt_id",
+            "checkpoint_uri",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "metrics_digest",
+            "tolerance_result",
+            "started_at",
+            "completed_at",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "baseline_identity",
+              "revision",
+              "run_id",
+              "attempt_id"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "tree_digest",
+              "resolved_config_digest",
+              "dataset_manifest_digest",
+              "split_manifest_digest",
+              "evaluator_digest",
+              "runtime_environment_digest",
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "metrics_digest",
+              "artifact_receipt_digest"
+            ],
+            "digest_or_not_applicable": [
+              "calibration_manifest_digest_when_applicable"
+            ],
+            "runtime_environment": [
+              "runtime_environment_manifest"
+            ],
+            "uri": [
+              "checkpoint_uri",
+              "artifact_receipt_uri"
+            ],
+            "tolerance_result": [
+              "tolerance_result"
+            ],
+            "timestamp": [
+              "started_at",
+              "completed_at"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [],
+                "required_any": [
+                  "baseline_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.contract-preflight",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "contract_digests",
+            "revision",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "revision"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "artifact_receipt_digest"
+            ],
+            "digest_map": [
+              "contract_digests"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "7": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.freeze-receipt",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "candidate_spec_digest",
+            "revision",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "revision"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "candidate_spec_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "8": {
+                "required": [],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.implementation-checks",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "11": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.deterministic-acceptance",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "merged_revision",
+            "merged_tree_digest",
+            "acceptance_ids",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity",
+              "merged_revision"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "merged_tree_digest",
+              "artifact_receipt_digest"
+            ],
+            "identity_array": [
+              "acceptance_ids"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "12": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest"
+                ],
+                "required_any": [
+                  "story_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.post-implementation-preflight",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "repository_identity",
+            "change_request_identity",
+            "change_revision",
+            "change_tree_digest",
+            "frozen_experiment_digest",
+            "diff_evidence_digest",
+            "pipeline_identity",
+            "pipeline_definition_digest",
+            "merged_revision",
+            "merged_tree_digest",
+            "geometry_tensor_finite_tiny_resume_results",
+            "resolved_configurations",
+            "resolved_configurations_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "repository_identity",
+              "change_request_identity",
+              "change_revision",
+              "pipeline_identity",
+              "merged_revision"
+            ],
+            "digest": [
+              "change_tree_digest",
+              "frozen_experiment_digest",
+              "diff_evidence_digest",
+              "pipeline_definition_digest",
+              "merged_tree_digest",
+              "resolved_configurations_digest",
+              "artifact_receipt_digest"
+            ],
+            "geometry_results": [
+              "geometry_tensor_finite_tiny_resume_results"
+            ],
+            "resolved_configurations": [
+              "resolved_configurations"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "13": {
+                "required": [
+                  "repository_identity",
+                  "change_request_identity",
+                  "change_revision",
+                  "change_tree_digest",
+                  "frozen_experiment_digest",
+                  "diff_evidence_digest",
+                  "pipeline_identity",
+                  "pipeline_definition_digest",
+                  "merged_revision",
+                  "merged_tree_digest"
+                ],
+                "required_any": [
+                  "experiment_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.execution-orchestration",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "run_id",
+            "attempt_id",
+            "run_manifest_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "run_id",
+              "attempt_id"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "run_manifest_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "15": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "run_manifest_digest",
+                  "expected_runtime_image_digest",
+                  "expected_runtime_profile_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.evaluation-orchestration",
+          "required_evidence": [
+            "controller_identity",
+            "job_identity",
+            "build_identity",
+            "pipeline_definition_digest",
+            "run_id",
+            "attempt_id",
+            "selected_checkpoint_attempt_id",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "training_r07_digest",
+            "training_r08_digest",
+            "evaluator_digest",
+            "terminal_status",
+            "artifact_receipt_uri",
+            "artifact_receipt_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "controller_identity",
+              "job_identity",
+              "build_identity",
+              "run_id",
+              "attempt_id",
+              "selected_checkpoint_attempt_id"
+            ],
+            "digest": [
+              "pipeline_definition_digest",
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "training_r07_digest",
+              "training_r08_digest",
+              "evaluator_digest",
+              "artifact_receipt_digest"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "uri": [
+              "artifact_receipt_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "16": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "run_manifest_digest",
+                  "expected_runtime_image_digest",
+                  "expected_runtime_profile_digest",
+                  "selected_checkpoint_attempt_id",
+                  "checkpoint_digest",
+                  "model_artifact_digest",
+                  "training_r07_digest",
+                  "training_r08_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.hpo-search",
+          "required_evidence": [
+            "experiment_id",
+            "search_spec_digest",
+            "trial_run_manifest_set_digest",
+            "every_trial_run_id",
+            "every_attempt_id",
+            "failed_cancelled_attempts",
+            "trial_records",
+            "selected_configuration",
+            "selected_configuration_digest",
+            "selected_objective_value",
+            "selection_rule_digest",
+            "selection_receipt",
+            "terminal_status",
+            "resource_use",
+            "artifact_uri",
+            "artifact_digest"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "experiment_id"
+            ],
+            "digest": [
+              "search_spec_digest",
+              "trial_run_manifest_set_digest",
+              "selected_configuration_digest",
+              "selection_rule_digest",
+              "artifact_digest"
+            ],
+            "identity_array": [
+              "every_trial_run_id",
+              "every_attempt_id"
+            ],
+            "identity_array_allow_empty": [
+              "failed_cancelled_attempts"
+            ],
+            "trial_records": [
+              "trial_records"
+            ],
+            "structured_configuration": [
+              "selected_configuration"
+            ],
+            "number": [
+              "selected_objective_value"
+            ],
+            "selection_receipt": [
+              "selection_receipt"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "resource_use": [
+              "resource_use"
+            ],
+            "uri": [
+              "artifact_uri"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "15": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "search_spec_digest",
+                  "trial_run_manifest_set_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.training",
+          "required_evidence": [
+            "run_id",
+            "attempt_id",
+            "frozen_spec_digest",
+            "run_manifest_digest",
+            "data_digest",
+            "split_digest",
+            "environment_manifest",
+            "environment_digest",
+            "checkpoint_uri",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "started_at",
+            "completed_at",
+            "attempt_terminal_status",
+            "attempt_validity",
+            "system_failure",
+            "resolved_config_digest",
+            "selected_configuration_digest",
+            "selected_configuration_replayed",
+            "confirmation_seed",
+            "confirmation_environment_plan_digest",
+            "independent_seed_environment",
+            "artifacts",
+            "artifact_completeness",
+            "terminal_status",
+            "resource_use"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "run_id",
+              "attempt_id"
+            ],
+            "digest": [
+              "frozen_spec_digest",
+              "run_manifest_digest",
+              "data_digest",
+              "split_digest",
+              "environment_digest",
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "resolved_config_digest",
+              "selected_configuration_digest"
+            ],
+            "runtime_environment": [
+              "environment_manifest"
+            ],
+            "uri": [
+              "checkpoint_uri"
+            ],
+            "timestamp": [
+              "started_at",
+              "completed_at"
+            ],
+            "attempt_status": [
+              "attempt_terminal_status"
+            ],
+            "attempt_validity": [
+              "attempt_validity"
+            ],
+            "boolean": [
+              "system_failure",
+              "selected_configuration_replayed",
+              "independent_seed_environment",
+              "artifact_completeness"
+            ],
+            "seed": [
+              "confirmation_seed"
+            ],
+            "digest_or_not_applicable": [
+              "confirmation_environment_plan_digest"
+            ],
+            "artifacts": [
+              "artifacts"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "resource_use": [
+              "resource_use"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "15": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "run_manifest_digest",
+                  "expected_runtime_image_digest",
+                  "expected_runtime_profile_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.locked-evaluation",
+          "required_evidence": [
+            "run_id",
+            "attempt_id",
+            "selected_checkpoint_attempt_id",
+            "checkpoint_uri",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "training_r07_digest",
+            "training_r08_digest",
+            "frozen_spec_digest",
+            "run_manifest_digest",
+            "evaluator_digest",
+            "data_digest",
+            "split_digest",
+            "environment_manifest",
+            "environment_digest",
+            "metrics_uri",
+            "metrics_digest",
+            "started_at",
+            "completed_at",
+            "attempt_terminal_status",
+            "attempt_validity",
+            "system_failure",
+            "evidence_summary",
+            "statistical_analysis",
+            "failure_case_index",
+            "scientific_facts",
+            "artifacts",
+            "artifact_completeness",
+            "terminal_status",
+            "resource_use"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "run_id",
+              "attempt_id",
+              "selected_checkpoint_attempt_id"
+            ],
+            "uri": [
+              "checkpoint_uri",
+              "metrics_uri"
+            ],
+            "digest": [
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "training_r07_digest",
+              "training_r08_digest",
+              "frozen_spec_digest",
+              "run_manifest_digest",
+              "evaluator_digest",
+              "data_digest",
+              "split_digest",
+              "environment_digest",
+              "metrics_digest"
+            ],
+            "runtime_environment": [
+              "environment_manifest"
+            ],
+            "timestamp": [
+              "started_at",
+              "completed_at"
+            ],
+            "attempt_status": [
+              "attempt_terminal_status"
+            ],
+            "attempt_validity": [
+              "attempt_validity"
+            ],
+            "boolean": [
+              "system_failure",
+              "artifact_completeness"
+            ],
+            "evidence_summary": [
+              "evidence_summary"
+            ],
+            "statistical_analysis": [
+              "statistical_analysis"
+            ],
+            "failure_case_index": [
+              "failure_case_index"
+            ],
+            "scientific_facts": [
+              "scientific_facts"
+            ],
+            "artifacts": [
+              "artifacts"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "resource_use": [
+              "resource_use"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [],
+                "required_any": [
+                  "baseline_id",
+                  "artifact_id"
+                ]
+              },
+              "16": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id",
+                  "run_manifest_digest",
+                  "expected_runtime_image_digest",
+                  "expected_runtime_profile_digest",
+                  "selected_checkpoint_attempt_id",
+                  "checkpoint_digest",
+                  "model_artifact_digest",
+                  "training_r07_digest",
+                  "training_r08_digest"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.robustness-evaluation",
+          "required_evidence": [
+            "run_id",
+            "attempt_id",
+            "model_artifact_digest",
+            "robustness_contract_digest",
+            "environment_digest",
+            "metrics_uri",
+            "metrics_digest",
+            "robustness_outcome",
+            "artifact_completeness",
+            "terminal_status",
+            "resource_use"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "run_id",
+              "attempt_id"
+            ],
+            "digest": [
+              "model_artifact_digest",
+              "robustness_contract_digest",
+              "environment_digest",
+              "metrics_digest"
+            ],
+            "uri": [
+              "metrics_uri"
+            ],
+            "robustness_outcome": [
+              "robustness_outcome"
+            ],
+            "boolean": [
+              "artifact_completeness"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "resource_use": [
+              "resource_use"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "17": {
+                "required": [
+                  "experiment_id",
+                  "run_id",
+                  "attempt_id"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.baseline-locked-evaluation",
+          "required_evidence": [
+            "run_id",
+            "attempt_id",
+            "selected_checkpoint_attempt_id",
+            "checkpoint_uri",
+            "checkpoint_digest",
+            "model_artifact_digest",
+            "frozen_spec_digest",
+            "evaluator_digest",
+            "data_digest",
+            "split_digest",
+            "environment_manifest",
+            "environment_digest",
+            "metrics_uri",
+            "metrics_digest",
+            "started_at",
+            "completed_at",
+            "attempt_terminal_status",
+            "attempt_validity",
+            "system_failure",
+            "evidence_summary",
+            "statistical_analysis",
+            "failure_case_index",
+            "scientific_facts",
+            "artifacts",
+            "artifact_completeness",
+            "terminal_status",
+            "resource_use"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "identity": [
+              "run_id",
+              "attempt_id",
+              "selected_checkpoint_attempt_id"
+            ],
+            "uri": [
+              "checkpoint_uri",
+              "metrics_uri"
+            ],
+            "digest": [
+              "checkpoint_digest",
+              "model_artifact_digest",
+              "frozen_spec_digest",
+              "evaluator_digest",
+              "data_digest",
+              "split_digest",
+              "environment_digest",
+              "metrics_digest"
+            ],
+            "runtime_environment": [
+              "environment_manifest"
+            ],
+            "timestamp": [
+              "started_at",
+              "completed_at"
+            ],
+            "attempt_status": [
+              "attempt_terminal_status"
+            ],
+            "attempt_validity": [
+              "attempt_validity"
+            ],
+            "boolean": [
+              "system_failure",
+              "artifact_completeness"
+            ],
+            "evidence_summary": [
+              "evidence_summary"
+            ],
+            "statistical_analysis": [
+              "statistical_analysis"
+            ],
+            "failure_case_index": [
+              "failure_case_index"
+            ],
+            "scientific_facts": [
+              "scientific_facts"
+            ],
+            "artifacts": [
+              "artifacts"
+            ],
+            "terminal_success": [
+              "terminal_status"
+            ],
+            "resource_use": [
+              "resource_use"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [],
+                "required_any": [
+                  "baseline_id",
+                  "artifact_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.diagnostic-execution",
+          "required_evidence": [
+            "execution_observation"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "execution_observation": [
+              "execution_observation"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [
+                  "artifact_id",
+                  "execution_id",
+                  "execution_attempt_id",
+                  "execution_kind",
+                  "code_revision",
+                  "repository_identity",
+                  "branch_identity",
+                  "dataset_namespace",
+                  "devspace_name",
+                  "devspace_uid",
+                  "source_root",
+                  "execution_output_root",
+                  "resolved_config_digest",
+                  "dataset_scope_digest",
+                  "data_evidence_digest",
+                  "checkpoint_digest",
+                  "dataset_version",
+                  "dataset_uid",
+                  "timeout_seconds",
+                  "execution_scope",
+                  "authorization_digest",
+                  "execution_provider"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        },
+        {
+          "name": "ml.normal-execution",
+          "required_evidence": [
+            "execution_observation"
+          ],
+          "evidence_cardinality": {
+            "default": {
+              "min": 1,
+              "max": 1
+            }
+          },
+          "evidence_value_profiles": {
+            "normal_execution_observation": [
+              "execution_observation"
+            ]
+          },
+          "subject_requirements": {
+            "by_step": {
+              "5": {
+                "required": [
+                  "artifact_id",
+                  "plan_digest",
+                  "authorization_digest",
+                  "resource_uid",
+                  "component_uid",
+                  "execution_kind",
+                  "evidence_kind",
+                  "execution_scope",
+                  "source_commit",
+                  "data_digest",
+                  "effective_config_digest",
+                  "identity_digest",
+                  "bundle_digest",
+                  "training_wall_seconds",
+                  "target_epochs",
+                  "world_size"
+                ],
+                "required_any": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

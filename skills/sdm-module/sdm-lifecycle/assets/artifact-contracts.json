@@ -1,0 +1,819 @@
+{
+  "schema": "sdm-artifact-contracts/v1",
+  "schema_version": "1.0.0",
+  "catalogs": [
+    "artifact-catalog.json",
+    "supporting-artifact-catalog.json"
+  ],
+  "central_schema": "schemas/artifact.schema.json",
+  "validation_order": [
+    "envelope-schema",
+    "owner-schema",
+    "catalog-entry",
+    "identity-cardinality",
+    "uri-digest-signature",
+    "semantic-validator",
+    "graph-edges",
+    "transition-gate"
+  ],
+  "common_rules": [
+    {
+      "id": "artifact.known-type",
+      "executor": "contracts.require_catalog_entry",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.instance-key",
+      "executor": "contracts.validate_instance_key",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.cardinality",
+      "executor": "contracts.validate_cardinality",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.immutable-boundary",
+      "executor": "contracts.validate_immutability",
+      "gate_impact": "blocks-workspace"
+    },
+    {
+      "id": "artifact.uri",
+      "executor": "contracts.validate_contained_or_immutable_uri",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.digest",
+      "executor": "contracts.validate_digest",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.signature",
+      "executor": "authority.validate_when_required",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.extensions",
+      "executor": "contracts.validate_reverse_dns_extensions",
+      "gate_impact": "blocks-step"
+    },
+    {
+      "id": "artifact.no-secret-content",
+      "executor": "contracts.reject_secret_fields",
+      "gate_impact": "blocks-workspace"
+    }
+  ],
+  "semantic_validators": [
+    {
+      "id": "artifact.governance-principles",
+      "executor": "contracts.validate_governance_principles",
+      "required": [
+        "principles",
+        "separation_of_duties",
+        "freeze_policy",
+        "exception_policy"
+      ]
+    },
+    {
+      "id": "artifact.contract-bundle",
+      "executor": "contracts.validate_reference_closure",
+      "required_ids": [
+        "G03",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G13"
+      ]
+    },
+    {
+      "id": "artifact.data-contract",
+      "executor": "contracts.validate_data_contract",
+      "required": [
+        "dataset_identity",
+        "version",
+        "schema",
+        "quality_policy",
+        "lineage"
+      ]
+    },
+    {
+      "id": "artifact.geometry-contract",
+      "executor": "contracts.validate_geometry_contract",
+      "required": [
+        "coordinate_frames",
+        "transforms",
+        "units",
+        "conventions",
+        "golden_artifacts"
+      ]
+    },
+    {
+      "id": "artifact.calibration-contract",
+      "executor": "contracts.validate_calibration_contract",
+      "required": [
+        "calibration_identity",
+        "frames",
+        "validity",
+        "uncertainty"
+      ]
+    },
+    {
+      "id": "artifact.synchronization-contract",
+      "executor": "contracts.validate_synchronization_contract",
+      "required": [
+        "clock_domains",
+        "alignment",
+        "tolerance",
+        "missing_policy"
+      ]
+    },
+    {
+      "id": "artifact.label-ontology",
+      "executor": "contracts.validate_label_ontology",
+      "required": [
+        "ontology_identity",
+        "classes",
+        "semantics",
+        "version"
+      ]
+    },
+    {
+      "id": "artifact.augmentation-contract",
+      "executor": "contracts.validate_augmentation_contract",
+      "required": [
+        "operations",
+        "probabilities",
+        "ordering",
+        "geometry_effects"
+      ]
+    },
+    {
+      "id": "artifact.tensor-contract",
+      "executor": "contracts.validate_tensor_contract",
+      "required": [
+        "inputs",
+        "outputs",
+        "shape",
+        "dtype",
+        "units",
+        "runtime_validator_digest"
+      ]
+    },
+    {
+      "id": "artifact.evaluation-contract",
+      "executor": "contracts.validate_evaluation_contract",
+      "required": [
+        "evaluator_identity",
+        "metric_definitions",
+        "slices",
+        "tolerances",
+        "inconclusive_rule",
+        "owner_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.robustness-contract",
+      "executor": "contracts.validate_robustness_contract",
+      "required": [
+        "suite_identity",
+        "stressors",
+        "thresholds",
+        "artifacts"
+      ]
+    },
+    {
+      "id": "artifact.deployment-contract",
+      "executor": "contracts.validate_deployment_contract",
+      "required": [
+        "target",
+        "interface",
+        "parity",
+        "latency",
+        "memory",
+        "health"
+      ]
+    },
+    {
+      "id": "artifact.traceability-contract",
+      "executor": "contracts.validate_traceability_contract",
+      "required": [
+        "node_types",
+        "edge_types",
+        "reciprocity",
+        "closure"
+      ]
+    },
+    {
+      "id": "artifact.baseline-spec",
+      "executor": "contracts.validate_baseline_spec",
+      "required": [
+        "baseline_id",
+        "scope",
+        "model",
+        "data",
+        "evaluator",
+        "tolerances"
+      ]
+    },
+    {
+      "id": "artifact.baseline-lock",
+      "executor": "contracts.validate_baseline_lock",
+      "required": [
+        "baseline_lock_id",
+        "baseline_id",
+        "baseline_digest",
+        "data_digest",
+        "evaluator_digest",
+        "baseline_fingerprint",
+        "baseline_fingerprint_digest",
+        "artifact_uri",
+        "timestamps",
+        "receipts",
+        "reviewer_role",
+        "authority"
+      ],
+      "allow_empty": [
+        "authority"
+      ]
+    },
+    {
+      "id": "artifact.baseline-reproduction",
+      "executor": "contracts.validate_baseline_reproduction",
+      "required": [
+        "reproduction_id",
+        "baseline_id",
+        "baseline_digest",
+        "baseline_fingerprint",
+        "baseline_fingerprint_digest",
+        "run",
+        "metrics",
+        "metrics_digest",
+        "tolerance_result",
+        "timestamps",
+        "receipts",
+        "authority"
+      ],
+      "allow_empty": [
+        "authority"
+      ]
+    },
+    {
+      "id": "artifact.baseline-deprecation",
+      "executor": "contracts.validate_baseline_deprecation",
+      "required": [
+        "deprecation_id",
+        "baseline_id",
+        "reason",
+        "active_dependents",
+        "replacement",
+        "authority"
+      ],
+      "allow_empty": [
+        "active_dependents"
+      ]
+    },
+    {
+      "id": "artifact.experiment-spec",
+      "executor": "contracts.validate_experiment_spec",
+      "required": [
+        "experiment_id",
+        "protocol_channel",
+        "promotable",
+        "hypothesis",
+        "variables",
+        "contracts",
+        "baseline",
+        "data",
+        "evaluator",
+        "budget",
+        "decision_rule",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.protocol-readiness",
+      "executor": "contracts.validate_protocol_readiness",
+      "required": [
+        "experiment_id",
+        "candidate_digest",
+        "blocking_gates",
+        "independent_reviewer",
+        "authority"
+      ]
+    },
+    {
+      "id": "artifact.search-spec",
+      "executor": "contracts.validate_search_spec",
+      "required": [
+        "space",
+        "algorithm",
+        "budget",
+        "objective",
+        "selection_rule",
+        "seed_policy",
+        "trial_plan",
+        "confirmation",
+        "split_manifest_ref",
+        "split_manifest_digest",
+        "run_plan_id"
+      ]
+    },
+    {
+      "id": "artifact.run-plan",
+      "executor": "contracts.validate_run_plan",
+      "required": [
+        "run_plan_id",
+        "experiment_id",
+        "candidate_spec_digest",
+        "channel",
+        "runs",
+        "attempt_policy",
+        "evidence_requirements",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.pipeline-spec",
+      "executor": "contracts.validate_pipeline_spec",
+      "required": [
+        "pipeline_identity",
+        "revision",
+        "definition_digest",
+        "channel",
+        "author_principal_ids",
+        "source_control_revision",
+        "source_control_result_digest",
+        "frozen_experiment_digest",
+        "diff_evidence_digest",
+        "engineering_provenance"
+      ]
+    },
+    {
+      "id": "artifact.amendment",
+      "executor": "contracts.validate_amendment",
+      "required": [
+        "amendment_id",
+        "experiment_id",
+        "timing_revision",
+        "classification",
+        "old_digest",
+        "candidate_digest",
+        "authority"
+      ]
+    },
+    {
+      "id": "artifact.protocol-deviation",
+      "executor": "contracts.validate_deviation",
+      "required": [
+        "deviation_id",
+        "experiment_id",
+        "first_affected_event",
+        "observed_facts",
+        "impact",
+        "authority"
+      ]
+    },
+    {
+      "id": "artifact.run-manifest",
+      "executor": "contracts.validate_run_manifest",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "attempt_policy",
+        "experiment_digest",
+        "frozen_experiment_ref",
+        "frozen_experiment_digest",
+        "run_plan_ref",
+        "run_plan_digest",
+        "repository_identity",
+        "change_request_identity",
+        "change_revision",
+        "change_tree_digest",
+        "merged_revision",
+        "merged_tree_digest",
+        "pipeline_identity",
+        "pipeline_definition_digest",
+        "baseline_lock_ref",
+        "baseline_lock_digest",
+        "resolved_configuration_ref",
+        "resolved_configuration_digest",
+        "config_digest",
+        "data_digest",
+        "split_digest",
+        "evaluator_digest",
+        "dataset_manifest_ref",
+        "dataset_manifest_digest",
+        "split_manifest_ref",
+        "split_manifest_digest",
+        "evaluator_contract_ref",
+        "evaluator_contract_digest",
+        "calibration_applicable",
+        "engineering_provenance",
+        "expected_runtime_image_digest",
+        "expected_runtime_profile",
+        "expected_runtime_profile_digest",
+        "seed",
+        "seed_digest",
+        "environment_requirements",
+        "budget",
+        "budget_digest",
+        "allowed_diff",
+        "allowed_diff_digest",
+        "run_fingerprint",
+        "run_fingerprint_digest"
+      ]
+    },
+    {
+      "id": "artifact.resolved-configuration",
+      "executor": "contracts.validate_resolved_configuration",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "source_run_plan_id",
+        "resolved_values",
+        "defaults",
+        "override_origins",
+        "structured_config_schema_digest",
+        "unknown_keys",
+        "forbidden_overrides",
+        "resolution_trace_digest",
+        "config_digest",
+        "frozen_sources"
+      ],
+      "allow_empty": [
+        "defaults",
+        "override_origins",
+        "unknown_keys",
+        "forbidden_overrides"
+      ]
+    },
+    {
+      "id": "artifact.runtime-environment",
+      "executor": "contracts.validate_runtime_environment",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "attempt_kind",
+        "environment_manifest",
+        "environment_digest",
+        "receipt"
+      ]
+    },
+    {
+      "id": "artifact.dataset-manifest",
+      "executor": "contracts.validate_dataset_manifest",
+      "required": [
+        "dataset_identity",
+        "version",
+        "instance_key",
+        "immutable_uri",
+        "content_digest",
+        "schema_digest",
+        "shard_digests",
+        "record_count",
+        "receipt"
+      ]
+    },
+    {
+      "id": "artifact.split-manifest",
+      "executor": "contracts.validate_split_manifest",
+      "required": [
+        "split_identity",
+        "version",
+        "instance_key",
+        "immutable_uri",
+        "dataset_content_digest",
+        "membership_digest",
+        "partition_digests",
+        "grouping_key",
+        "hidden_access_policy",
+        "receipt"
+      ]
+    },
+    {
+      "id": "artifact.calibration-manifest",
+      "executor": "contracts.validate_calibration_manifest",
+      "required": [
+        "calibration_identity",
+        "version",
+        "instance_key",
+        "immutable_uri",
+        "content_digest",
+        "validity",
+        "receipt"
+      ]
+    },
+    {
+      "id": "artifact.actual-run-record",
+      "executor": "contracts.validate_actual_run",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "attempt_kind",
+        "status",
+        "started_at",
+        "completed_at",
+        "resource_use",
+        "receipt",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.artifact-index",
+      "executor": "contracts.validate_artifact_index",
+      "required": [
+        "run_id",
+        "attempt_id",
+        "attempt_kind",
+        "artifacts",
+        "completeness",
+        "receipt",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.evidence-index",
+      "executor": "contracts.validate_evidence_index",
+      "required": [
+        "evidence_id",
+        "experiment_id",
+        "planned_runs",
+        "accounted_attempts",
+        "scientific_attempt_ids",
+        "items",
+        "source_digests",
+        "bundle_digest",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.evidence-summary",
+      "executor": "contracts.validate_evidence_summary",
+      "required": [
+        "hypothesis",
+        "results",
+        "limitations",
+        "missingness",
+        "deviations",
+        "source_attempt_ids",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.statistical-analysis",
+      "executor": "contracts.validate_statistical_analysis",
+      "required": [
+        "comparisons",
+        "effect_sizes",
+        "uncertainty",
+        "power",
+        "multiplicity",
+        "scientific_facts",
+        "source_attempt_ids",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.failure-case-index",
+      "executor": "contracts.validate_failure_index",
+      "required": [
+        "taxonomy",
+        "cases",
+        "artifact_digests",
+        "coverage",
+        "source_attempt_ids",
+        "author_principal_ids"
+      ]
+    },
+    {
+      "id": "artifact.scientific-decision",
+      "executor": "contracts.validate_scientific_decision",
+      "required": [
+        "decision_id",
+        "experiment_id",
+        "frozen_spec_digest",
+        "evidence_bundle_digest",
+        "rule_digest",
+        "outcome",
+        "reviewers",
+        "authority",
+        "decision_context"
+      ]
+    },
+    {
+      "id": "artifact.traceability-graph",
+      "executor": "contracts.validate_traceability_graph",
+      "required": [
+        "schema",
+        "nodes",
+        "edges",
+        "derived_from_revision"
+      ],
+      "allow_empty": [
+        "nodes",
+        "edges"
+      ]
+    },
+    {
+      "id": "support.product-requirement",
+      "executor": "contracts.validate_product_requirement",
+      "required": [
+        "requirement_id",
+        "uri",
+        "owner",
+        "impact",
+        "non_goals"
+      ]
+    },
+    {
+      "id": "support.research-brief",
+      "executor": "contracts.validate_research_brief",
+      "required": [
+        "brief_id",
+        "requirement_id",
+        "hypothesis",
+        "mechanism",
+        "uncertainty",
+        "history"
+      ]
+    },
+    {
+      "id": "support.bmad-links",
+      "executor": "contracts.validate_bmad_links",
+      "required": [
+        "product_brief",
+        "prd",
+        "architecture",
+        "source_refs"
+      ]
+    },
+    {
+      "id": "support.planning-readiness-trio",
+      "executor": "contracts.validate_planning_readiness",
+      "required": [
+        "planning_readiness",
+        "immutable_experiment_readiness",
+        "post_implementation_preflight_applicability"
+      ]
+    },
+    {
+      "id": "support.engineering-stories",
+      "executor": "contracts.validate_engineering_stories",
+      "required": [
+        "story_id",
+        "acceptance_ids",
+        "allowed_paths",
+        "dependencies"
+      ]
+    },
+    {
+      "id": "support.context-pack",
+      "executor": "contracts.validate_context_pack",
+      "required": [
+        "story_id",
+        "allowed_paths",
+        "allowed_context",
+        "forbidden_context",
+        "source_digests"
+      ]
+    },
+    {
+      "id": "support.code-review",
+      "executor": "contracts.validate_code_review",
+      "required": [
+        "change_request",
+        "reviewers",
+        "findings",
+        "approval_receipts",
+        "ci_receipt",
+        "author_principal_ids",
+        "source_control_revision",
+        "source_control_result_digest",
+        "engineering_provenance"
+      ]
+    },
+    {
+      "id": "support.implementation-acceptance",
+      "executor": "contracts.validate_implementation_acceptance",
+      "required": [
+        "revision",
+        "tree_digest",
+        "acceptance_ids",
+        "git_receipt",
+        "ci_receipt",
+        "author_principal_ids",
+        "source_control_revision",
+        "source_control_result_digest",
+        "engineering_provenance"
+      ]
+    },
+    {
+      "id": "support.post-implementation-preflight",
+      "executor": "contracts.validate_preflight",
+      "required": [
+        "experiment_digest",
+        "revision",
+        "geometry",
+        "tensor",
+        "finite",
+        "tiny",
+        "resume",
+        "receipt",
+        "engineering_provenance",
+        "resolved_configurations",
+        "resolved_configurations_digest"
+      ]
+    },
+    {
+      "id": "support.independent-review",
+      "executor": "contracts.validate_independent_review",
+      "required": [
+        "evidence_digest",
+        "reviewers",
+        "roles",
+        "five_lenses",
+        "deviation_disposition"
+      ]
+    },
+    {
+      "id": "support.handoff-request",
+      "executor": "handoffs.validate_request",
+      "schema": "schemas/handoff-request.schema.json"
+    },
+    {
+      "id": "support.handoff-result",
+      "executor": "handoffs.validate_result",
+      "schema": "schemas/handoff-result.schema.json"
+    },
+    {
+      "id": "support.authority-attestation",
+      "executor": "authority.validate_attestation",
+      "schema": "schemas/authority-attestation.schema.json"
+    },
+    {
+      "id": "support.exception",
+      "executor": "contracts.validate_exception",
+      "required": [
+        "exception_id",
+        "scope",
+        "reason",
+        "subjects",
+        "expires_or_terminal",
+        "authority",
+        "child_dispositions"
+      ],
+      "allow_empty": [
+        "child_dispositions"
+      ]
+    },
+    {
+      "id": "support.cancellation",
+      "executor": "contracts.validate_cancellation",
+      "required": [
+        "cancellation_id",
+        "scope",
+        "reason",
+        "subjects",
+        "authority",
+        "child_dispositions"
+      ],
+      "allow_empty": [
+        "child_dispositions"
+      ]
+    },
+    {
+      "id": "support.archive-closure",
+      "executor": "contracts.validate_closure",
+      "required": [
+        "closure_id",
+        "terminal_subjects",
+        "child_accounting",
+        "open_handoffs",
+        "authority",
+        "anchor"
+      ]
+    }
+  ],
+  "decision_rule": {
+    "outcomes": [
+      "invalid",
+      "inconclusive",
+      "hypothesis_rejected",
+      "hypothesis_supported"
+    ],
+    "precedence": [
+      "invalid",
+      "inconclusive",
+      "hypothesis_rejected",
+      "hypothesis_supported"
+    ],
+    "requirements": [
+      "mutually-exclusive",
+      "exhaustive",
+      "frozen",
+      "complete-attempt-accounting"
+    ],
+    "underpowered_valid_evidence": "use-frozen-inconclusive-rule"
+  }
+}

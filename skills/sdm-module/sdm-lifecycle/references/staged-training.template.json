@@ -1,0 +1,64 @@
+{
+  "schema": "sdm-staged-training-planning/v1",
+  "status": "draft",
+  "execution_authorized": false,
+  "study_ref": null,
+  "project": null,
+  "question": null,
+  "original_base_ref": null,
+  "current_research_baseline_ref": null,
+  "required_confirmation_scope_ref": null,
+  "training_length_evidence_refs": [],
+  "stages": [{
+    "id": null,
+    "purpose": null,
+    "question": null,
+    "control_ref": null,
+    "candidate_refs": [],
+    "comparison_group_ref": null,
+    "data_split_subset_sampling_ref": null,
+    "initialization": {
+      "policy": null,
+      "checkpoint_ref": null,
+      "resume_state_inventory_ref": null,
+      "restore_verification_ref": null
+    },
+    "budget": {
+      "basis": null,
+      "intended_epochs": null,
+      "successful_optimizer_updates": null,
+      "examples_seen": null,
+      "effective_batch": null,
+      "schedule_kind": null,
+      "scheduler_clock_and_horizon": null,
+      "warmup_decay_ref": null,
+      "stop_at": null,
+      "resource_confirmation_ref": null
+    },
+    "evaluation": {
+      "evaluator_ref": null,
+      "scope_ref": null,
+      "cadence_and_checkpoint_rule": null,
+      "metric_direction_and_units": null,
+      "minimum_useful_effect": null,
+      "variation_evidence_refs": [],
+      "critical_slice_tolerance_and_support": null,
+      "observation_window_and_early_stop_rule": null,
+      "selection_vs_protected_confirmation_data_ref": null
+    },
+    "decision_branches": [{
+      "observation": null,
+      "required_evidence_refs": [],
+      "next_choice": null,
+      "remaining_uncertainty": null
+    }],
+    "actual_assessment_ref": null,
+    "short_to_long_transfer_risks": [],
+    "next_stage_or_diagnostic_ref": null
+  }],
+  "aggregate_budget_ref": null,
+  "attempt_ledger_including_controls_failures_tuning_repeats_ref": null,
+  "fixed_pro_session_ref": null,
+  "limitations": [],
+  "next_action": "prepare-evidence-and-stage-plan-only"
+}

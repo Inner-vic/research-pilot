@@ -1,0 +1,10 @@
+{
+  "schema": "sdm-worktree-plan/v1",
+  "backend": "git-local",
+  "project": null,
+  "repository": null,
+  "base_commit": null,
+  "branch": null,
+  "allowed_worktree_root": null,
+  "worktree_path": null
+}

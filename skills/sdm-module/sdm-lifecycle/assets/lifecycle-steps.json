@@ -1,0 +1,941 @@
+{
+  "schema": "sdm-lifecycle-steps/v1",
+  "schema_version": "1.0.0",
+  "step_count": 21,
+  "gate_dsl": [
+    "sequence",
+    "all_of",
+    "when",
+    "check",
+    "substate_event"
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "owning_skill": "sdm-lifecycle",
+      "actor": "Product Owner",
+      "required_inputs": [
+        "intent",
+        "constraints"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S01"
+      ],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "problem.clear"
+          },
+          {
+            "check": "non_goals.explicit"
+          }
+        ]
+      },
+      "failure_disposition": "clarify",
+      "transition": {
+        "dimension": "jira",
+        "from": "absent",
+        "to": "open"
+      }
+    },
+    {
+      "step": 2,
+      "owning_skill": "sdm-agent-research-planner",
+      "actor": "ML Lead",
+      "required_inputs": [
+        "S01",
+        "S03.PRD",
+        "history"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S02"
+      ],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "hypothesis.falsifiable"
+          },
+          {
+            "check": "target_not_must"
+          },
+          {
+            "check": "mechanism.explicit"
+          },
+          {
+            "check": "uncertainty.explicit"
+          }
+        ]
+      },
+      "failure_disposition": "revise",
+      "transition": {
+        "dimension": "experiment",
+        "from": "absent",
+        "to": "draft"
+      }
+    },
+    {
+      "step": 3,
+      "owning_skill": "sdm-create-ml-contract",
+      "actor": "Contract Stewards",
+      "required_inputs": [
+        "S02",
+        "system_facts",
+        "data_facts"
+      ],
+      "governed_outputs": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "R04",
+        "R05",
+        "R06"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "data.quality-check",
+        "data.labeling-status"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "all_of": [
+              {
+                "operation": "data.quality-check"
+              },
+              {
+                "operation": "data.labeling-status"
+              }
+            ]
+          },
+          {
+            "check": "contracts.all_applicable_semantics_closed"
+          }
+        ]
+      },
+      "failure_disposition": "contract-story-or-readiness-block",
+      "transition": {
+        "dimension": "contract_readiness",
+        "from": "open",
+        "to": "pass"
+      }
+    },
+    {
+      "step": 4,
+      "owning_skill": "sdm-lock-baseline",
+      "actor": "Baseline Owner",
+      "required_inputs": [
+        "G02",
+        "G03",
+        "G09",
+        "G10",
+        "existing_model_refs"
+      ],
+      "governed_outputs": [
+        "B01"
+      ],
+      "supporting_outputs": [],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "baseline.scope_exact"
+          },
+          {
+            "check": "baseline.version_selected"
+          }
+        ]
+      },
+      "failure_disposition": "choose-or-version-baseline",
+      "transition": {
+        "dimension": "baseline",
+        "from": "absent",
+        "to": "draft"
+      }
+    },
+    {
+      "step": 5,
+      "owning_skill": "sdm-lock-baseline",
+      "actor": "Independent Reviewer",
+      "required_inputs": [
+        "B01",
+        "data_refs",
+        "evaluator_refs"
+      ],
+      "governed_outputs": [
+        "B02",
+        "B03"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13",
+        "S14"
+      ],
+      "platform_operations": [
+        "git.snapshot",
+        "ml.baseline-reproduction",
+        "ml.baseline-locked-evaluation"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "all_of": [
+              {
+                "operation": "git.snapshot"
+              },
+              {
+                "operation": "ml.baseline-reproduction"
+              },
+              {
+                "operation": "ml.baseline-locked-evaluation"
+              }
+            ]
+          },
+          {
+            "all_of": [
+              {
+                "check": "baseline.receipts_exact"
+              },
+              {
+                "check": "baseline.tolerance_pass"
+              },
+              {
+                "check": "baseline.runtime_environment_exact"
+              },
+              {
+                "check": "authority.baseline_lock"
+              }
+            ]
+          }
+        ]
+      },
+      "failure_disposition": "repair-or-version",
+      "transition": {
+        "dimension": "baseline",
+        "from": "draft",
+        "to": "locked"
+      }
+    },
+    {
+      "step": 6,
+      "owning_skill": "sdm-create-experiment-spec",
+      "actor": "Experiment Agent",
+      "required_inputs": [
+        "S01",
+        "S02",
+        "S03.PRD",
+        "S03.Architecture",
+        "G_refs",
+        "B_refs"
+      ],
+      "governed_outputs": [
+        "E01",
+        "E03",
+        "E04"
+      ],
+      "supporting_outputs": [],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "experiment.schema"
+          },
+          {
+            "check": "variables.isolated"
+          },
+          {
+            "when": {
+              "condition": "hpo_enabled",
+              "then": {
+                "check": "E03.complete"
+              },
+              "else": {
+                "check": "true"
+              }
+            }
+          }
+        ]
+      },
+      "failure_disposition": "return-to-step-2-through-5",
+      "transition": {
+        "dimension": "protocol",
+        "from": "absent",
+        "to": "draft"
+      }
+    },
+    {
+      "step": 7,
+      "owning_skill": "sdm-ml-readiness",
+      "actor": "Independent Reviewer",
+      "required_inputs": [
+        "E01.draft",
+        "B_refs",
+        "data_refs",
+        "budget"
+      ],
+      "governed_outputs": [
+        "E02"
+      ],
+      "supporting_outputs": [
+        "S04",
+        "S12",
+        "S13",
+        "S14"
+      ],
+      "platform_operations": [
+        "data.quality-check",
+        "ml.contract-preflight"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "all_of": [
+              {
+                "operation": "data.quality-check"
+              },
+              {
+                "operation": "ml.contract-preflight"
+              }
+            ]
+          },
+          {
+            "all_of": [
+              {
+                "check": "planning_readiness.trio_complete"
+              },
+              {
+                "check": "protocol_readiness.all_blocking_gates_pass"
+              },
+              {
+                "check": "authority.readiness"
+              }
+            ]
+          }
+        ]
+      },
+      "failure_disposition": "route-owner",
+      "transition": {
+        "dimension": "protocol",
+        "from": "draft",
+        "to": "readiness-review"
+      }
+    },
+    {
+      "step": 8,
+      "owning_skill": "sdm-freeze-experiment",
+      "actor": "Research Owner",
+      "required_inputs": [
+        "E02.approved",
+        "E01.candidate"
+      ],
+      "governed_outputs": [
+        "E01.frozen"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13",
+        "S14"
+      ],
+      "platform_operations": [
+        "git.tag-frozen-spec",
+        "ml.freeze-receipt",
+        "git.anchor-ledger-head"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "all_of": [
+              {
+                "operation": "git.tag-frozen-spec"
+              },
+              {
+                "operation": "ml.freeze-receipt"
+              }
+            ]
+          },
+          {
+            "check": "freeze.content_digest_and_current_receipts"
+          },
+          {
+            "substate_event": "freeze.provisional"
+          },
+          {
+            "operation": "git.anchor-ledger-head"
+          },
+          {
+            "check": "anchor.result_exact"
+          },
+          {
+            "substate_event": "anchor.accepted"
+          }
+        ]
+      },
+      "failure_disposition": "block",
+      "transition": {
+        "dimension": "protocol",
+        "from": "readiness-review",
+        "to": "frozen",
+        "effect_after": "anchor.accepted"
+      }
+    },
+    {
+      "step": 9,
+      "owning_skill": "sdm-build-context-pack",
+      "actor": "BMAD Planner",
+      "required_inputs": [
+        "E01.frozen",
+        "S03.PRD",
+        "S03.Architecture"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S05",
+        "S06"
+      ],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "stories.deterministic_acceptance"
+          },
+          {
+            "check": "context.allowed_paths"
+          }
+        ]
+      },
+      "failure_disposition": "re-split",
+      "transition": {
+        "dimension": "implementation",
+        "from": "absent",
+        "to": "backlog"
+      }
+    },
+    {
+      "step": 10,
+      "owning_skill": "sdm-build-context-pack",
+      "actor": "Coding Agent",
+      "required_inputs": [
+        "S06.per_story"
+      ],
+      "governed_outputs": [
+        "E05"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "git.branch-change-request"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "check": "coding.allowed_paths_only"
+          },
+          {
+            "operation": "git.branch-change-request"
+          }
+        ]
+      },
+      "failure_disposition": "return-story",
+      "transition": {
+        "dimension": "implementation",
+        "from": "backlog",
+        "to": "in-progress"
+      }
+    },
+    {
+      "step": 11,
+      "owning_skill": "sdm-build-context-pack",
+      "actor": "Human + Review Agent",
+      "required_inputs": [
+        "S13.change_receipt",
+        "frozen_diff"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S07",
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "git.change-review-status",
+        "ml.implementation-checks"
+      ],
+      "gate": {
+        "all_of": [
+          {
+            "operation": "git.change-review-status"
+          },
+          {
+            "operation": "ml.implementation-checks"
+          },
+          {
+            "check": "review.owner_approvals"
+          }
+        ]
+      },
+      "failure_disposition": "return-coding",
+      "transition": {
+        "dimension": "implementation",
+        "from": "in-progress",
+        "to": "review"
+      }
+    },
+    {
+      "step": 12,
+      "owning_skill": "sdm-build-context-pack",
+      "actor": "Lifecycle Coordinator",
+      "required_inputs": [
+        "approved_change"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S08",
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "git.merge-status",
+        "ml.deterministic-acceptance"
+      ],
+      "gate": {
+        "all_of": [
+          {
+            "operation": "git.merge-status"
+          },
+          {
+            "operation": "ml.deterministic-acceptance"
+          },
+          {
+            "check": "deterministic_acceptance.all_pass"
+          }
+        ]
+      },
+      "failure_disposition": "repair",
+      "transition": {
+        "dimension": "implementation",
+        "from": "review",
+        "to": "done"
+      }
+    },
+    {
+      "step": 13,
+      "owning_skill": "sdm-build-context-pack",
+      "actor": "Lifecycle Coordinator",
+      "required_inputs": [
+        "merged_revision",
+        "E01.frozen"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S09",
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "ml.post-implementation-preflight"
+      ],
+      "gate": {
+        "all_of": [
+          {
+            "operation": "ml.post-implementation-preflight"
+          },
+          {
+            "check": "preflight.geometry_tensor_finite_tiny_resume"
+          }
+        ]
+      },
+      "failure_disposition": "repair-or-E06",
+      "transition": {
+        "dimension": "preflight",
+        "from": "pending",
+        "to": "pass"
+      }
+    },
+    {
+      "step": 14,
+      "owning_skill": "sdm-lifecycle",
+      "actor": "Run Materializer",
+      "required_inputs": [
+        "E01.frozen",
+        "E04",
+        "S09"
+      ],
+      "governed_outputs": [
+        "R01",
+        "R02"
+      ],
+      "supporting_outputs": [],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "run.fingerprints_exact"
+          },
+          {
+            "check": "run.references_exact"
+          },
+          {
+            "check": "run.budget_exact"
+          },
+          {
+            "check": "attempt.planned"
+          }
+        ]
+      },
+      "failure_disposition": "block",
+      "transition": {
+        "dimension": "execution",
+        "from": "absent",
+        "to": "planned"
+      }
+    },
+    {
+      "step": 15,
+      "owning_skill": "sdm-lifecycle",
+      "actor": "Training Coordinator",
+      "required_inputs": [
+        "R01",
+        "R02",
+        "R03",
+        "E03.when_hpo"
+      ],
+      "governed_outputs": [
+        "R03",
+        "R07",
+        "R08"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "ml.hpo-search",
+        "ml.execution-orchestration",
+        "ml.training"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "when": {
+              "condition": "hpo_enabled",
+              "then": {
+                "sequence": [
+                  {
+                    "operation": "ml.hpo-search"
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "check": "hpo.every_trial_retained"
+                      },
+                      {
+                        "check": "hpo.selection_replayable"
+                      },
+                      {
+                        "check": "hpo.formal_test_isolated"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "else": {
+                "check": "hpo.not_applicable"
+              }
+            }
+          },
+          {
+            "all_of": [
+              {
+                "operation": "ml.execution-orchestration"
+              },
+              {
+                "operation": "ml.training"
+              }
+            ]
+          },
+          {
+            "all_of": [
+              {
+                "check": "confirmation.selected_config_replayed"
+              },
+              {
+                "check": "confirmation.independent_seed_environment"
+              },
+              {
+                "check": "attempt.environment_matches_R01"
+              },
+              {
+                "check": "attempt.terminal"
+              }
+            ]
+          }
+        ]
+      },
+      "failure_disposition": "retry-or-E07",
+      "transition": {
+        "dimension": "attempt",
+        "from": "planned",
+        "to": "terminal"
+      }
+    },
+    {
+      "step": 16,
+      "owning_skill": "sdm-lifecycle",
+      "actor": "Evaluation Coordinator",
+      "required_inputs": [
+        "checkpoint",
+        "R01"
+      ],
+      "governed_outputs": [
+        "R07",
+        "R08"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "ml.evaluation-orchestration",
+        "ml.locked-evaluation"
+      ],
+      "gate": {
+        "all_of": [
+          {
+            "operation": "ml.evaluation-orchestration"
+          },
+          {
+            "operation": "ml.locked-evaluation"
+          },
+          {
+            "check": "evaluator.digest_exact"
+          },
+          {
+            "check": "attempt.environment_matches_R01"
+          }
+        ]
+      },
+      "failure_disposition": "E07-or-invalid",
+      "transition": {
+        "dimension": "execution",
+        "from": "terminal",
+        "to": "evaluated"
+      }
+    },
+    {
+      "step": 17,
+      "owning_skill": "sdm-lifecycle",
+      "actor": "Robustness Coordinator",
+      "required_inputs": [
+        "selected_checkpoints",
+        "G11"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S12",
+        "S13"
+      ],
+      "platform_operations": [
+        "ml.robustness-evaluation"
+      ],
+      "gate": {
+        "all_of": [
+          {
+            "operation": "ml.robustness-evaluation"
+          },
+          {
+            "check": "robustness.pass_or_fail_retained"
+          },
+          {
+            "check": "robustness.no_result_editing"
+          }
+        ]
+      },
+      "failure_disposition": "retain-failure-evidence",
+      "transition": {
+        "dimension": "robustness",
+        "from": "pending",
+        "to": "assessed"
+      }
+    },
+    {
+      "step": 18,
+      "owning_skill": "sdm-evidence-review",
+      "actor": "Evidence Agent",
+      "required_inputs": [
+        "every_planned_run_attempt_artifact"
+      ],
+      "governed_outputs": [
+        "D01",
+        "D02",
+        "D03",
+        "D04"
+      ],
+      "supporting_outputs": [],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "evidence.complete_attempt_accounting"
+          },
+          {
+            "check": "evidence.deviations_accounted"
+          },
+          {
+            "check": "evidence.receipts_exact"
+          }
+        ]
+      },
+      "failure_disposition": "request-missing-work-or-block",
+      "transition": {
+        "dimension": "evidence",
+        "from": "pending",
+        "to": "ready|incomplete"
+      }
+    },
+    {
+      "step": 19,
+      "owning_skill": "sdm-evidence-review",
+      "actor": "Independent Reviewers",
+      "required_inputs": [
+        "E01.frozen",
+        "D01",
+        "D02",
+        "D03",
+        "D04"
+      ],
+      "governed_outputs": [],
+      "supporting_outputs": [
+        "S10",
+        "S14"
+      ],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "authority.reviewer_independent"
+          },
+          {
+            "check": "deviation.none_unresolved"
+          },
+          {
+            "check": "five_lenses.complete"
+          }
+        ]
+      },
+      "failure_disposition": "supplement-or-invalid",
+      "transition": {
+        "dimension": "evidence",
+        "from": "ready",
+        "to": "reviewed"
+      }
+    },
+    {
+      "step": 20,
+      "owning_skill": "sdm-scientific-decision",
+      "actor": "Scientific Reviewer",
+      "required_inputs": [
+        "reviewed_bundle",
+        "E01.frozen_rule"
+      ],
+      "governed_outputs": [
+        "D05"
+      ],
+      "supporting_outputs": [
+        "S12",
+        "S13",
+        "S14"
+      ],
+      "platform_operations": [
+        "git.anchor-ledger-head"
+      ],
+      "gate": {
+        "sequence": [
+          {
+            "all_of": [
+              {
+                "check": "decision.all_attempts_accounted"
+              },
+              {
+                "check": "decision.rule_exhaustive_mutually_exclusive"
+              },
+              {
+                "check": "decision.precedence_invalid_inconclusive_rejected_supported"
+              },
+              {
+                "check": "authority.D05"
+              }
+            ]
+          },
+          {
+            "substate_event": "decision.provisional"
+          },
+          {
+            "operation": "git.anchor-ledger-head"
+          },
+          {
+            "check": "anchor.result_exact"
+          },
+          {
+            "substate_event": "anchor.accepted"
+          }
+        ]
+      },
+      "failure_disposition": "supersede-only",
+      "transition": {
+        "dimension": "scientific",
+        "from": "pending",
+        "to": "hypothesis_supported|hypothesis_rejected|inconclusive|invalid",
+        "effect_after": "anchor.accepted"
+      }
+    },
+    {
+      "step": 21,
+      "owning_skill": "sdm-create-experiment-spec",
+      "actor": "Research Agent",
+      "required_inputs": [
+        "D05_or_failure_cases"
+      ],
+      "governed_outputs": [
+        "E01"
+      ],
+      "supporting_outputs": [
+        "S02"
+      ],
+      "platform_operations": [],
+      "gate": {
+        "all_of": [
+          {
+            "check": "successor.reciprocal_links"
+          },
+          {
+            "check": "predecessor.protocol_unchanged"
+          }
+        ]
+      },
+      "failure_disposition": "continue-or-archive",
+      "transition": {
+        "dimension": "successor_experiment",
+        "from": "absent",
+        "to": "draft"
+      }
+    }
+  ]
+}

@@ -1,0 +1,636 @@
+{
+  "schema": "sdm-transition-requirements/v1",
+  "schema_version": "1.0.0",
+  "principles": [
+    "orthogonal-state-dimensions",
+    "append-only-history",
+    "full-genesis-replay",
+    "CAS-expected-revision",
+    "pinned-engine-bundle",
+    "exact-artifact-and-receipt-bindings",
+    "no-manual-platform-evidence"
+  ],
+  "transitions": [
+    {
+      "name": "workspace.create",
+      "event_type": "workspace.created",
+      "from": "absent",
+      "to": "active",
+      "gate": {
+        "all_of": [
+          "intent.present",
+          "workspace.path-safe",
+          "engine.bundle-complete"
+        ]
+      },
+      "defaults": {
+        "protocol": "exploratory"
+      }
+    },
+    {
+      "name": "contract.ready",
+      "event_type": "artifact.published",
+      "from": "open",
+      "to": "pass",
+      "gate": {
+        "step": 3,
+        "all_of": [
+          "all-applicable-G-contracts",
+          "exact-successful-platform-results"
+        ]
+      }
+    },
+    {
+      "name": "baseline.lock",
+      "event_type": "baseline.locked",
+      "from": "draft",
+      "to": "locked",
+      "authority_action": "readiness.approve",
+      "gate": {
+        "step": 5,
+        "all_of": [
+          "B01",
+          "B02",
+          "B03",
+          "git.snapshot",
+          "ml.baseline-reproduction",
+          "ml.baseline-locked-evaluation",
+          "tolerance-pass"
+        ]
+      }
+    },
+    {
+      "name": "baseline.deprecate",
+      "event_type": "baseline.deprecated",
+      "from": "locked",
+      "to": "deprecated",
+      "authority_action": "baseline.deprecate",
+      "gate": {
+        "all_of": [
+          "B04",
+          "no-orphan-active-dependent",
+          "pinned-experiment-policy-preserved"
+        ]
+      }
+    },
+    {
+      "name": "protocol.readiness",
+      "event_type": "readiness.approved",
+      "from": "draft",
+      "to": "readiness-review",
+      "authority_action": "readiness.approve",
+      "gate": {
+        "step": 7,
+        "all_of": [
+          "E01-candidate-digest",
+          "E02",
+          "S04",
+          "data.quality-check",
+          "ml.contract-preflight"
+        ]
+      }
+    },
+    {
+      "name": "protocol.freeze-provisional",
+      "event_type": "protocol.freeze-provisional",
+      "from": "readiness-review",
+      "to": "readiness-review",
+      "authority_action": "freeze.approve",
+      "gate": {
+        "step": 8,
+        "all_of": [
+          "candidate-digest-exact",
+          "B03-current",
+          "data-split-evaluator-budget-exact",
+          "git.tag-frozen-spec",
+          "ml.freeze-receipt"
+        ]
+      }
+    },
+    {
+      "name": "protocol.freeze",
+      "event_type": "experiment.frozen",
+      "from": "readiness-review",
+      "to": "frozen",
+      "authority_action": "freeze.approve",
+      "gate": {
+        "sequence": [
+          "protocol.freeze-provisional",
+          "git.anchor-ledger-head.successful",
+          "anchor.accepted"
+        ]
+      }
+    },
+    {
+      "name": "protocol.amend",
+      "event_type": "amendment.accepted",
+      "from": "frozen",
+      "to": "frozen",
+      "authority_action": "amendment.approve",
+      "gate": {
+        "all_of": [
+          "before-first-affected-run-dispatch",
+          "non-material",
+          "E06-reciprocal-digests",
+          "frozen-bytes-unchanged"
+        ]
+      }
+    },
+    {
+      "name": "protocol.deviate",
+      "event_type": "deviation.observed",
+      "from": "frozen",
+      "to": "frozen",
+      "authority_action": "deviation.accept",
+      "gate": {
+        "all_of": [
+          "at-or-after-first-affected-run-dispatch",
+          "E07-observed-facts",
+          "impact-classified",
+          "frozen-bytes-unchanged"
+        ]
+      }
+    },
+    {
+      "name": "experiment.supersede",
+      "event_type": "experiment.superseded",
+      "from": "any-non-closed",
+      "to": "superseded",
+      "authority_action": "experiment.supersede",
+      "gate": {
+        "all_of": [
+          "material-change",
+          "reciprocal-successor-links",
+          "successor-new-id",
+          "predecessor-byte-identical"
+        ]
+      }
+    },
+    {
+      "name": "implementation.start",
+      "event_type": "implementation.started",
+      "from": "backlog",
+      "to": "in-progress",
+      "gate": {
+        "step": 10,
+        "all_of": [
+          "S06-contained-context",
+          "allowed-paths",
+          "git.branch-change-request"
+        ]
+      }
+    },
+    {
+      "name": "implementation.review",
+      "event_type": "implementation.reviewed",
+      "from": "in-progress",
+      "to": "review",
+      "gate": {
+        "step": 11,
+        "all_of": [
+          "S07",
+          "git.change-review-status",
+          "ml.implementation-checks"
+        ]
+      }
+    },
+    {
+      "name": "implementation.accept",
+      "event_type": "implementation.accepted",
+      "from": "review",
+      "to": "done",
+      "gate": {
+        "step": 12,
+        "all_of": [
+          "S08",
+          "git.merge-status",
+          "ml.deterministic-acceptance",
+          "all-deterministic-ACs"
+        ]
+      }
+    },
+    {
+      "name": "preflight.accept",
+      "event_type": "preflight.accepted",
+      "from": "pending",
+      "to": "pass",
+      "gate": {
+        "step": 13,
+        "all_of": [
+          "S08-exact-revision",
+          "S09",
+          "ml.post-implementation-preflight"
+        ]
+      }
+    },
+    {
+      "name": "run.materialize",
+      "event_type": "run.materialized",
+      "from": "absent",
+      "to": "planned",
+      "gate": {
+        "step": 14,
+        "all_of": [
+          "E01-frozen",
+          "E04",
+          "S09",
+          "unique-run-id",
+          "unique-attempt-id",
+          "exact-budget-and-fingerprints"
+        ]
+      }
+    },
+    {
+      "name": "run.dispatch",
+      "event_type": "run.dispatched",
+      "from": "planned",
+      "to": "dispatched",
+      "gate": {
+        "all_of": [
+          "R01",
+          "R02",
+          "required-handoffs-created"
+        ]
+      }
+    },
+    {
+      "name": "attempt.start",
+      "event_type": "attempt.started",
+      "from": "dispatched",
+      "to": "running",
+      "gate": {
+        "all_of": [
+          "dispatch-correlation",
+          "R03",
+          "immutable-attempt-id"
+        ]
+      }
+    },
+    {
+      "name": "attempt.terminal",
+      "event_type": "attempt.terminal",
+      "from": "running|dispatched",
+      "to": "successful|failed|cancelled|invalid",
+      "gate": {
+        "all_of": [
+          "producer-terminal-result",
+          "R07",
+          "R08-or-explicit-missingness"
+        ]
+      }
+    },
+    {
+      "name": "attempt.retry",
+      "event_type": "attempt.retry-created",
+      "from": "failed|cancelled|invalid",
+      "to": "planned",
+      "gate": {
+        "all_of": [
+          "same-run-id",
+          "new-attempt-id",
+          "prior-attempt-retained",
+          "frozen-retry-policy"
+        ]
+      }
+    },
+    {
+      "name": "hpo.select",
+      "event_type": "hpo.selection-recorded",
+      "from": "searching",
+      "to": "selected",
+      "gate": {
+        "step": 15,
+        "all_of": [
+          "E03-frozen",
+          "every-trial-and-attempt-retained",
+          "failed-cancelled-visible",
+          "formal-test-isolated",
+          "selection-replayable"
+        ]
+      }
+    },
+    {
+      "name": "confirmation.materialize",
+      "event_type": "confirmation.materialized",
+      "from": "selected",
+      "to": "planned",
+      "gate": {
+        "all_of": [
+          "selected-config-exact",
+          "new-run-id",
+          "independent-seed",
+          "independent-environment"
+        ]
+      }
+    },
+    {
+      "name": "evaluation.accept",
+      "event_type": "evaluation.accepted",
+      "from": "terminal",
+      "to": "evaluated",
+      "gate": {
+        "step": 16,
+        "all_of": [
+          "ml.evaluation-orchestration",
+          "ml.locked-evaluation",
+          "frozen-evaluator-digest",
+          "exact-run-attempt"
+        ]
+      }
+    },
+    {
+      "name": "robustness.assess",
+      "event_type": "robustness.assessed",
+      "from": "pending",
+      "to": "assessed",
+      "gate": {
+        "step": 17,
+        "all_of": [
+          "G11",
+          "ml.robustness-evaluation",
+          "pass-or-fail-retained"
+        ]
+      }
+    },
+    {
+      "name": "evidence.build",
+      "event_type": "evidence.built",
+      "from": "pending",
+      "to": "ready|incomplete",
+      "gate": {
+        "step": 18,
+        "all_of": [
+          "all-planned-runs-accounted",
+          "all-attempts-retained",
+          "D01",
+          "D02",
+          "D03-when-applicable",
+          "D04-when-applicable",
+          "E07-accounted"
+        ]
+      }
+    },
+    {
+      "name": "evidence.review",
+      "event_type": "evidence.reviewed",
+      "from": "ready",
+      "to": "reviewed",
+      "authority_action": "readiness.approve",
+      "gate": {
+        "step": 19,
+        "all_of": [
+          "S10",
+          "independent-reviewer",
+          "five-lenses",
+          "no-unresolved-deviation"
+        ]
+      }
+    },
+    {
+      "name": "decision.provisional",
+      "event_type": "decision.provisional",
+      "from": "pending",
+      "to": "pending",
+      "authority_action": "decision.D05",
+      "gate": {
+        "step": 20,
+        "all_of": [
+          "complete-accounting",
+          "frozen-rule-exhaustive",
+          "one-canonical-outcome",
+          "D05-exact-bundle"
+        ]
+      }
+    },
+    {
+      "name": "decision.accept",
+      "event_type": "decision.accepted",
+      "from": "pending",
+      "to": "hypothesis_supported|hypothesis_rejected|inconclusive|invalid",
+      "authority_action": "decision.D05",
+      "gate": {
+        "sequence": [
+          "decision.provisional",
+          "git.anchor-ledger-head.successful",
+          "anchor.accepted"
+        ]
+      }
+    },
+    {
+      "name": "decision.supersede",
+      "event_type": "decision.superseded",
+      "from": "scientific-terminal",
+      "to": "hypothesis_supported|hypothesis_rejected|inconclusive|invalid",
+      "authority_action": "decision.supersede",
+      "gate": {
+        "all_of": [
+          "new-D05-id",
+          "old-D05-unchanged",
+          "supersession-reason"
+        ]
+      }
+    },
+    {
+      "name": "handoff.create",
+      "event_type": "handoff.created",
+      "from": "absent",
+      "to": "pending",
+      "gate": {
+        "all_of": [
+          "configured-binding",
+          "allowed-operation",
+          "immutable-S12",
+          "unique-idempotency-key"
+        ]
+      }
+    },
+    {
+      "name": "handoff.dispatch",
+      "event_type": "handoff.dispatched",
+      "from": "pending",
+      "to": "dispatched",
+      "gate": {
+        "all_of": [
+          "same-S12-digest",
+          "dispatch-correlation",
+          "outer-agent-activation"
+        ]
+      }
+    },
+    {
+      "name": "handoff.ingest",
+      "event_type": "handoff.result-ingested",
+      "from": "pending|dispatched",
+      "to": "successful|failed|cancelled",
+      "gate": {
+        "all_of": [
+          "exact-S12-anchors",
+          "producer-terminal",
+          "one-accepted-terminal-result",
+          "complete-required-evidence"
+        ]
+      }
+    },
+    {
+      "name": "handoff.retry",
+      "event_type": "handoff.retry-created",
+      "from": "failed|cancelled",
+      "to": "pending",
+      "gate": {
+        "all_of": [
+          "new-request-id",
+          "new-idempotency-key",
+          "prior-request-link",
+          "prior-bytes-unchanged"
+        ]
+      }
+    },
+    {
+      "name": "handoff.supersede",
+      "event_type": "handoff.superseded",
+      "from": "pending|dispatched|failed|cancelled",
+      "to": "superseded",
+      "gate": {
+        "all_of": [
+          "successor-link",
+          "prior-bytes-unchanged"
+        ]
+      }
+    },
+    {
+      "name": "handoff.reconciliation-required",
+      "event_type": "handoff.reconciliation-required",
+      "from": "dispatched",
+      "to": "reconciliation-required",
+      "gate": {
+        "all_of": [
+          "possible-external-effect",
+          "same-operation-id",
+          "no-blind-redispatch"
+        ]
+      }
+    },
+    {
+      "name": "handoff.reconcile",
+      "event_type": "handoff.reconciled",
+      "from": "reconciliation-required",
+      "to": "successful|failed|cancelled|no-effect",
+      "gate": {
+        "all_of": [
+          "exact-correlation",
+          "effect-proven-or-disproven",
+          "no-conflicting-terminal-result"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle.exception",
+      "event_type": "exception.granted",
+      "from": "any-non-closed",
+      "to": "unchanged",
+      "authority_action": "exception.grant",
+      "gate": {
+        "all_of": [
+          "S15",
+          "scope-exact",
+          "subjects-exact",
+          "child-dispositions",
+          "not-never-rule"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle.cancel",
+      "event_type": "lifecycle.cancelled",
+      "from": "any-non-closed",
+      "to": "cancelled",
+      "authority_action": "lifecycle.cancel",
+      "gate": {
+        "all_of": [
+          "S16",
+          "every-run-wait-handoff-disposed"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle.archive-provisional",
+      "event_type": "lifecycle.archive-provisional",
+      "from": "scientific-terminal|cancelled",
+      "to": "scientific-terminal|cancelled",
+      "authority_action": "lifecycle.close",
+      "gate": {
+        "all_of": [
+          "S17",
+          "all-children-accounted",
+          "T01-complete",
+          "no-open-reconciliation"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle.archive",
+      "event_type": "lifecycle.archived",
+      "from": "scientific-terminal|cancelled",
+      "to": "archived",
+      "authority_action": "lifecycle.close",
+      "gate": {
+        "sequence": [
+          "lifecycle.archive-provisional",
+          "git.anchor-ledger-head.successful",
+          "anchor.accepted"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle.close-provisional",
+      "event_type": "closure.provisional",
+      "from": "archived",
+      "to": "archived",
+      "authority_action": "lifecycle.close",
+      "gate": {
+        "all_of": [
+          "current-trusted-anchor",
+          "terminal-history-replayable"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle.close",
+      "event_type": "lifecycle.closed",
+      "from": "archived",
+      "to": "closed",
+      "authority_action": "lifecycle.close",
+      "gate": {
+        "sequence": [
+          "lifecycle.close-provisional",
+          "git.anchor-ledger-head.successful",
+          "anchor.accepted"
+        ]
+      }
+    },
+    {
+      "name": "engine.migrate",
+      "event_type": "engine.migrated",
+      "from": "engine-vN",
+      "to": "engine-vN+1",
+      "authority_action": "engine.migrate",
+      "gate": {
+        "all_of": [
+          "old-bundle-pinned",
+          "new-bundle-complete",
+          "migration-boundary",
+          "no-old-event-reinterpretation"
+        ]
+      }
+    }
+  ],
+  "forbidden_transitions": [
+    "closed-to-active",
+    "frozen-bytes-rewrite",
+    "terminal-attempt-rewrite",
+    "accepted-result-replacement",
+    "manual-platform-evidence",
+    "partial-ledger-replay",
+    "projection-as-source-of-truth"
+  ]
+}

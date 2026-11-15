@@ -1,0 +1,73 @@
+{
+  "schema": "sdm-comparison-group-planning/v1",
+  "group_id": null,
+  "project": null,
+  "question": null,
+  "changed_factor": null,
+  "schedule": "sequential",
+  "project_policy_ref": null,
+  "adapter_capability_ref": null,
+  "partial_start_policy": "stop-started-arm",
+  "arm_failure_policy": "stop-peer",
+  "launch_window_hours": null,
+  "billing_margin_cost": null,
+  "limits": {
+    "max_concurrent_tasks": 1,
+    "max_gpus_per_arm": null,
+    "max_concurrent_gpus": null,
+    "max_hourly_cost": null,
+    "max_gpu_hours": null,
+    "max_total_cost": null,
+    "max_wall_hours": null
+  },
+  "arms": [
+    {
+      "id": "control",
+      "role": "control",
+      "job_name": null,
+      "attempt_root": null,
+      "workspace_root": null,
+      "output_root": null,
+      "source_ref": null,
+      "config_ref": null,
+      "record_identity": {"run_id": null, "round": null},
+      "source_commit": null,
+      "config_digest": null,
+      "source_snapshot_ref": null,
+      "parameters": {},
+      "conditions": {
+        "dataset_version": null, "split_digest": null, "initial_checkpoint_ref": null,
+        "evaluator_ref": null, "metric_definition": {"name": null, "direction": null},
+        "training_budget": {"basis": null, "amount": null}, "effective_batch": null,
+        "precision": null, "randomness_pairing": null, "checkpoint_selection": null
+      },
+      "allocation": {"gpu_type": null, "gpus": null, "hourly_cost": null,
+                     "currency": null, "max_resource_hours": null, "quote_ref": null}
+    },
+    {
+      "id": "treatment",
+      "role": "treatment",
+      "job_name": null,
+      "attempt_root": null,
+      "workspace_root": null,
+      "output_root": null,
+      "source_ref": null,
+      "config_ref": null,
+      "record_identity": {"run_id": null, "round": null},
+      "source_commit": null,
+      "config_digest": null,
+      "source_snapshot_ref": null,
+      "parameters": {},
+      "conditions": {
+        "dataset_version": null, "split_digest": null, "initial_checkpoint_ref": null,
+        "evaluator_ref": null, "metric_definition": {"name": null, "direction": null},
+        "training_budget": {"basis": null, "amount": null}, "effective_batch": null,
+        "precision": null, "randomness_pairing": null, "checkpoint_selection": null
+      },
+      "allocation": {"gpu_type": null, "gpus": null, "hourly_cost": null,
+                     "currency": null, "max_resource_hours": null, "quote_ref": null}
+    }
+  ],
+  "confirmation": {"status": "pending", "user_message_ref": null, "resolved_group_digest": null},
+  "execution_authorized": false
+}

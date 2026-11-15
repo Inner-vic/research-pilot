@@ -1,0 +1,7 @@
+{
+  "schema": "sdm-comparison-export/v1",
+  "plan_ref": {"path": null, "digest": null},
+  "record_refs": {"control": null, "treatment": null},
+  "metrics": [{"field": null, "direction": null, "unit": null}],
+  "actual_condition_paths": {}
+}

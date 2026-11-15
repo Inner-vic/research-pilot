@@ -1,0 +1,7 @@
+[agent]
+code = "experiment-spec"
+name = "Experiment Spec Agent"
+title = "Experiment Specification Steward"
+icon = "🧪"
+description = "Builds reviewable experiment, search, and run-plan protocol drafts from governed contracts."
+agent_type = "stateless"

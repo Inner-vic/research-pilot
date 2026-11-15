@@ -1,0 +1,3125 @@
+{
+  "schema": "sdm-command-contracts/v2",
+  "schema_version": "2.0.0",
+  "stdout_schema_default": "schemas/result.schema.json",
+  "exit_meanings": {
+    "0": "pass",
+    "2": "malformed CLI or deterministic contract failure",
+    "3": "blocked/wait/unknown external outcome or unavailable native telemetry/isolation",
+    "4": "CAS, lock, or concurrent protected-root snapshot conflict",
+    "5": "runtime configuration unavailable",
+    "70": "caught unexpected internal failure"
+  },
+  "signal_exception": "SIGKILL, OOM, and interpreter-startup failure may emit no JSON and use platform startup or 128+signal exit",
+  "scope_registry": [
+    {
+      "id": "module-source",
+      "resolver": {
+        "kind": "entrypoint-module-root"
+      }
+    },
+    {
+      "id": "workspace",
+      "resolver": {
+        "kind": "argument",
+        "argument": "--workspace",
+        "read_identity_ancestor_depth": 1
+      }
+    },
+    {
+      "id": "project-host",
+      "resolver": {
+        "kind": "argument",
+        "argument": "--project-root",
+        "read_identity_ancestor_depth": 1
+      }
+    },
+    {
+      "id": "skills-source",
+      "resolver": {
+        "kind": "argument",
+        "argument": "--skills-source"
+      }
+    },
+    {
+      "id": "declared-inputs",
+      "resolver": {
+        "kind": "input-bindings"
+      }
+    },
+    {
+      "id": "authority-trust-root",
+      "resolver": {
+        "kind": "workspace-genesis",
+        "field": "authority_trust_root"
+      }
+    },
+    {
+      "id": "successor-engine-assets",
+      "resolver": {
+        "kind": "input-document-field",
+        "argument": "--payload",
+        "field": "new_engine_assets",
+        "value_kind": "absolute-directory"
+      }
+    },
+    {
+      "id": "run-directory",
+      "resolver": {
+        "kind": "argument-first",
+        "arguments": [
+          "--run-dir",
+          "--run-root"
+        ]
+      }
+    },
+    {
+      "id": "native-auth-source",
+      "resolver": {
+        "kind": "environment",
+        "variables": [
+          "SDM_NATIVE_AUTH_SOURCE",
+          "SDM_REAL_CODEX_HOME"
+        ]
+      }
+    },
+    {
+      "id": "temporary-runtime",
+      "resolver": {
+        "kind": "environment",
+        "variables": [
+          "TMPDIR",
+          "TMP",
+          "TEMP",
+          "XDG_CACHE_HOME",
+          "XDG_CONFIG_HOME",
+          "XDG_STATE_HOME",
+          "UV_CACHE_DIR"
+        ]
+      }
+    }
+  ],
+  "input_contract_registry": [
+    {
+      "id": "document:any-strict/v1",
+      "kind": "handler-semantic",
+      "shape": "any",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "artifact:envelope/v1",
+      "kind": "json-schema",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ],
+      "schema": "schemas/artifact.schema.json"
+    },
+    {
+      "id": "experiment:diff-input/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "authority:attestation/v1",
+      "kind": "json-schema",
+      "shape": "array-or-object",
+      "accepted_transports": [
+        "strict-document-file"
+      ],
+      "schema": "schemas/authority-attestation.schema.json"
+    },
+    {
+      "id": "anchor:trusted-result/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "transition:validation-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:create-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:advance-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:amend-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:deviate-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:supersede-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:deprecate-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:retry-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:cancel-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:exception-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:archive-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:close-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "lifecycle:migrate-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "handoff:request/v1",
+      "kind": "json-schema",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ],
+      "schema": "schemas/handoff-request.schema.json"
+    },
+    {
+      "id": "handoff:result/v1",
+      "kind": "json-schema",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ],
+      "schema": "schemas/handoff-result.schema.json"
+    },
+    {
+      "id": "handoff:reconcile-payload/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-document-file"
+      ]
+    },
+    {
+      "id": "setup:answers/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-json-inline",
+        "strict-json-file"
+      ]
+    },
+    {
+      "id": "native:adapter/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-json-file"
+      ]
+    },
+    {
+      "id": "verify:native-adapter/v1",
+      "kind": "handler-semantic",
+      "shape": "object",
+      "accepted_transports": [
+        "strict-json-file"
+      ]
+    }
+  ],
+  "external_call_registry": [
+    {
+      "id": "openssl-ed25519",
+      "kind": "subprocess",
+      "executables": [
+        "openssl"
+      ]
+    },
+    {
+      "id": "native-runtime-adapter",
+      "kind": "configured-subprocess",
+      "executables": []
+    },
+    {
+      "id": "native-kernel-guard",
+      "kind": "subprocess",
+      "executables": [
+        "bwrap"
+      ]
+    },
+    {
+      "id": "python-validator",
+      "kind": "python-subprocess",
+      "executables": []
+    },
+    {
+      "id": "uv-validator",
+      "kind": "subprocess",
+      "executables": [
+        "uv"
+      ]
+    }
+  ],
+  "authoritative_behavior_audit_exceptions": [
+    {
+      "command": "native-eval.run",
+      "reason": "successful native runtime execution is same-run authoritative evidence and cannot be recursively audited by pytest",
+      "evidence_kind": "same-run-native"
+    },
+    {
+      "command": "verify-launcher.run",
+      "reason": "launcher success creates and invokes the authoritative verifier and cannot recurse inside pytest",
+      "evidence_kind": "outer-launcher"
+    },
+    {
+      "command": "verify-orchestrator.run",
+      "reason": "orchestrator success executes the complete pytest and native gates and cannot recurse inside itself",
+      "evidence_kind": "outer-orchestrator"
+    }
+  ],
+  "execution_contracts": {
+    "specctl.validate": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "validate"
+      ],
+      "parser": {
+        "required": [
+          "--workspace"
+        ],
+        "optional": [
+          "--artifact",
+          "--trusted-anchor-result"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--artifact": "path",
+          "--trusted-anchor-result": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--artifact",
+          "contract": "artifact:envelope/v1"
+        },
+        {
+          "argument": "--trusted-anchor-result",
+          "contract": "anchor:trusted-result/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "shared"
+        }
+      ],
+      "journals": [],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.hash": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "hash"
+      ],
+      "parser": {
+        "required": [
+          "--input"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--input": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--input",
+          "contract": "document:any-strict/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "declared-inputs"
+      ],
+      "write_scopes": [],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.freeze": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "freeze"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--experiment-id",
+          "--attestation",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--experiment-id": "string",
+          "--attestation": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--attestation",
+          "contract": "authority:attestation/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.check-diff": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "check-diff"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--experiment-id",
+          "--candidate"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--experiment-id": "string",
+          "--candidate": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--candidate",
+          "contract": "experiment:diff-input/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.materialize-run": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "materialize-run"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--experiment-id",
+          "--run-plan-id",
+          "--run-id",
+          "--attempt-id",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--experiment-id": "string",
+          "--run-plan-id": "string",
+          "--run-id": "string",
+          "--attempt-id": "string",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "workspace"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.verify-run-manifest": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "verify-run-manifest"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--manifest"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--manifest": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--manifest",
+          "contract": "artifact:envelope/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.build-evidence": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "build-evidence"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--experiment-id",
+          "--evidence-id",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--experiment-id": "string",
+          "--evidence-id": "string",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "workspace"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.verify-evidence": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "verify-evidence"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--evidence-id"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--evidence-id": "string"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "workspace"
+      ],
+      "write_scopes": [],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.scientific-decision": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "scientific-decision"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--experiment-id",
+          "--evidence-id",
+          "--decision-id",
+          "--attestation",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--experiment-id": "string",
+          "--evidence-id": "string",
+          "--decision-id": "string",
+          "--attestation": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--attestation",
+          "contract": "authority:attestation/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.validate-transition": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "validate-transition"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--transition",
+          "--payload"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--transition": "string",
+          "--payload": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "transition:validation-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.lifecycle.create": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "create"
+      ],
+      "parser": {
+        "required": [
+          "--project-root",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--workspace",
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:create-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "project-host"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.resume": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "resume"
+      ],
+      "parser": {
+        "required": [
+          "--workspace"
+        ],
+        "optional": [
+          "--trusted-anchor-result"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--trusted-anchor-result": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--trusted-anchor-result",
+          "contract": "anchor:trusted-result/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "shared"
+        }
+      ],
+      "journals": [],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "specctl.lifecycle.advance": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "advance"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:advance-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.amend": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "amend"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:amend-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.deviate": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "deviate"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:deviate-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.supersede": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "supersede"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:supersede-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.deprecate": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "deprecate"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:deprecate-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.retry": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "retry"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:retry-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.cancel": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "cancel"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:cancel-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.exception": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "exception"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:exception-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.archive": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "archive"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id",
+          "--trusted-anchor-result"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string",
+          "--trusted-anchor-result": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:archive-payload/v1"
+        },
+        {
+          "argument": "--trusted-anchor-result",
+          "contract": "anchor:trusted-result/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.close": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "close"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id",
+          "--trusted-anchor-result"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string",
+          "--trusted-anchor-result": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:close-payload/v1"
+        },
+        {
+          "argument": "--trusted-anchor-result",
+          "contract": "anchor:trusted-result/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.lifecycle.migrate": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "lifecycle",
+        "migrate"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "lifecycle:migrate-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs",
+        "authority-trust-root",
+        "successor-engine-assets"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.create": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "create"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "handoff:request/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.mark-dispatched": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "mark-dispatched"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--request-id",
+          "--dispatch-correlation",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--coordinator-disposition",
+          "--uncertain",
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--request-id": "string",
+          "--dispatch-correlation": "string",
+          "--expected-revision": "integer",
+          "--coordinator-disposition": "enum",
+          "--uncertain": "boolean-flag",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "workspace"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.ingest": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "ingest"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--result",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--result": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--result",
+          "contract": "handoff:result/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.cancel": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "cancel"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--request-id",
+          "--reason",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--request-id": "string",
+          "--reason": "string",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "workspace"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.retry": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "retry"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--payload",
+          "--prior-request-id",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--payload": "path",
+          "--prior-request-id": "string",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "handoff:request/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.supersede": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "supersede"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--request-id",
+          "--successor-request-id",
+          "--reason",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--request-id": "string",
+          "--successor-request-id": "string",
+          "--reason": "string",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "workspace"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "specctl.handoff.reconcile": {
+      "entrypoint": "specctl",
+      "command_path": [
+        "handoff",
+        "reconcile"
+      ],
+      "parser": {
+        "required": [
+          "--workspace",
+          "--request-id",
+          "--payload",
+          "--expected-revision"
+        ],
+        "optional": [
+          "--operation-id"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--workspace": "path",
+          "--request-id": "string",
+          "--payload": "path",
+          "--expected-revision": "integer",
+          "--operation-id": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--payload",
+          "contract": "handoff:reconcile-payload/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "workspace",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "workspace"
+      ],
+      "locks": [
+        {
+          "scope": "workspace",
+          "path": "_lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "workspace",
+          "path": "_journal.json",
+          "protocol": "roll-forward"
+        }
+      ],
+      "external_call_allowlist": [
+        "openssl-ed25519"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "governed-workspace-only"
+      }
+    },
+    "setup.install": {
+      "entrypoint": "setup",
+      "command_path": [
+        "install"
+      ],
+      "parser": {
+        "required": [
+          "--project-root"
+        ],
+        "optional": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_required": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_forbidden": [],
+        "constants": {
+          "--expected-install-digest": "absent"
+        },
+        "argument_kinds": {
+          "--project-root": "path",
+          "--answers": "strict-json-inline-or-path",
+          "--skills-source": "path",
+          "--expected-install-digest": "digest-or-absence"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--answers",
+          "contract": "setup:answers/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "project-host",
+        "skills-source",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "project-host"
+      ],
+      "locks": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup.lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup-journal.json",
+          "protocol": "rollback-capable"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "module-owned-install-paths-only"
+      }
+    },
+    "setup.update": {
+      "entrypoint": "setup",
+      "command_path": [
+        "update"
+      ],
+      "parser": {
+        "required": [
+          "--project-root"
+        ],
+        "optional": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_required": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--answers": "strict-json-inline-or-path",
+          "--skills-source": "path",
+          "--expected-install-digest": "digest-or-absence"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--answers",
+          "contract": "setup:answers/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "project-host",
+        "skills-source",
+        "declared-inputs"
+      ],
+      "write_scopes": [
+        "project-host"
+      ],
+      "locks": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup.lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup-journal.json",
+          "protocol": "rollback-capable"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "module-owned-install-paths-only"
+      }
+    },
+    "setup.uninstall": {
+      "entrypoint": "setup",
+      "command_path": [
+        "uninstall"
+      ],
+      "parser": {
+        "required": [
+          "--project-root"
+        ],
+        "optional": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_required": [
+          "--expected-install-digest"
+        ],
+        "semantic_forbidden": [
+          "--answers",
+          "--skills-source"
+        ],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--answers": "strict-json-inline-or-path",
+          "--skills-source": "path",
+          "--expected-install-digest": "digest-or-absence"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "project-host"
+      ],
+      "write_scopes": [
+        "project-host"
+      ],
+      "locks": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup.lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup-journal.json",
+          "protocol": "rollback-capable"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "module-owned-install-paths-only"
+      }
+    },
+    "setup.recover": {
+      "entrypoint": "setup",
+      "command_path": [
+        "recover"
+      ],
+      "parser": {
+        "required": [
+          "--project-root"
+        ],
+        "optional": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--answers": "strict-json-inline-or-path",
+          "--skills-source": "path",
+          "--expected-install-digest": "digest-or-absence"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "project-host"
+      ],
+      "write_scopes": [
+        "project-host"
+      ],
+      "locks": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup.lock",
+          "mode": "exclusive"
+        }
+      ],
+      "journals": [
+        {
+          "scope": "project-host",
+          "path": "{project-root}/_bmad/.sdm-setup-journal.json",
+          "protocol": "rollback-capable"
+        }
+      ],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "module-owned-install-paths-only"
+      }
+    },
+    "setup.validate": {
+      "entrypoint": "setup",
+      "command_path": [
+        "validate"
+      ],
+      "parser": {
+        "required": [
+          "--project-root"
+        ],
+        "optional": [
+          "--answers",
+          "--skills-source",
+          "--expected-install-digest"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [
+          "--answers",
+          "--expected-install-digest"
+        ],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--answers": "strict-json-inline-or-path",
+          "--skills-source": "path",
+          "--expected-install-digest": "digest-or-absence"
+        }
+      },
+      "input_bindings": [],
+      "read_scopes": [
+        "module-source",
+        "project-host",
+        "skills-source"
+      ],
+      "write_scopes": [],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "forbidden"
+      }
+    },
+    "native-eval.run": {
+      "entrypoint": "native-eval",
+      "command_path": [
+        "run"
+      ],
+      "parser": {
+        "required": [
+          "--project-root",
+          "--module-root",
+          "--adapter",
+          "--run-dir",
+          "--run-nonce",
+          "--source-digest",
+          "--verification-manifest-digest",
+          "--case-manifest-digest"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--module-root": "path",
+          "--adapter": "path",
+          "--run-dir": "path",
+          "--run-nonce": "string",
+          "--source-digest": "sha256-digest",
+          "--verification-manifest-digest": "sha256-digest",
+          "--case-manifest-digest": "sha256-digest"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--adapter",
+          "contract": "native:adapter/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "project-host",
+        "declared-inputs",
+        "run-directory",
+        "native-auth-source"
+      ],
+      "write_scopes": [
+        "run-directory",
+        "temporary-runtime"
+      ],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [
+        "native-kernel-guard",
+        "native-runtime-adapter",
+        "python-validator"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "external-run-only"
+      }
+    },
+    "verify-launcher.run": {
+      "entrypoint": "verify-launcher",
+      "command_path": [
+        "run"
+      ],
+      "parser": {
+        "required": [
+          "--project-root",
+          "--native-adapter"
+        ],
+        "optional": [
+          "--run-root"
+        ],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--native-adapter": "path",
+          "--run-root": "path"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--native-adapter",
+          "contract": "verify:native-adapter/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "project-host",
+        "declared-inputs",
+        "native-auth-source"
+      ],
+      "write_scopes": [
+        "run-directory",
+        "temporary-runtime"
+      ],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [
+        "python-validator"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "external-run-only"
+      }
+    },
+    "verify-orchestrator.run": {
+      "entrypoint": "verify-orchestrator",
+      "command_path": [
+        "run"
+      ],
+      "parser": {
+        "required": [
+          "--project-root",
+          "--module-root",
+          "--native-adapter",
+          "--run-dir",
+          "--run-nonce"
+        ],
+        "optional": [],
+        "semantic_required": [],
+        "semantic_forbidden": [],
+        "constants": {},
+        "argument_kinds": {
+          "--project-root": "path",
+          "--module-root": "path",
+          "--native-adapter": "path",
+          "--run-dir": "path",
+          "--run-nonce": "string"
+        }
+      },
+      "input_bindings": [
+        {
+          "argument": "--native-adapter",
+          "contract": "verify:native-adapter/v1"
+        }
+      ],
+      "read_scopes": [
+        "module-source",
+        "project-host",
+        "declared-inputs",
+        "run-directory"
+      ],
+      "write_scopes": [
+        "run-directory",
+        "temporary-runtime"
+      ],
+      "locks": [],
+      "journals": [],
+      "external_call_allowlist": [
+        "native-kernel-guard",
+        "python-validator",
+        "uv-validator",
+        "native-runtime-adapter"
+      ],
+      "mutation_boundaries": {
+        "module_source": "forbidden",
+        "live_host": "external-run-only"
+      }
+    }
+  },
+  "commands": [
+    {
+      "name": "specctl.validate",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "idempotency": "pure read-only snapshot",
+      "reconciliation": "concurrent mutation returns exit 4"
+    },
+    {
+      "name": "specctl.hash",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        70
+      ],
+      "idempotency": "same canonical bytes yield same digest",
+      "reconciliation": "none"
+    },
+    {
+      "name": "specctl.freeze",
+      "emitted_events": [
+        "handoff.configuration-required",
+        "handoff.created",
+        "protocol.freeze-provisional",
+        "anchor.accepted",
+        "experiment.frozen"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "operation and candidate digest",
+      "reconciliation": "pending external anchor remains blocked"
+    },
+    {
+      "name": "specctl.check-diff",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        70
+      ],
+      "idempotency": "pure classification",
+      "reconciliation": "none"
+    },
+    {
+      "name": "specctl.materialize-run",
+      "emitted_events": [
+        "run.materialized"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "run-id plus attempt-id and canonical manifest",
+      "reconciliation": "CAS retry with same IDs only if bytes exact"
+    },
+    {
+      "name": "specctl.verify-run-manifest",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        70
+      ],
+      "idempotency": "pure validation",
+      "reconciliation": "none"
+    },
+    {
+      "name": "specctl.build-evidence",
+      "emitted_events": [
+        "evidence.built"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "evidence-id plus complete source digest set",
+      "reconciliation": "any missing/nonterminal/substituted fact blocks with no evidence write"
+    },
+    {
+      "name": "specctl.verify-evidence",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        70
+      ],
+      "idempotency": "pure validation",
+      "reconciliation": "none"
+    },
+    {
+      "name": "specctl.scientific-decision",
+      "emitted_events": [
+        "decision.provisional",
+        "handoff.configuration-required",
+        "handoff.created",
+        "anchor.accepted",
+        "decision.accepted"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "operation ID plus exact governed source digest set and frozen rule result",
+      "reconciliation": "D05 remains immutable and provisional until the exact external anchor result for the same logical operation is accepted"
+    },
+    {
+      "name": "specctl.validate-transition",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        70
+      ],
+      "idempotency": "pure gate evaluation",
+      "reconciliation": "none"
+    },
+    {
+      "name": "specctl.lifecycle.create",
+      "emitted_events": [
+        "workspace.created"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "workspace-id plus absent CAS",
+      "reconciliation": "recover incomplete create before retry"
+    },
+    {
+      "name": "specctl.lifecycle.resume",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "full replay and deterministic ordering",
+      "reconciliation": "returns durable outstanding reconciliation as block"
+    },
+    {
+      "name": "specctl.lifecycle.advance",
+      "emitted_events": [
+        "handoff.configuration-required",
+        "handoff.created",
+        "lifecycle.step-skipped",
+        "lifecycle.advanced",
+        "artifact.published",
+        "baseline.locked",
+        "readiness.approved",
+        "implementation.started",
+        "implementation.reviewed",
+        "implementation.accepted",
+        "preflight.accepted",
+        "evidence.reviewed",
+        "confirmation.materialized",
+        "run.dispatched",
+        "attempt.started",
+        "attempt.terminal",
+        "hpo.trial-recorded",
+        "hpo.selection-recorded",
+        "evaluation.accepted",
+        "robustness.assessed"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "next action canonical operation key",
+      "reconciliation": "one deterministic step only; outstanding side effect blocks"
+    },
+    {
+      "name": "specctl.lifecycle.amend",
+      "emitted_events": [
+        "amendment.accepted"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "amendment-id",
+      "reconciliation": "material/timing mismatch requires successor or E07"
+    },
+    {
+      "name": "specctl.lifecycle.deviate",
+      "emitted_events": [
+        "deviation.observed"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "deviation-id",
+      "reconciliation": "observed facts retained; material reframing requires successor"
+    },
+    {
+      "name": "specctl.lifecycle.supersede",
+      "emitted_events": [
+        "experiment.superseded",
+        "decision.superseded",
+        "handoff.cancelled"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "subject plus successor ID",
+      "reconciliation": "dependent model disposition required for supported D05"
+    },
+    {
+      "name": "specctl.lifecycle.deprecate",
+      "emitted_events": [
+        "baseline.deprecated"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "baseline plus deprecation ID",
+      "reconciliation": "replacement cycles or mismatched active dependencies block without writes"
+    },
+    {
+      "name": "specctl.lifecycle.retry",
+      "emitted_events": [
+        "attempt.retry-created"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "predecessor Attempt plus successor Attempt ID",
+      "reconciliation": "frozen retry policy preserves the terminal predecessor and creates one new planned Attempt"
+    },
+    {
+      "name": "specctl.lifecycle.cancel",
+      "emitted_events": [
+        "lifecycle.cancelled",
+        "handoff.cancelled"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "cancellation-id",
+      "reconciliation": "unknown external effects remain open and block cancellation completion"
+    },
+    {
+      "name": "specctl.lifecycle.exception",
+      "emitted_events": [
+        "exception.granted"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "exception-id",
+      "reconciliation": "never-rule bypass rejected"
+    },
+    {
+      "name": "specctl.lifecycle.archive",
+      "emitted_events": [
+        "lifecycle.archive-provisional",
+        "handoff.configuration-required",
+        "handoff.created",
+        "anchor.accepted",
+        "lifecycle.archived"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "closure-id and provisional head",
+      "reconciliation": "unknown anchor dispatch blocks"
+    },
+    {
+      "name": "specctl.lifecycle.close",
+      "emitted_events": [
+        "closure.provisional",
+        "handoff.configuration-required",
+        "handoff.created",
+        "anchor.accepted",
+        "lifecycle.closed"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "closure-id",
+      "reconciliation": "shorter/different/stale anchor blocks"
+    },
+    {
+      "name": "specctl.lifecycle.migrate",
+      "emitted_events": [
+        "engine.migrated"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "operation ID plus exact old/new engine boundary",
+      "reconciliation": "no activation occurs unless bundle copy, signed event, projection, and memlog commit atomically"
+    },
+    {
+      "name": "specctl.handoff.create",
+      "emitted_events": [
+        "handoff.configuration-required",
+        "handoff.created"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "logical operation anchors; one durable configuration-required event while the binding remains absent",
+      "reconciliation": "missing binding is replayable from the ledger and never fabricates S12"
+    },
+    {
+      "name": "specctl.handoff.mark-dispatched",
+      "emitted_events": [
+        "handoff.dispatched",
+        "handoff.reconciliation-required"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "request-id plus dispatch correlation plus coordinator disposition",
+      "reconciliation": "invoke_error and dispatch_unknown retain their exact coordinator disposition and prohibit blind redispatch until effect_committed or no_effect reconciliation"
+    },
+    {
+      "name": "specctl.handoff.ingest",
+      "emitted_events": [
+        "handoff.result-ingested",
+        "handoff.reconciliation-required"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "request-id plus exact result digest",
+      "reconciliation": "duplicate exact result is no-op; conflict/late result blocked and retained"
+    },
+    {
+      "name": "specctl.handoff.cancel",
+      "emitted_events": [
+        "handoff.cancelled"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "idempotency": "request-id",
+      "reconciliation": "possible side effect requires reconciliation"
+    },
+    {
+      "name": "specctl.handoff.retry",
+      "emitted_events": [
+        "handoff.retry-created"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "idempotency": "new request-id",
+      "reconciliation": "uncertain dispatch cannot retry"
+    },
+    {
+      "name": "specctl.handoff.supersede",
+      "emitted_events": [
+        "handoff.superseded"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "idempotency": "old and new request IDs",
+      "reconciliation": "old request remains immutable; late result cannot advance"
+    },
+    {
+      "name": "specctl.handoff.reconcile",
+      "emitted_events": [
+        "handoff.reconciled"
+      ],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "idempotency": "request-id and exact correlation",
+      "reconciliation": "only action allowed to resolve dispatch_unknown"
+    },
+    {
+      "name": "setup.install",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "expected install digest CAS",
+      "reconciliation": "recover before retry; commit marker determines restore/complete"
+    },
+    {
+      "name": "setup.update",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "expected install digest CAS",
+      "reconciliation": "recover before retry; preserve non-module content"
+    },
+    {
+      "name": "setup.uninstall",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "expected install digest CAS",
+      "reconciliation": "recover before retry; unrelated bytes preserved"
+    },
+    {
+      "name": "setup.recover",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "journal transaction ID",
+      "reconciliation": "pre-marker restore; post-marker complete/validate"
+    },
+    {
+      "name": "setup.validate",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "pure read-only validation",
+      "reconciliation": "unfinished journal returns blocked; concurrent change returns conflict"
+    },
+    {
+      "name": "native-eval.run",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "nonce plus source/adapter/manifest digests",
+      "reconciliation": "missing trusted path-bearing load telemetry or attested kernel isolation is blocked"
+    },
+    {
+      "name": "verify-launcher.run",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "fresh nonce per run; summaries bound to nonce and tree digest",
+      "reconciliation": "stale or caller-supplied summaries fail"
+    },
+    {
+      "name": "verify-orchestrator.run",
+      "emitted_events": [],
+      "stdout_schema": "schemas/result.schema.json",
+      "handled_exit_codes": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "idempotency": "nonce plus complete source/adapter/manifest digests",
+      "reconciliation": "any summary mismatch or skipped/xfailed/deselected case fails"
+    }
+  ]
+}

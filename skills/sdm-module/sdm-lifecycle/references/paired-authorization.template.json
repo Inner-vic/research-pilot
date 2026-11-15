@@ -1,0 +1,5 @@
+{
+  "schema": "sdm-paired-authorization/v1", "status": "pending",
+  "contract_digest": null, "plan_digest": null, "user_message_ref": null,
+  "operations": ["submit", "stop-owned-until-released"], "submit_before": null, "resource_deadline": null
+}

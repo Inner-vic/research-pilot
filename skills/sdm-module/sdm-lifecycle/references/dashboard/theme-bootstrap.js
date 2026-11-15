@@ -1,0 +1,1 @@
+(()=>{let choice="auto";try{const saved=localStorage.getItem("sdm-dashboard-theme");if(["auto","light","dark"].includes(saved))choice=saved;}catch{}const root=document.documentElement;root.dataset.themeChoice=choice;root.dataset.theme=choice==="auto"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):choice;})();

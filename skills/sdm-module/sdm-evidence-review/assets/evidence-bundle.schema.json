@@ -1,0 +1,145 @@
+{
+  "$id": "https://schemas.bmad.dev/sdm/evidence.persisted.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence Persisted Artifact Contract",
+  "type": "object",
+  "required": ["artifact_type", "content"],
+  "properties": {
+    "artifact_type": {"enum": ["D01", "D02", "D03", "D04", "S10"]},
+    "content": {"type": "object"}
+  },
+  "oneOf": [
+    {
+      "required": ["artifact_type", "content"],
+      "properties": {
+        "artifact_type": {"const": "D01"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["evidence_id", "experiment_id", "planned_runs", "accounted_attempts", "scientific_attempt_ids", "items", "source_digests", "bundle_digest", "author_principal_ids"],
+          "properties": {
+            "evidence_id": {},
+            "experiment_id": {},
+            "planned_runs": {},
+            "accounted_attempts": {},
+            "scientific_attempt_ids": {"$ref": "#/$defs/sourceAttemptIds"},
+            "items": {},
+            "source_digests": {},
+            "bundle_digest": {},
+            "author_principal_ids": {"$ref": "#/$defs/authorPrincipalIds"}
+          }
+        }
+      }
+    },
+    {
+      "required": ["artifact_type", "content"],
+      "properties": {
+        "artifact_type": {"const": "D02"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hypothesis", "results", "limitations", "missingness", "deviations", "source_attempt_ids", "author_principal_ids"],
+          "properties": {
+            "hypothesis": {
+              "oneOf": [
+                {"type": "string", "minLength": 1},
+                {"type": "object", "minProperties": 1}
+              ]
+            },
+            "results": {"$ref": "#/$defs/attemptAggregation"},
+            "limitations": {"$ref": "#/$defs/attemptAggregation"},
+            "missingness": {"$ref": "#/$defs/attemptAggregation"},
+            "deviations": {"$ref": "#/$defs/attemptAggregation"},
+            "source_attempt_ids": {"$ref": "#/$defs/sourceAttemptIds"},
+            "author_principal_ids": {"$ref": "#/$defs/authorPrincipalIds"}
+          }
+        }
+      }
+    },
+    {
+      "required": ["artifact_type", "content"],
+      "properties": {
+        "artifact_type": {"const": "D03"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["comparisons", "effect_sizes", "uncertainty", "power", "multiplicity", "scientific_facts", "source_attempt_ids", "author_principal_ids"],
+          "properties": {
+            "comparisons": {"$ref": "#/$defs/attemptAggregation"},
+            "effect_sizes": {"$ref": "#/$defs/attemptAggregation"},
+            "uncertainty": {"$ref": "#/$defs/attemptAggregation"},
+            "power": {"$ref": "#/$defs/attemptAggregation"},
+            "multiplicity": {"$ref": "#/$defs/attemptAggregation"},
+            "scientific_facts": {"type": "object", "minProperties": 1},
+            "source_attempt_ids": {"$ref": "#/$defs/sourceAttemptIds"},
+            "author_principal_ids": {"$ref": "#/$defs/authorPrincipalIds"}
+          }
+        }
+      }
+    },
+    {
+      "required": ["artifact_type", "content"],
+      "properties": {
+        "artifact_type": {"const": "D04"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["taxonomy", "cases", "artifact_digests", "coverage", "source_attempt_ids", "author_principal_ids"],
+          "properties": {
+            "taxonomy": {"$ref": "#/$defs/attemptAggregation"},
+            "cases": {"$ref": "#/$defs/attemptAggregation"},
+            "artifact_digests": {"$ref": "#/$defs/attemptAggregation"},
+            "coverage": {"$ref": "#/$defs/attemptAggregation"},
+            "source_attempt_ids": {"$ref": "#/$defs/sourceAttemptIds"},
+            "author_principal_ids": {"$ref": "#/$defs/authorPrincipalIds"}
+          }
+        }
+      }
+    },
+    {
+      "required": ["artifact_type", "content"],
+      "properties": {
+        "artifact_type": {"const": "S10"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["evidence_digest", "reviewers", "roles", "five_lenses", "deviation_disposition"],
+          "properties": {
+            "evidence_digest": {},
+            "reviewers": {},
+            "roles": {},
+            "five_lenses": {},
+            "deviation_disposition": {}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "authorPrincipalIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "sourceAttemptIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "attemptAggregation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["attempt_id", "value"],
+        "properties": {
+          "attempt_id": {"type": "string", "minLength": 1},
+          "value": {"not": {"enum": [null, "", [], {}]}}
+        }
+      }
+    }
+  }
+}

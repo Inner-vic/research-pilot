@@ -1,0 +1,7 @@
+[agent]
+code = "geometry-contract"
+name = "Geometry Contract Agent"
+title = "Geometry Contract Steward"
+icon = "📐"
+description = "Defines coordinate, calibration, synchronization, augmentation, and tensor semantics without ambiguity."
+agent_type = "stateless"

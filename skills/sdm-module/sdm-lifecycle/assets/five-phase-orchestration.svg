@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1590" viewBox="0 0 1440 1590">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6" fill="none" stroke="#35576f"/></marker></defs>
+<style>text{font-family:Microsoft YaHei,Noto Sans CJK SC,sans-serif;fill:#183346} .title{font-size:23px;font-weight:700}.body{font-size:18px}.small{font-size:16px;fill:#3c566b} .edge{fill:none;stroke:#35576f;stroke-width:2;marker-end:url(#arrow)}</style>
+<rect width="1440" height="1590" fill="#f6f8fc"/>
+<text x="120" y="45" class="title">BMAD ML：五阶段主步骤与横向服务</text>
+<text x="120" y="74" class="small">workflow revision 1 · 主步骤按1→5推进；内部检查与历史ID保留</text>
+<rect x="120" y="100" width="880" height="205" rx="14" fill="white" stroke="#b7cbd9"/>
+<text x="145" y="134" class="title">1 问题定义与需求梳理</text>
+<text x="145" y="170" class="body">1.1 任务约定</text>
+<text x="180" y="196" class="small">项目登记、指标和验收边界、真实需求共识；只补充缺失信息</text>
+<text x="145" y="234" class="body">1.2 数据与材料确认</text>
+<text x="180" y="260" class="small">登记原始数据/日志/产物，核对来源、可读性与适用性</text>
+<path d="M560 305V342" class="edge"/>
+<rect x="120" y="350" width="880" height="205" rx="14" fill="white" stroke="#b7cbd9"/>
+<text x="145" y="384" class="title">2 方案设计与实验规划</text>
+<text x="145" y="420" class="body">2.1 模型与对照选择</text>
+<text x="180" y="446" class="small">模型起点、对照选择及已有证据复用；选择不等于复现</text>
+<text x="145" y="484" class="body">2.2 实验方案与审查</text>
+<text x="180" y="510" class="small">一份方案：假设、训练/评估协议、方法检查、审查与问题闭合</text>
+<path d="M560 555V592" class="edge"/>
+<rect x="120" y="600" width="880" height="285" rx="14" fill="white" stroke="#b7cbd9"/>
+<text x="145" y="634" class="title">3 实验开发与训练验证</text>
+<text x="145" y="670" class="body">3.1 实现与工程验证</text>
+<text x="180" y="696" class="small">条件执行：接口准备、实现、工程检查；代码审查按明确策略拦截</text>
+<text x="145" y="734" class="body">3.2 执行准备与预检</text>
+<text x="180" y="760" class="small">先本地预检和冻结；获资源后做远端预检，计算前放行</text>
+<text x="145" y="798" class="body">3.3 运行实验</text>
+<text x="180" y="824" class="small">baseline按需先验证；正常计算、实际更新、终态与异常现场</text>
+<path d="M560 885V922" class="edge"/>
+<rect x="120" y="930" width="880" height="205" rx="14" fill="white" stroke="#b7cbd9"/>
+<text x="145" y="964" class="title">4 结果评估与评审</text>
+<text x="145" y="1000" class="body">4.1 评估与比较</text>
+<text x="180" y="1026" class="small">同口径评估、对照和按协议专项；汇集原件而非重复生成结论</text>
+<text x="145" y="1064" class="body">4.2 结果审查</text>
+<text x="180" y="1090" class="small">一次评审材料，分别验收证据一致性、反证与结论充分性</text>
+<path d="M560 1135V1172" class="edge"/>
+<rect x="120" y="1180" width="880" height="205" rx="14" fill="white" stroke="#b7cbd9"/>
+<text x="145" y="1214" class="title">5 结论输出与迭代决策</text>
+<text x="145" y="1250" class="body">5.1 结论与行动选择</text>
+<text x="180" y="1276" class="small">同一份结论和行动材料；推荐、实际选择与执行权限分开</text>
+<text x="145" y="1314" class="body">5.2 归档与迭代接续</text>
+<text x="180" y="1340" class="small">核验清理闭合、归档；授权内实际启动下一轮并比较其真实结果</text>
+<rect x="1030" y="100" width="390" height="196" rx="12" fill="#eaf1f9" stroke="#a5bfd3"/>
+<text x="1048" y="133" class="body">R 资源生命周期</text>
+<text x="1048" y="167" class="small">R.1 实际资源调查 → R.2 配置与预算</text>
+<text x="1048" y="196" class="small">R.3 授权 → R.4 获取（可发生自动启动）</text>
+<text x="1048" y="225" class="small">先本地检查，获取后远端预检再计算</text>
+<text x="1048" y="254" class="small">R.5 异常/终态及时清理及独立对账</text>
+<rect x="1030" y="420" width="390" height="167" rx="12" fill="#eaf1f9" stroke="#a5bfd3"/>
+<text x="1048" y="453" class="body">W 工作区与版本</text>
+<text x="1048" y="487" class="small">W.1 修改前按需隔离</text>
+<text x="1048" y="516" class="small">W.2 计算前冻结输入、代码与配置</text>
+<text x="1048" y="545" class="small">新版本/新输入触发必要依赖失效</text>
+<rect x="1030" y="690" width="390" height="167" rx="12" fill="#eaf1f9" stroke="#a5bfd3"/>
+<text x="1048" y="723" class="body">V 评审协作</text>
+<text x="1048" y="757" class="small">V.1 任务共识、方案和证据上下文</text>
+<text x="1048" y="786" class="small">V.2 追问、修订、问题闭合</text>
+<text x="1048" y="815" class="small">方案/代码/结果按需调用；Pro可选</text>
+<rect x="1030" y="990" width="390" height="167" rx="12" fill="#eaf1f9" stroke="#a5bfd3"/>
+<text x="1048" y="1023" class="body">证据、事件与恢复</text>
+<text x="1048" y="1057" class="small">原件登记、终态通知及交付回执</text>
+<text x="1048" y="1086" class="small">重复事件静默；恢复同一任务</text>
+<text x="1048" y="1115" class="small">未知副作用先对账，禁止盲目重提</text>
+<rect x="1030" y="1260" width="390" height="167" rx="12" fill="#eaf1f9" stroke="#a5bfd3"/>
+<text x="1048" y="1293" class="body">清理与循环的边界</text>
+<text x="1048" y="1327" class="small">清理未闭合：允许诊断与无授权建议</text>
+<text x="1048" y="1356" class="small">阻塞完整归档与下一轮资源操作</text>
+<text x="1048" y="1385" class="small">修订方案后实际运行并比较新结果</text>
+<path d="M120 1310H65V445H112" class="edge" stroke-dasharray="8 6"/>
+<text x="20" y="850" class="small" transform="rotate(-90 20 850)">计划修改与授权核验后，实际启动下一轮</text>
+<text x="120" y="1450" class="body">条件分支：无代码修改跳过3.1；只评估跳过训练；专项验证与baseline按协议选择。</text>
+<text x="120" y="1482" class="body">异常分支：保存现场 → 及时清理，同时诊断与评审；不将失败伪装成完成目标。</text>
+<text x="120" y="1514" class="small">精确检查依赖以公开协调器 --plan / checks-mermaid 为准。图中服务可在主步骤内部调用。</text>
+</svg>

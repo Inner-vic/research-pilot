@@ -1,0 +1,1253 @@
+{
+  "$id": "https://schemas.bmad.dev/sdm/experiment.persisted.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Experiment Persisted Artifact Contract",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "content"
+  ],
+  "properties": {
+    "artifact_type": {
+      "enum": [
+        "E01",
+        "E03",
+        "E04",
+        "E06",
+        "E07"
+      ]
+    },
+    "content": {
+      "type": "object"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "artifact_type",
+        "content"
+      ],
+      "properties": {
+        "artifact_type": {
+          "const": "E01"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "experiment_id",
+            "protocol_channel",
+            "promotable",
+            "hypothesis",
+            "variables",
+            "contracts",
+            "baseline",
+            "data",
+            "evaluator",
+            "budget",
+            "decision_rule",
+            "author_principal_ids"
+          ],
+          "properties": {
+            "experiment_id": {},
+            "protocol_channel": {},
+            "promotable": {},
+            "hypothesis": {},
+            "variables": {},
+            "contracts": {},
+            "baseline": {},
+            "data": {},
+            "evaluator": {},
+            "budget": {},
+            "decision_rule": {},
+            "author_principal_ids": {},
+            "change_only": {
+              "$ref": "#/$defs/changeOnly"
+            },
+            "forbidden_changes": {
+              "$ref": "#/$defs/pathTokens"
+            },
+            "frozen_variables": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/frozenVariable"
+              }
+            },
+            "hpo_enabled": {},
+            "run_plan_digest": {},
+            "run_plan_id": {},
+            "search": {},
+            "search_spec_instance_key": {},
+            "source_refs": {}
+          },
+          "allOf": [
+            {
+              "if": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "protocol_channel": {
+                        "enum": [
+                          "formal",
+                          "regression",
+                          "promotion"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "protocol_channel"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "promotable": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "promotable"
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "required": [
+                  "change_only",
+                  "frozen_variables",
+                  "forbidden_changes"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "required": [
+        "artifact_type",
+        "content"
+      ],
+      "properties": {
+        "artifact_type": {
+          "const": "E03"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "space",
+            "algorithm",
+            "budget",
+            "objective",
+            "selection_rule",
+            "seed_policy",
+            "trial_plan",
+            "confirmation",
+            "split_manifest_ref",
+            "split_manifest_digest",
+            "run_plan_id"
+          ],
+          "properties": {
+            "space": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "parameters"
+              ],
+              "properties": {
+                "parameters": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "values"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "categorical",
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "values": {
+                        "type": "array",
+                        "minItems": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "algorithm": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "deterministic",
+                "seed"
+              ],
+              "properties": {
+                "name": {
+                  "enum": [
+                    "grid",
+                    "random",
+                    "bayesian"
+                  ]
+                },
+                "deterministic": {
+                  "const": true
+                },
+                "seed": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "budget": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "trial_count",
+                "recheck_count"
+              ],
+              "properties": {
+                "trial_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "recheck_count": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "objective": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "metric",
+                "direction",
+                "search_partition_name",
+                "search_partition_digest",
+                "recheck_partition_name",
+                "recheck_partition_digest",
+                "formal_test_partition_name",
+                "formal_test_partition_digest"
+              ],
+              "properties": {
+                "metric": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "direction": {
+                  "enum": [
+                    "maximize",
+                    "minimize"
+                  ]
+                },
+                "search_partition_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "search_partition_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "recheck_partition_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "recheck_partition_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "formal_test_partition_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "formal_test_partition_digest": {
+                  "$ref": "#/$defs/digest"
+                }
+              }
+            },
+            "selection_rule": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "direction",
+                "aggregation",
+                "tie_breaker"
+              ],
+              "properties": {
+                "direction": {
+                  "enum": [
+                    "maximize",
+                    "minimize"
+                  ]
+                },
+                "aggregation": {
+                  "const": "mean"
+                },
+                "tie_breaker": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "field",
+                    "direction"
+                  ],
+                  "properties": {
+                    "field": {
+                      "const": "configuration_digest"
+                    },
+                    "direction": {
+                      "const": "ascending"
+                    }
+                  }
+                }
+              }
+            },
+            "seed_policy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "trial_seeds_unique",
+                "recheck_seeds_unique",
+                "confirmation_seed_distinct"
+              ],
+              "properties": {
+                "trial_seeds_unique": {
+                  "const": true
+                },
+                "recheck_seeds_unique": {
+                  "const": true
+                },
+                "confirmation_seed_distinct": {
+                  "const": true
+                }
+              }
+            },
+            "trial_plan": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/trialPlanRow"
+              }
+            },
+            "confirmation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "run_id",
+                "attempt_id",
+                "independent_seed",
+                "independent_environment_plan",
+                "independent_environment_plan_digest",
+                "partition_name",
+                "partition_digest"
+              ],
+              "properties": {
+                "run_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "attempt_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "independent_seed": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "independent_environment_plan": {
+                  "$ref": "#/$defs/runtimeEnvironmentPlan"
+                },
+                "independent_environment_plan_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "partition_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "partition_digest": {
+                  "$ref": "#/$defs/digest"
+                }
+              }
+            },
+            "split_manifest_ref": {
+              "type": "string",
+              "pattern": "^R05:.+$"
+            },
+            "split_manifest_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "run_plan_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "required": [
+        "artifact_type",
+        "content"
+      ],
+      "properties": {
+        "artifact_type": {
+          "const": "E04"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "run_plan_id",
+            "experiment_id",
+            "candidate_spec_digest",
+            "channel",
+            "runs",
+            "attempt_policy",
+            "evidence_requirements",
+            "source_refs",
+            "author_principal_ids"
+          ],
+          "properties": {
+            "run_plan_id": {},
+            "experiment_id": {},
+            "candidate_spec_digest": {},
+            "channel": {},
+            "runs": {},
+            "attempt_policy": {},
+            "evidence_requirements": {},
+            "source_refs": {},
+            "author_principal_ids": {},
+            "preflight_instance_key": {},
+            "implementation_revision": {}
+          }
+        }
+      }
+    },
+    {
+      "required": [
+        "artifact_type",
+        "content"
+      ],
+      "properties": {
+        "artifact_type": {
+          "const": "E06"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "amendment_id",
+            "experiment_id",
+            "timing_revision",
+            "classification",
+            "old_digest",
+            "candidate_digest",
+            "authority"
+          ],
+          "properties": {
+            "amendment_id": {},
+            "experiment_id": {},
+            "timing_revision": {},
+            "classification": {},
+            "old_digest": {},
+            "candidate_digest": {},
+            "authority": {}
+          }
+        }
+      }
+    },
+    {
+      "required": [
+        "artifact_type",
+        "content"
+      ],
+      "properties": {
+        "artifact_type": {
+          "const": "E07"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "deviation_id",
+            "experiment_id",
+            "first_affected_event",
+            "observed_facts",
+            "impact",
+            "authority"
+          ],
+          "properties": {
+            "deviation_id": {},
+            "experiment_id": {},
+            "first_affected_event": {},
+            "observed_facts": {},
+            "impact": {},
+            "authority": {}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "artifactRefDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "digest"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9]*:[A-Za-z0-9._-]+$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "changeOnly": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_code_paths",
+        "allowed_config_paths",
+        "required_equal_refs",
+        "required_diff_paths"
+      ],
+      "properties": {
+        "allowed_code_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^?\\u0000]+$"
+          }
+        },
+        "allowed_config_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/jsonPointer"
+          }
+        },
+        "required_equal_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/artifactRefDigest"
+          }
+        },
+        "required_diff_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/pathToken"
+          }
+        },
+        "automatically_derived_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/pathToken"
+          }
+        }
+      }
+    },
+    "frozenVariable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "digest",
+        "reason"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/jsonPointer"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "jsonPointer": {
+      "type": "string",
+      "pattern": "^/(?:[^~/]|~0|~1)+(?:/(?:[^~/]|~0|~1)+)*$"
+    },
+    "pathToken": {
+      "type": "string",
+      "pattern": "^(?:code:[^?\\u0000]+|config:/[^?\\u0000]+|ref:[A-Z][A-Z0-9]*:[A-Za-z0-9._-]+|artifact:[A-Z][A-Z0-9]*:[A-Za-z0-9._-]+)$"
+    },
+    "pathTokens": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/pathToken"
+      }
+    },
+    "trialPlanRow": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "run_id",
+            "attempt_id",
+            "configuration",
+            "configuration_digest",
+            "partition_digest",
+            "seed",
+            "environment_plan",
+            "environment_plan_digest"
+          ],
+          "properties": {
+            "phase": {
+              "const": "search"
+            },
+            "run_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attempt_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "configuration": {
+              "type": "object",
+              "minProperties": 1
+            },
+            "configuration_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "partition_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "seed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "environment_plan": {
+              "$ref": "#/$defs/runtimeEnvironmentPlan"
+            },
+            "environment_plan_digest": {
+              "$ref": "#/$defs/digest"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "run_id",
+            "attempt_id",
+            "configuration",
+            "configuration_digest",
+            "partition_digest",
+            "seed",
+            "environment_plan",
+            "environment_plan_digest",
+            "recheck_of"
+          ],
+          "properties": {
+            "phase": {
+              "const": "recheck"
+            },
+            "run_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attempt_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "configuration": {
+              "type": "object",
+              "minProperties": 1
+            },
+            "configuration_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "partition_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "seed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "environment_plan": {
+              "$ref": "#/$defs/runtimeEnvironmentPlan"
+            },
+            "environment_plan_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "recheck_of": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "runtimeEnvironmentPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "environment_instance_identity",
+        "expected_runtime_image_digest",
+        "expected_runtime_profile",
+        "expected_runtime_profile_digest"
+      ],
+      "properties": {
+        "schema": {
+          "const": "sdm-runtime-environment-plan/v1"
+        },
+        "environment_instance_identity": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$"
+        },
+        "expected_runtime_image_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "const": "not-provided"
+            }
+          ]
+        },
+        "expected_runtime_profile": {
+          "$ref": "#/$defs/runtimeProfile"
+        },
+        "expected_runtime_profile_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "runtimeProfile": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "container_image_signature_digest",
+            "operating_system",
+            "driver",
+            "cuda",
+            "libraries",
+            "gpu",
+            "cpu",
+            "kernel",
+            "distributed_topology",
+            "dependency_lock_digest"
+          ],
+          "properties": {
+            "schema": {
+              "const": "sdm-runtime-profile/v1"
+            },
+            "container_image_signature_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "operating_system": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "architecture"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "driver": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "version"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cuda": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "toolkit_version",
+                "runtime_version"
+              ],
+              "properties": {
+                "toolkit_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runtime_version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "libraries": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "version",
+                  "artifact_digest"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "artifact_digest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                }
+              }
+            },
+            "gpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "model",
+                "count",
+                "memory_bytes",
+                "compute_capability"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "memory_bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "compute_capability": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "architecture",
+                "model",
+                "logical_cores"
+              ],
+              "properties": {
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "logical_cores": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "kernel": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "release"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "release": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "distributed_topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "node_count",
+                "world_size",
+                "processes_per_node",
+                "interconnect"
+              ],
+              "properties": {
+                "backend": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "node_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "world_size": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "processes_per_node": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "interconnect": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "dependency_lock_digest": {
+              "$ref": "#/$defs/digest"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "container_image_signature_digest",
+            "operating_system",
+            "driver",
+            "cuda",
+            "libraries",
+            "gpu",
+            "cpu",
+            "kernel",
+            "distributed_topology",
+            "dependency_lock_digest",
+            "image_provenance"
+          ],
+          "properties": {
+            "schema": {
+              "const": "sdm-devspace-runtime-profile/v1"
+            },
+            "container_image_signature_digest": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/digest"
+                },
+                {
+                  "const": "not-provided"
+                }
+              ]
+            },
+            "operating_system": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "architecture"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "driver": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "version"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cuda": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "toolkit_version",
+                "runtime_version"
+              ],
+              "properties": {
+                "toolkit_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "runtime_version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "libraries": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "version",
+                  "artifact_digest"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "artifact_digest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                }
+              }
+            },
+            "gpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "vendor",
+                "model",
+                "count",
+                "memory_bytes",
+                "compute_capability"
+              ],
+              "properties": {
+                "vendor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "memory_bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "compute_capability": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "cpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "architecture",
+                "model",
+                "logical_cores"
+              ],
+              "properties": {
+                "architecture": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "logical_cores": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "kernel": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "release"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "release": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "distributed_topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "node_count",
+                "world_size",
+                "processes_per_node",
+                "interconnect"
+              ],
+              "properties": {
+                "backend": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "node_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "world_size": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "processes_per_node": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "interconnect": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "dependency_lock_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "image_provenance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "purpose",
+                "namespace",
+                "space_uid",
+                "image_reference",
+                "platform_spec_digest",
+                "content_status",
+                "signature_status"
+              ],
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "space_uid": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "image_reference": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "backend": {
+                  "const": "lpai-devspace"
+                },
+                "purpose": {
+                  "const": "diagnostic-only"
+                },
+                "platform_spec_digest": {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                "content_status": {
+                  "enum": [
+                    "resolved",
+                    "not-provided"
+                  ]
+                },
+                "signature_status": {
+                  "enum": [
+                    "verified",
+                    "not-provided"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "preparation_only": true,
+  "objective": "execute-and-learn",
+  "orchestration_version": 2,
+  "orchestration": {
+    "review_mode": "local-agent",
+    "source_isolation": false,
+    "records": {
+      "background": {"path": ""},
+      "research": {"path": ""},
+      "inventory": {"path": ""},
+      "proposal": {"path": ""},
+      "plan_review": {"path": ""},
+      "confirmation": {"path": ""},
+      "review_context": {"path": ""},
+      "review_response": {"path": ""},
+      "transition": {"path": ""}
+    }
+  },
+  "drivers": {},
+  "cleanup_driver": null
+}

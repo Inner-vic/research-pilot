@@ -1,0 +1,11 @@
+{
+  "agent_roles": {
+    "version": 1,
+    "models": {
+      "planner": "gpt-6-astra",
+      "executor": "gpt-6.1-sol",
+      "generator": "gpt-6-astra",
+      "critic": "gpt-6.1-sol"
+    }
+  }
+}

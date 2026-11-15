@@ -1,0 +1,1361 @@
+{
+  "schema": "sdm-verification-manifest/v1",
+  "schema_version": "1.0.0",
+  "pytest_inventory": {
+    "algorithm": "sha256-sorted-nodeids-v1",
+    "count": 777,
+    "digest": "sha256:00d32620729992b502ac55c77f7cf36d4401131d052ba0f7b6d05f4f4b6aaba4"
+  },
+  "id_derivation": {
+    "command_exit": "CLI-{normalized-command}-{exit}",
+    "eval": "case.id when already prefixed EVAL-, otherwise EVAL-{skill}-{case.id}",
+    "step": "STEP{two-digit-step}"
+  },
+  "coverage": [
+    {
+      "id": "AC01",
+      "targets": [
+        "tests/test_module_structure.py::test_exact_direct_child_skill_inventory",
+        "tests/test_module_structure.py::test_all_skill_frontmatter_and_eval_inventory",
+        "tests/test_module_structure.py::test_exact_questions_and_agent_roster",
+        "tests/test_module_structure.py::test_exact_help_roster_and_order",
+        "tests/test_module_structure.py::test_installed_module_validator_has_zero_findings",
+        "tests/test_eval_contracts.py::test_pinned_bmad_dependencies_validate_without_source_mutation",
+        "tests/test_setup_temp_host.py::test_setup_validate_is_strictly_read_only",
+        "tests/test_scope_boundaries.py::test_setup_targets_only_current_native_surfaces"
+      ]
+    },
+    {
+      "id": "AC02",
+      "targets": [
+        "tests/test_lifecycle_matrix.py::test_all_steps_execute_or_source_block",
+        "tests/test_matrix_integration_contracts.py::test_public_interrupts_commit_exact_records_and_reject_substitution_without_writes",
+        "tests/test_matrix_integration_contracts.py::test_persisted_lifecycle_close_records_S17_two_phase_anchors_and_dispositions"
+      ]
+    },
+    {
+      "id": "AC03",
+      "targets": [
+        "tests/test_lifecycle_matrix.py::test_steps_1_2_intent"
+      ]
+    },
+    {
+      "id": "AC04",
+      "targets": [
+        "tests/test_lifecycle_matrix.py::test_readiness_surfaces_are_distinct"
+      ]
+    },
+    {
+      "id": "AC05",
+      "targets": [
+        "tests/test_discovery_and_dispatch.py::test_exact_platform_handoff",
+        "tests/test_discovery_and_dispatch.py::test_bound_platform_gate",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_single_logical_request",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_composite_all_of",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_at_least_once_owner_dedup",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_stale_or_binding_changed_result",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_under_bound_subjects_rejected",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_manual_evidence_bypass_rejected",
+        "tests/test_scope_boundaries.py::test_coordinator_never_executes_skill_binding"
+      ]
+    },
+    {
+      "id": "AC06",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_all_interrupted_dispositions"
+      ]
+    },
+    {
+      "id": "AC08",
+      "targets": [
+        "tests/test_end_to_end_journeys.py::test_protocol_channels_enforce_exploratory_default"
+      ]
+    },
+    {
+      "id": "AC09",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_formal_freeze_and_change"
+      ]
+    },
+    {
+      "id": "AC10",
+      "targets": [
+        "tests/test_end_to_end_journeys.py::test_engineering_done_gate_uses_deterministic_acceptance_not_metrics"
+      ]
+    },
+    {
+      "id": "AC11",
+      "targets": [
+        "tests/test_end_to_end_journeys.py::test_hpo_gate_retains_trials_and_requires_independent_confirmation"
+      ]
+    },
+    {
+      "id": "AC12",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_append_only_change_families_materialize_real_records_and_successor",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_decision_supersession_uses_real_immutable_records"
+      ]
+    },
+    {
+      "id": "AC13",
+      "targets": [
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[missing-attempt]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[unaccounted]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[non-terminal]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[missing-run-evidence]"
+      ]
+    },
+    {
+      "id": "AC15",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_terminal_governance_transition_gates_execute_and_block_shortcuts[baseline.deprecate]",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_terminal_governance_transition_gates_execute_and_block_shortcuts[lifecycle.cancel]",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_terminal_governance_transition_gates_execute_and_block_shortcuts[lifecycle.exception]",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_terminal_governance_transition_gates_execute_and_block_shortcuts[lifecycle.archive]",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_terminal_governance_transition_gates_execute_and_block_shortcuts[lifecycle.close]"
+      ]
+    },
+    {
+      "id": "AC16",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_artifact_graph.py::test_full_T01_reconstruction",
+        "sdm-lifecycle/scripts/tests/test_artifact_graph.py::test_successor_closure_lineage",
+        "sdm-lifecycle/scripts/tests/test_artifact_graph.py::test_graph_rejects_duplicate_and_derivation_cycle"
+      ]
+    },
+    {
+      "id": "AC17",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_contracts.py::test_strict_malformed_ingress_matrix"
+      ]
+    },
+    {
+      "id": "AC18",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_read_only_validate.py::test_validate_snapshot_unchanged"
+      ]
+    },
+    {
+      "id": "AC19",
+      "targets": [
+        "tests/test_native_eval_gate.py::test_native_gate",
+        "native:NATIVE01",
+        "native:NATIVE02",
+        "native:NATIVE03",
+        "native:NATIVE04",
+        "native:NATIVE05",
+        "native:NATIVE06",
+        "native:NATIVE07",
+        "native:NATIVE08",
+        "native:NATIVE09",
+        "native:NATIVE10"
+      ]
+    },
+    {
+      "id": "CLI-native-3",
+      "targets": [
+        "tests/test_native_eval_gate.py::test_missing_adapter_or_telemetry_exit_3"
+      ]
+    },
+    {
+      "id": "CLI-runtime-config-5",
+      "targets": [
+        "tests/test_command_contracts.py::test_runtime_configuration_exit_5"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-evidence-review-best-run-bias",
+      "targets": [
+        "eval:EVAL-sdm-agent-evidence-review-best-run-bias"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-evidence-review-system-failure",
+      "targets": [
+        "eval:EVAL-sdm-agent-evidence-review-system-failure"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-experiment-spec-default-exploratory",
+      "targets": [
+        "eval:EVAL-sdm-agent-experiment-spec-default-exploratory"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-experiment-spec-no-harking",
+      "targets": [
+        "eval:EVAL-sdm-agent-experiment-spec-no-harking"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-geometry-contract-augmentation-intrinsics",
+      "targets": [
+        "eval:EVAL-sdm-agent-geometry-contract-augmentation-intrinsics"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-geometry-contract-extrinsic-direction",
+      "targets": [
+        "eval:EVAL-sdm-agent-geometry-contract-extrinsic-direction"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-agent-research-planner-falsifiable-brief",
+      "targets": [
+        "eval:EVAL-sdm-agent-research-planner-falsifiable-brief"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-build-context-pack-least-context",
+      "targets": [
+        "eval:EVAL-sdm-build-context-pack-least-context"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-build-context-pack-metric-not-done",
+      "targets": [
+        "eval:EVAL-sdm-build-context-pack-metric-not-done"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-create-experiment-spec-exploratory-default",
+      "targets": [
+        "eval:EVAL-sdm-create-experiment-spec-exploratory-default"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-create-experiment-spec-hpo-confirmation",
+      "targets": [
+        "eval:EVAL-sdm-create-experiment-spec-hpo-confirmation"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-create-experiment-spec-post-result-change",
+      "targets": [
+        "eval:EVAL-sdm-create-experiment-spec-post-result-change"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-create-ml-contract-data-handoff",
+      "targets": [
+        "eval:EVAL-sdm-create-ml-contract-data-handoff"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-create-ml-contract-semantic-closure",
+      "targets": [
+        "eval:EVAL-sdm-create-ml-contract-semantic-closure"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-evidence-review-all-attempts",
+      "targets": [
+        "eval:EVAL-sdm-evidence-review-all-attempts"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-evidence-review-underpowered-accounted",
+      "targets": [
+        "eval:EVAL-sdm-evidence-review-underpowered-accounted"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-freeze-experiment-digest-drift",
+      "targets": [
+        "eval:EVAL-sdm-freeze-experiment-digest-drift"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-freeze-experiment-two-phase-freeze",
+      "targets": [
+        "eval:EVAL-sdm-freeze-experiment-two-phase-freeze"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-close",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-close"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-create-default",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-create-default"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-evidence-accounting",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-evidence-accounting"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-frozen-change",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-frozen-change"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-platform-gate",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-platform-gate"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-read-only-validate",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-read-only-validate"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-resume-order",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-resume-order"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lifecycle-uncertain-dispatch",
+      "targets": [
+        "eval:EVAL-sdm-lifecycle-uncertain-dispatch"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lock-baseline-composite-lock",
+      "targets": [
+        "eval:EVAL-sdm-lock-baseline-composite-lock"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-lock-baseline-deprecation-cycle",
+      "targets": [
+        "eval:EVAL-sdm-lock-baseline-deprecation-cycle"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-ml-readiness-distinct-surfaces",
+      "targets": [
+        "eval:EVAL-sdm-ml-readiness-distinct-surfaces"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-ml-readiness-hook-noop",
+      "targets": [
+        "eval:EVAL-sdm-ml-readiness-hook-noop"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-scientific-decision-four-outcomes",
+      "targets": [
+        "eval:EVAL-sdm-scientific-decision-four-outcomes"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-scientific-decision-superseded-scientific-decision",
+      "targets": [
+        "eval:EVAL-sdm-scientific-decision-superseded-scientific-decision"
+      ]
+    },
+    {
+      "id": "EVAL-sdm-scientific-decision-unaccounted-block",
+      "targets": [
+        "eval:EVAL-sdm-scientific-decision-unaccounted-block"
+      ]
+    },
+    {
+      "id": "IO01",
+      "targets": [
+        "tests/test_setup_temp_host.py::test_clean_host_install_discovery_and_scoped_hook",
+        "tests/test_module_structure.py::test_exact_direct_child_skill_inventory",
+        "tests/test_module_structure.py::test_exact_questions_and_agent_roster",
+        "tests/test_module_structure.py::test_exact_help_roster_and_order",
+        "tests/test_setup_transactions.py::test_install_kill_points_recover_without_secret_disclosure",
+        "tests/test_setup_transactions.py::test_in_process_fault_rolls_back_and_emits_one_json_object",
+        "tests/test_setup_temp_host.py::test_source_path_safety_rejects_symlink_and_hardlink",
+        "tests/test_matrix_integration_contracts.py::test_setup_rejects_missing_orphan_and_duplicate_capabilities",
+        "native:NATIVE01"
+      ]
+    },
+    {
+      "id": "IO02",
+      "targets": [
+        "tests/test_lifecycle_matrix.py::test_create_resume",
+        "sdm-lifecycle/scripts/tests/test_workspace_transactions.py::test_create_pins_engine_genesis_and_initial_projection",
+        "sdm-lifecycle/scripts/tests/test_workspace.py::test_resume_is_full_replay_and_returns_earliest_action",
+        "sdm-lifecycle/scripts/tests/test_ledger_replay.py::test_replay_reconstructs_contiguous_hash_chain",
+        "sdm-lifecycle/scripts/tests/test_ledger_replay.py::test_replay_rejects_tampered_event_bytes",
+        "sdm-lifecycle/scripts/tests/test_projection.py::test_materialization_is_deterministic_full_replay",
+        "sdm-lifecycle/scripts/tests/test_projection.py::test_stored_projection_must_match_canonical_replay"
+      ]
+    },
+    {
+      "id": "IO03",
+      "targets": [
+        "tests/test_discovery_and_dispatch.py::test_bound_platform_gate"
+      ]
+    },
+    {
+      "id": "IO03A",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_single_logical_request"
+      ]
+    },
+    {
+      "id": "IO03B",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_composite_all_of"
+      ]
+    },
+    {
+      "id": "IO03C",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_at_least_once_owner_dedup"
+      ]
+    },
+    {
+      "id": "IO04",
+      "targets": [
+        "tests/test_discovery_and_dispatch.py::test_interrupted_platform_gate",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_blind_uncertain_redispatch_rejected"
+      ]
+    },
+    {
+      "id": "IO04A",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_missing_binding"
+      ]
+    },
+    {
+      "id": "IO04B",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_no_result_wait"
+      ]
+    },
+    {
+      "id": "IO04C",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_producer_failed"
+      ]
+    },
+    {
+      "id": "IO04D",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_producer_cancelled"
+      ]
+    },
+    {
+      "id": "IO04E",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_invoke_error"
+      ]
+    },
+    {
+      "id": "IO04F",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_dispatch_unknown",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_blind_uncertain_redispatch_rejected"
+      ]
+    },
+    {
+      "id": "IO04G",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_stale_or_binding_changed_result"
+      ]
+    },
+    {
+      "id": "IO04H",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_duplicate_conflicting_result"
+      ]
+    },
+    {
+      "id": "IO04I",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_late_result"
+      ]
+    },
+    {
+      "id": "IO04J",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_possible_external_success_reconcile"
+      ]
+    },
+    {
+      "id": "IO05",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_frozen_change_classification",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_append_only_change_families_materialize_real_records_and_successor",
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_supersession_cannot_invent_an_unmaterialized_successor"
+      ]
+    },
+    {
+      "id": "IO06",
+      "targets": [
+        "tests/test_end_to_end_journeys.py::test_scientific_outcomes_execute_frozen_rules[False-False-True-False-hypothesis_supported]",
+        "tests/test_end_to_end_journeys.py::test_scientific_outcomes_execute_frozen_rules[False-False-False-True-hypothesis_rejected]",
+        "tests/test_end_to_end_journeys.py::test_scientific_outcomes_execute_frozen_rules[False-True-False-False-inconclusive]",
+        "tests/test_end_to_end_journeys.py::test_scientific_outcomes_execute_frozen_rules[True-False-True-False-invalid]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[missing-attempt]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[unaccounted]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[non-terminal]",
+        "tests/test_end_to_end_journeys.py::test_D05_blocks_incomplete_attempt_accounting[missing-run-evidence]",
+        "tests/test_matrix_integration_contracts.py::test_D05_evaluation_is_persisted_as_one_immutable_governed_record"
+      ]
+    },
+    {
+      "id": "IO08",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_read_only_validate.py::test_validate_snapshot_unchanged",
+        "tests/test_setup_temp_host.py::test_setup_validate_is_strictly_read_only",
+        "tests/test_eval_contracts.py::test_pinned_bmad_dependencies_validate_without_source_mutation",
+        "tests/test_module_structure.py::test_exact_direct_child_skill_inventory",
+        "tests/test_module_structure.py::test_all_skill_frontmatter_and_eval_inventory",
+        "tests/test_module_structure.py::test_installed_module_validator_has_zero_findings",
+        "tests/test_native_eval_gate.py::test_real_root_snapshot_excludes_declared_desktop_volatility_and_protects_stable_nodes",
+        "sdm-lifecycle/scripts/tests/test_specctl.py::test_malformed_cli_and_document_are_structured_exit_2",
+        "tests/test_matrix_integration_contracts.py::test_complete_module_validate_is_read_only_and_workspace_validate_has_no_external_calls"
+      ]
+    },
+    {
+      "id": "NATIVE01",
+      "targets": [
+        "native:NATIVE01"
+      ]
+    },
+    {
+      "id": "NATIVE02",
+      "targets": [
+        "native:NATIVE02"
+      ]
+    },
+    {
+      "id": "NATIVE03",
+      "targets": [
+        "native:NATIVE03"
+      ]
+    },
+    {
+      "id": "NATIVE04",
+      "targets": [
+        "native:NATIVE04"
+      ]
+    },
+    {
+      "id": "NATIVE05",
+      "targets": [
+        "native:NATIVE05"
+      ]
+    },
+    {
+      "id": "NATIVE06",
+      "targets": [
+        "native:NATIVE06"
+      ]
+    },
+    {
+      "id": "NATIVE07",
+      "targets": [
+        "native:NATIVE07"
+      ]
+    },
+    {
+      "id": "NATIVE08",
+      "targets": [
+        "native:NATIVE08"
+      ]
+    },
+    {
+      "id": "NATIVE09",
+      "targets": [
+        "native:NATIVE09"
+      ]
+    },
+    {
+      "id": "NATIVE10",
+      "targets": [
+        "native:NATIVE10"
+      ]
+    },
+    {
+      "id": "NEG01",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_contracts.py::test_documentation_only_schema_rejected"
+      ]
+    },
+    {
+      "id": "NEG02",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_contracts.py::test_unexecuted_semantic_validator_rejected"
+      ]
+    },
+    {
+      "id": "NEG03",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_contracts.py::test_allowlist_transition_drift_rejected"
+      ]
+    },
+    {
+      "id": "NEG04",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_ledger_replay.py::test_caller_origin_ignored"
+      ]
+    },
+    {
+      "id": "NEG05",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_ledger_replay.py::test_partial_history_projection_not_trusted"
+      ]
+    },
+    {
+      "id": "NEG06",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_under_bound_subjects_rejected"
+      ]
+    },
+    {
+      "id": "NEG07",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_manual_evidence_bypass_rejected",
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_manual_complete_result_with_recomputed_receipt_still_requires_producer_signature"
+      ]
+    },
+    {
+      "id": "NEG08",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_retry_supersession_preserve_history"
+      ]
+    },
+    {
+      "id": "NEG09",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_handoffs.py::test_blind_uncertain_redispatch_rejected"
+      ]
+    },
+    {
+      "id": "NEG10",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_authority.py::test_action_role_mismatch"
+      ]
+    },
+    {
+      "id": "NEG11",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_authority.py::test_key_substitution_rejected"
+      ]
+    },
+    {
+      "id": "NEG12",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_authority.py::test_historical_consumption_time"
+      ]
+    },
+    {
+      "id": "NEG13",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_transitions.py::test_D05_rule_complete"
+      ]
+    },
+    {
+      "id": "NEG15",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_authority.py::test_two_authority_same_principal_rejected"
+      ]
+    },
+    {
+      "id": "NEG17",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_artifact_graph.py::test_successor_closure_lineage"
+      ]
+    },
+    {
+      "id": "NEG18",
+      "targets": [
+        "tests/test_native_eval_gate.py::test_fake_driver_not_native_telemetry"
+      ]
+    },
+    {
+      "id": "SCOPE01",
+      "targets": [
+        "tests/test_research_scope.py::test_engine_step_count_is_exact_and_typed[20]",
+        "tests/test_research_scope.py::test_engine_step_count_is_exact_and_typed[21]",
+        "tests/test_research_scope.py::test_engine_step_count_is_exact_and_typed[22]",
+        "tests/test_research_scope.py::test_engine_step_count_is_exact_and_typed[True]"
+      ]
+    },
+    {
+      "id": "SCOPE02",
+      "targets": [
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_rejected-exploratory]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_rejected-formal]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_rejected-promotion]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_rejected-regression]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_supported-exploratory]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_supported-formal]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_supported-promotion]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[hypothesis_supported-regression]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[inconclusive-exploratory]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[inconclusive-formal]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[inconclusive-promotion]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[inconclusive-regression]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[invalid-exploratory]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[invalid-formal]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[invalid-promotion]",
+        "tests/test_research_scope.py::test_every_scientific_classification_requires_followup[invalid-regression]"
+      ]
+    },
+    {
+      "id": "SCOPE03",
+      "targets": [
+        "tests/test_research_scope.py::test_old_engine_is_rejected_before_removed_owner_schema_resolution"
+      ]
+    },
+    {
+      "id": "SCOPE04",
+      "targets": [
+        "tests/test_research_scope.py::test_reduced_workspace_has_only_scientific_storage"
+      ]
+    },
+    {
+      "id": "SCOPE05",
+      "targets": [
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[M01]",
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[M02]",
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[M03]",
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[M04]",
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[S11]",
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[S18]",
+        "tests/test_research_scope.py::test_retired_artifact_publication_cannot_mutate[S19]"
+      ]
+    },
+    {
+      "id": "SCOPE06",
+      "targets": [
+        "tests/test_research_scope.py::test_retired_cli_action_is_structured_and_read_only[deploy]",
+        "tests/test_research_scope.py::test_retired_cli_action_is_structured_and_read_only[promote]",
+        "tests/test_research_scope.py::test_retired_cli_action_is_structured_and_read_only[register-candidate]",
+        "tests/test_research_scope.py::test_retired_cli_action_is_structured_and_read_only[rollback]"
+      ]
+    },
+    {
+      "id": "SCOPE07",
+      "targets": [
+        "tests/test_research_scope.py::test_retired_creation_configuration_is_rejected_before_write[promotion_adapter_identity]",
+        "tests/test_research_scope.py::test_retired_creation_configuration_is_rejected_before_write[promotion_eligible]",
+        "tests/test_research_scope.py::test_retired_creation_configuration_is_rejected_before_write[promotion_state_root]"
+      ]
+    },
+    {
+      "id": "SCOPE08",
+      "targets": [
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[candidate.nominated]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[candidate.registered]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[candidate.rejected]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[deployment.transitioned]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[health.recorded]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[model.retired]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[promotion.accepted]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[promotion.provisional]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.alias-restored]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.complete]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.dispatched]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.health-failed]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.health-pending]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.provisional]",
+        "tests/test_research_scope.py::test_retired_event_cannot_mutate[rollback.reconciled]"
+      ]
+    },
+    {
+      "id": "SCOPE09",
+      "targets": [
+        "tests/test_research_scope.py::test_retired_step_is_rejected_before_any_write[22]",
+        "tests/test_research_scope.py::test_retired_step_is_rejected_before_any_write[23]",
+        "tests/test_research_scope.py::test_retired_step_is_rejected_before_any_write[24]",
+        "tests/test_research_scope.py::test_retired_step_is_rejected_before_any_write[25]"
+      ]
+    },
+    {
+      "id": "SCOPE10",
+      "targets": [
+        "sdm-lifecycle/scripts/tests/test_contracts.py::test_research_deployment_contract_requires_no_release_state"
+      ]
+    }
+  ],
+  "lifecycle_rows": [
+    {
+      "id": "STEP01",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP01]"
+    },
+    {
+      "id": "STEP02",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP02]"
+    },
+    {
+      "id": "STEP03",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP03]"
+    },
+    {
+      "id": "STEP04",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP04]"
+    },
+    {
+      "id": "STEP05",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP05]"
+    },
+    {
+      "id": "STEP06",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP06]"
+    },
+    {
+      "id": "STEP07",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP07]"
+    },
+    {
+      "id": "STEP08",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP08]"
+    },
+    {
+      "id": "STEP09",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP09]"
+    },
+    {
+      "id": "STEP10",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP10]"
+    },
+    {
+      "id": "STEP11",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP11]"
+    },
+    {
+      "id": "STEP12",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP12]"
+    },
+    {
+      "id": "STEP13",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP13]"
+    },
+    {
+      "id": "STEP14",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP14]"
+    },
+    {
+      "id": "STEP15",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP15]"
+    },
+    {
+      "id": "STEP16",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP16]"
+    },
+    {
+      "id": "STEP17",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP17]"
+    },
+    {
+      "id": "STEP18",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP18]"
+    },
+    {
+      "id": "STEP19",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP19]"
+    },
+    {
+      "id": "STEP20",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP20]"
+    },
+    {
+      "id": "STEP21",
+      "target": "tests/test_public_step_execution.py::test_public_step_executes_supported_entry[STEP21]"
+    }
+  ],
+  "command_exit_coverage": [
+    {
+      "command": "specctl.validate",
+      "exits": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-validate-{exit}]"
+    },
+    {
+      "command": "specctl.hash",
+      "exits": [
+        0,
+        2,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-hash-{exit}]"
+    },
+    {
+      "command": "specctl.freeze",
+      "exits": [
+        0,
+        2,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-freeze-{exit}]"
+    },
+    {
+      "command": "specctl.check-diff",
+      "exits": [
+        0,
+        2,
+        3,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-check-diff-{exit}]"
+    },
+    {
+      "command": "specctl.materialize-run",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-materialize-run-{exit}]"
+    },
+    {
+      "command": "specctl.verify-run-manifest",
+      "exits": [
+        0,
+        2,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-verify-run-manifest-{exit}]"
+    },
+    {
+      "command": "specctl.build-evidence",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-build-evidence-{exit}]"
+    },
+    {
+      "command": "specctl.verify-evidence",
+      "exits": [
+        0,
+        2,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-verify-evidence-{exit}]"
+    },
+    {
+      "command": "specctl.scientific-decision",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-scientific-decision-{exit}]"
+    },
+    {
+      "command": "specctl.validate-transition",
+      "exits": [
+        0,
+        2,
+        3,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-validate-transition-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.create",
+      "exits": [
+        0,
+        2,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-create-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.resume",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-resume-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.advance",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-advance-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.amend",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-amend-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.deviate",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-deviate-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.supersede",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-supersede-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.deprecate",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-deprecate-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.retry",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-retry-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.cancel",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-cancel-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.exception",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-exception-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.archive",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-archive-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.close",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-close-{exit}]"
+    },
+    {
+      "command": "specctl.lifecycle.migrate",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-lifecycle-migrate-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.create",
+      "exits": [
+        0,
+        2,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-create-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.mark-dispatched",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-mark-dispatched-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.ingest",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-ingest-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.cancel",
+      "exits": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-cancel-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.retry",
+      "exits": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-retry-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.supersede",
+      "exits": [
+        0,
+        2,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-supersede-{exit}]"
+    },
+    {
+      "command": "specctl.handoff.reconcile",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-specctl-handoff-reconcile-{exit}]"
+    },
+    {
+      "command": "setup.install",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-setup-install-{exit}]"
+    },
+    {
+      "command": "setup.update",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-setup-update-{exit}]"
+    },
+    {
+      "command": "setup.uninstall",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-setup-uninstall-{exit}]"
+    },
+    {
+      "command": "setup.recover",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-setup-recover-{exit}]"
+    },
+    {
+      "command": "setup.validate",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-setup-validate-{exit}]"
+    },
+    {
+      "command": "native-eval.run",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-native-eval-run-{exit}]",
+      "target_overrides": {
+        "0": [
+          "same-run:native-eval.run:0"
+        ],
+        "4": [
+          "pytest:tests/test_authoritative_command_paths.py::test_native_protected_root_conflict_returns_exit_4"
+        ]
+      }
+    },
+    {
+      "command": "verify-launcher.run",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-verify-launcher-run-{exit}]",
+      "target_overrides": {
+        "0": [
+          "outer:verify-launcher.run:0"
+        ],
+        "4": [
+          "pytest:tests/test_authoritative_command_paths.py::test_launcher_wraps_child_conflict_as_exit_4"
+        ],
+        "70": [
+          "pytest:tests/test_authoritative_command_paths.py::test_launcher_protocol_failure_returns_exit_70"
+        ]
+      }
+    },
+    {
+      "command": "verify-orchestrator.run",
+      "exits": [
+        0,
+        2,
+        3,
+        4,
+        70
+      ],
+      "target_template": "tests/test_command_contracts.py::test_command_exit[CLI-verify-orchestrator-run-{exit}]",
+      "target_overrides": {
+        "0": [
+          "outer:verify-orchestrator.run:0"
+        ],
+        "3": [
+          "pytest:tests/test_authoritative_command_paths.py::test_orchestrator_native_unavailable_maps_to_exit_3"
+        ],
+        "4": [
+          "pytest:tests/test_authoritative_command_paths.py::test_orchestrator_protected_root_change_maps_to_exit_4"
+        ]
+      }
+    }
+  ],
+  "schemas": [
+    "sdm-build-context-pack/assets/context-pack.schema.json",
+    "sdm-create-experiment-spec/assets/experiment-spec.schema.json",
+    "sdm-create-ml-contract/assets/contract-record.schema.json",
+    "sdm-evidence-review/assets/evidence-bundle.schema.json",
+    "sdm-lifecycle/assets/schemas/artifact.schema.json",
+    "sdm-lifecycle/assets/schemas/authority-attestation.schema.json",
+    "sdm-lifecycle/assets/schemas/event.schema.json",
+    "sdm-lifecycle/assets/schemas/finding.schema.json",
+    "sdm-lifecycle/assets/schemas/handoff-request.schema.json",
+    "sdm-lifecycle/assets/schemas/handoff-result.schema.json",
+    "sdm-lifecycle/assets/schemas/result.schema.json",
+    "sdm-lifecycle/assets/schemas/state.schema.json",
+    "sdm-lock-baseline/assets/baseline.schema.json",
+    "sdm-ml-readiness/assets/readiness-report.schema.json",
+    "sdm-scientific-decision/assets/decision-record.schema.json"
+  ],
+  "same_run_summary": {
+    "required": [
+      "run_nonce",
+      "complete_source_tree_digest",
+      "adapter_digest",
+      "verification_manifest_digest",
+      "case_manifest_digest",
+      "started_at",
+      "ended_at",
+      "tool_version"
+    ],
+    "forbid_caller_supplied": true
+  },
+  "pytest_outcome": {
+    "require_executed_gt": 0,
+    "require_zero": [
+      "failed",
+      "errors",
+      "skipped",
+      "xfailed",
+      "xpassed",
+      "deselected"
+    ]
+  }
+}

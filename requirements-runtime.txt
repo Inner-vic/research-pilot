@@ -1,0 +1,2 @@
+# Official Codex Python SDK and matching CLI binary; no ML framework needed locally.
+openai-codex==0.163.0

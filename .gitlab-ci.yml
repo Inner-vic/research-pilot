@@ -1,0 +1,19 @@
+stages: [verify]
+core:
+  image: python:3.12-slim
+  stage: verify
+  script:
+    - python -B -m unittest discover -s skills/sdm-module/sdm-lifecycle/scripts/tests -p test_research_dashboard.py
+    - python -B -m unittest discover -s skills/sdm-module/sdm-lifecycle/scripts/tests -p test_evaluation_metrics.py
+    - python -B scripts/setup.py --skip-model-sdk --no-dashboard --no-install
+  artifacts:
+    when: on_failure
+    paths: [.bmad-ml/installation.json]
+    expire_in: 7 days
+
+lineage:
+  image: node:22-slim
+  stage: verify
+  script:
+    - node --check skills/sdm-module/sdm-lifecycle/references/dashboard/dashboard.js
+    - node scripts/tests/test_lineage_view.cjs

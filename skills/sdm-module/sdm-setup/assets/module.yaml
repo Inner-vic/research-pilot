@@ -1,0 +1,60 @@
+code: sdm
+name: "Specification-Driven ML Development"
+description: "Governed, specification-driven machine-learning development from product intent through evidence, scientific follow-up, and closure."
+module_version: 1.0.0
+default_selected: false
+module_greeting: >
+  Specification-Driven ML Development is configured. Use Manage ML Lifecycle
+  to create or resume a governed workspace; configure all four platform Skill
+  bindings before their first mandatory gate.
+
+sdm_output_root:
+  prompt: "Where should governed SDM workspaces and reports be stored?"
+  default: "{project-root}/_bmad-output/sdm"
+
+sdm_trust_root:
+  prompt: "Where are public SDM trust bundles stored?"
+  default: "{project-root}/ml-spec/governance/trust"
+
+sdm_active_workspace:
+  prompt: "Which SDM workspace should the sprint-planning hook assess?"
+  default: ""
+  user_setting: true
+
+data_platform_skill:
+  prompt: "Exact installed Skill directory name for labeling and data-quality operations?"
+  default: ""
+
+source_control_platform_skill:
+  prompt: "Exact installed Skill directory name for Git operations?"
+  default: ""
+
+ci_platform_skill:
+  prompt: "Exact installed Skill directory name for Jenkins operations?"
+  default: ""
+
+ml_execution_platform_skill:
+  prompt: "Exact installed Skill directory name for HPO, training, and evaluation operations?"
+  default: ""
+
+agents:
+  - code: research-planner
+    name: Research Planner Agent
+    title: ML Research Planning Agent
+    icon: "🔬"
+    description: "Turns product intent into falsifiable research questions without changing governed outcomes."
+  - code: experiment-spec
+    name: Experiment Spec Agent
+    title: Experiment Specification Steward
+    icon: "🧪"
+    description: "Builds reviewable experiment, search, and run-plan protocol drafts from governed contracts."
+  - code: geometry-contract
+    name: Geometry Contract Agent
+    title: Geometry Contract Steward
+    icon: "📐"
+    description: "Defines coordinate, calibration, synchronization, augmentation, and tensor semantics without ambiguity."
+  - code: evidence-review
+    name: Evidence Review Agent
+    title: Independent Evidence Reviewer
+    icon: "🔎"
+    description: "Independently audits evidence completeness, validity, fairness, geometry, statistics, and deployment parity."

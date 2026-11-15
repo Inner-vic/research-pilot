@@ -1,0 +1,60 @@
+{
+  "schema": "sdm-research-study-planning/v1",
+  "status": "draft",
+  "execution_authorized": false,
+  "study_id": null,
+  "project": null,
+  "mode": null,
+  "research_question": null,
+  "mode_reason": {"statement": null, "evidence_refs": [], "plateau_status": "unknown"},
+  "metric": {
+    "name": null, "direction": null, "unit": null, "aggregation": null,
+    "target": null, "meaningful_effect": null, "evaluator_ref": null,
+    "evaluation_scope": null, "comparison_conditions": {}
+  },
+  "original_base_ref": null,
+  "research_baseline": {
+    "candidate_ref": null, "source_config_data_checkpoint_refs": [],
+    "observed_values": [], "variation_evidence_refs": [],
+    "selection_procedure": null, "promotion_status": "unconfirmed"
+  },
+  "error_slices": [],
+  "hypotheses": [{
+    "id": null, "mechanism": null, "status": "unassessed",
+    "supporting_refs": [], "contrary_refs": [], "confounders": [],
+    "unresolved_questions": [], "continue_conditions": [], "abandon_conditions": []
+  }],
+  "study_design": {
+    "kind": null, "scientific_factors": {}, "nuisance_settings": {},
+    "claim_scope": null, "parameter_role_reasons": [],
+    "fixed_conditions": {}, "nuisance_tuning_policy": null,
+    "comparison_budget_basis": null, "initialization_and_retraining_scope": null,
+    "variants": [{"id": null, "factor_values": {}, "resolved_recipe_ref": null,
+                  "tuning_budget_ref": null, "trial_refs": []}],
+    "paired_contrasts": [{"left_variant_id": null, "right_variant_id": null,
+                          "question": null, "shared_conditions": {}, "known_confounders": []}],
+    "missing_or_invalid_comparisons": [],
+    "search_space_and_conditional_ranges_ref": null,
+    "search_validity_review_ref": null,
+    "result_branches": [{"observation": null, "hypothesis_implication": null, "next_choice": null}],
+    "repetition_policy": null,
+    "checkpoint_selection_rule": null, "diagnostic_set_ref": null,
+    "confirmation_set_ref": null, "deployment_constraints": [], "limitations": []
+  },
+  "research_history_refs": [],
+  "evidence_questions": [],
+  "uncertainty_plan": {"decisive_source": null, "collection_method": null,
+                       "independent_sampling_unit": null, "conditional_claim_limits": []},
+  "adoption_benefit_complexity_tradeoff": null,
+  "feasibility": {
+    "existing_evidence_or_cpu_checks": [], "new_compute_needed_for": [],
+    "adapter_support": "unverified", "allowed_change_scope_ref": null,
+    "total_trial_budget_including_controls_tuning_repeats": null,
+    "resource_budget_ref": null, "concurrency_policy_ref": null,
+    "stop_conditions": [], "continue_or_abandon_conditions": []
+  },
+  "pro_review_binding_ref": null,
+  "comparison_group_plan_ref": null,
+  "staged_training_plan_ref": null,
+  "next_action": "prepare-evidence-and-study-only"
+}

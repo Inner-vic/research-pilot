@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.bmad.dev/sdm/state.schema.json",
+  "title": "SDM Materialized State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "workspace_id",
+    "revision",
+    "ledger_head",
+    "active_engine_digest",
+    "lifecycle_step",
+    "dimensions",
+    "artifacts",
+    "attempts",
+    "handoffs",
+    "operations",
+    "authorities",
+    "lineage",
+    "substate_events",
+    "findings",
+    "traceability"
+  ],
+  "properties": {
+    "schema": {
+      "const": "sdm-state/v1"
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ledger_head": {
+      "$ref": "#/$defs/digest"
+    },
+    "active_engine_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "lifecycle_step": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 22
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jira",
+        "experiment",
+        "contract_readiness",
+        "baseline",
+        "protocol",
+        "implementation",
+        "preflight",
+        "execution",
+        "attempt",
+        "validity",
+        "evidence",
+        "scientific",
+        "robustness",
+        "successor_experiment",
+        "lifecycle",
+        "anchor"
+      ],
+      "properties": {
+        "jira": {
+          "type": "string"
+        },
+        "experiment": {
+          "type": "string"
+        },
+        "contract_readiness": {
+          "type": "string"
+        },
+        "baseline": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "implementation": {
+          "type": "string"
+        },
+        "preflight": {
+          "type": "string"
+        },
+        "execution": {
+          "type": "string"
+        },
+        "attempt": {
+          "type": "string"
+        },
+        "validity": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "scientific": {
+          "type": "string"
+        },
+        "robustness": {
+          "type": "string"
+        },
+        "successor_experiment": {
+          "type": "string"
+        },
+        "lifecycle": {
+          "type": "string"
+        },
+        "anchor": {
+          "type": "string"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "attempts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "handoffs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "operations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "authorities": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array"
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "object"
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "substate_events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "traceability": {
+      "type": "object"
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "binding_skill_digests": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/digest"
+      }
+    },
+    "protocol": {
+      "enum": [
+        "exploratory",
+        "formal",
+        "regression",
+        "promotion"
+      ]
+    },
+    "intent": {
+      "type": "object"
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "platform_results": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "pending_anchor": {
+      "type": "object"
+    },
+    "trusted_anchor": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

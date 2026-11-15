@@ -1,0 +1,65 @@
+{
+  "schema": "sdm-example-research-brief/v1",
+  "purpose": "供Codex读取的初始研究说明，不是可直接启动的运行配置",
+  "task": "公开单变量序列二分类",
+  "dataset": {
+    "name": "DistalPhalanxOutlineCorrect",
+    "record_url": "https://zenodo.org/records/11186597",
+    "train_url": "https://zenodo.org/records/11186597/files/DistalPhalanxOutlineCorrect_TRAIN.ts?download=1",
+    "train_sha256": "fb5b488b8a2d651ed208a64756ceaf20249d877857a852a3efb428f33c14532a",
+    "samples": 600,
+    "length": 80,
+    "classes": 2,
+    "class_labels": [
+      0,
+      1
+    ]
+  },
+  "comparison": {
+    "primary_metric": "validation.macro_f1",
+    "direction": "maximize",
+    "target": 0.9,
+    "protocol": "sdm-distal-20261113-v1",
+    "split_sha256": "9b12b29a1d2032f5ff7df4d40c17ac7038d53d6981bfa7769a45a112eba87c19",
+    "train_samples": 449,
+    "validation_samples": 151,
+    "validation_class_support": [
+      56,
+      95
+    ],
+    "test_used": false,
+    "checkpoint_selection": "max validation macro_f1 then min validation loss; earliest tie",
+    "limits": [
+      "单随机种子42",
+      "固定TRAIN内部验证集被多轮自适应复用",
+      "未进行独立TEST泛化验收"
+    ]
+  },
+  "baseline": {
+    "architecture": "三层Conv1d + BatchNorm + ReLU + 全局平均池化 + 线性分类器",
+    "input_channels": 1,
+    "channels": 16,
+    "training": {
+      "epochs": 20,
+      "lr": 0.001,
+      "batch_size": 64,
+      "channels": 16,
+      "seed": 42,
+      "threads": 1
+    }
+  },
+  "execution_requirements": {
+    "official_lpai_skill": true,
+    "remote_training_only": true,
+    "platform_scope": "使用新用户自己的已授权namespace、组件、数据与资源",
+    "epochs_default": 20,
+    "epochs_allowed": [
+      10,
+      30
+    ],
+    "trial_count_limit": null,
+    "stop": "登记目标达到、用户暂停/撤回，或明确无法自动解决的阻塞"
+  },
+  "initial_authorization": "先检查和准备方案，待用户确认才提交新任务",
+  "replay_policy": "复用数据和评价口径，按新结果决定下一方案；不照抄14次历史实验，不继承原实验分数或任务身份"
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.bmad.dev/sdm/finding.schema.json",
+  "title": "SDM Finding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["severity", "code", "subject", "json_pointer", "message", "governing_asset", "rule_digest", "gate_impact"],
+  "properties": {
+    "severity": {"enum": ["critical", "high", "medium", "low", "info"]},
+    "code": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.-]{2,127}$"},
+    "subject": {"type": "string", "minLength": 1},
+    "json_pointer": {"type": "string", "pattern": "^(|/(?:[^~/]|~[01])*)$"},
+    "message": {"type": "string", "minLength": 1},
+    "governing_asset": {"type": "string", "minLength": 1},
+    "rule_digest": {"$ref": "#/$defs/digest"},
+    "gate_impact": {"enum": ["none", "warning", "block", "blocks-step", "blocks-workspace", "conflict"]},
+    "extensions": {"$ref": "#/$defs/extensions"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "extensions": {"type": "object", "propertyNames": {"pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$"}, "additionalProperties": true}
+  }
+}

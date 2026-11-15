@@ -1,0 +1,13 @@
+{
+  "schema": "sdm-verification-toolchain/v1",
+  "uv": {
+    "version": "uv 0.12.5 (x86_64-unknown-linux-gnu)",
+    "digest": "sha256:b65f23a420c4acc96427efb30e5ed9bc0f7e25d2d712000f6ede77c1a0de5f46",
+    "candidates": [
+      "{passwd-home}/.local/bin/uv",
+      "/usr/local/bin/uv",
+      "/usr/bin/uv",
+      "/sdm-tools/uv"
+    ]
+  }
+}

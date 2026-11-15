@@ -1,0 +1,545 @@
+{
+  "schema": "sdm-public-case/v1",
+  "title": "指骨轮廓分类：从结果反馈到方案迭代",
+  "dataset": {
+    "name": "DistalPhalanxOutlineCorrect",
+    "record_url": "https://zenodo.org/records/11186597",
+    "train_url": "https://zenodo.org/records/11186597/files/DistalPhalanxOutlineCorrect_TRAIN.ts?download=1",
+    "train_sha256": "fb5b488b8a2d651ed208a64756ceaf20249d877857a852a3efb428f33c14532a",
+    "samples": 600,
+    "length": 80,
+    "classes": 2,
+    "class_labels": [
+      0,
+      1
+    ]
+  },
+  "evaluation": {
+    "primary_metric": "validation.macro_f1",
+    "direction": "maximize",
+    "target": 0.9,
+    "protocol": "sdm-distal-20261113-v1",
+    "split_sha256": "9b12b29a1d2032f5ff7df4d40c17ac7038d53d6981bfa7769a45a112eba87c19",
+    "train_samples": 449,
+    "validation_samples": 151,
+    "validation_class_support": [
+      56,
+      95
+    ],
+    "test_used": false,
+    "checkpoint_selection": "max validation macro_f1 then min validation loss; earliest tie",
+    "limits": [
+      "单随机种子42",
+      "固定TRAIN内部验证集被多轮自适应复用",
+      "未进行独立TEST泛化验收"
+    ]
+  },
+  "execution": {
+    "backend": "LPAI 组件库",
+    "training_location": "远端",
+    "epochs_range": [
+      20,
+      30
+    ],
+    "maximum_trial_count": null
+  },
+  "preparation_event": {
+    "kind": "declared-interface-fault-exercise",
+    "description": "原研究的首次准备任务故意包含输入通道2与实际单变量1不一致的错误；真实远端报错后修复接口，再建立有效基线。",
+    "valid_training_round": false,
+    "score": null,
+    "new_user_default": "使用接口正确的初始模型，不默认注入此故障。"
+  },
+  "mainline": [
+    1,
+    6,
+    7,
+    14
+  ],
+  "baseline_round": 1,
+  "best_round": 14,
+  "status": "registered-validation-goal-met",
+  "rounds": [
+    {
+      "id": "trial-01",
+      "round": 1,
+      "base_round": null,
+      "title": "建立卷积分类基线",
+      "change": "建立当前数据拆分与验证协议下的卷积分类基线。",
+      "macro_f1": 0.8449981336319522,
+      "delta_from_base": null,
+      "incumbent_after": 1,
+      "selected_epoch": 16,
+      "training": {
+        "epochs": 20,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8543046357615894,
+        "macro_f1": 0.8449981336319522,
+        "confusion_matrix": [
+          [
+            46,
+            10
+          ],
+          [
+            12,
+            83
+          ]
+        ]
+      },
+      "next_decision": "后续选择：沿用当前候选；实际起点为实验1。保留最优骨干与训练配方，改用四个时间分段池化，并调整分类器维度。"
+    },
+    {
+      "id": "trial-02",
+      "round": 2,
+      "base_round": 1,
+      "title": "四段池化对照",
+      "change": "保留最优骨干与训练配方，改用四个时间分段池化，并调整分类器维度。",
+      "macro_f1": 0.7927450980392157,
+      "delta_from_base": -0.05225303559273653,
+      "incumbent_after": 1,
+      "selected_epoch": 12,
+      "training": {
+        "epochs": 20,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8145695364238411,
+        "macro_f1": 0.7927450980392157,
+        "confusion_matrix": [
+          [
+            37,
+            19
+          ],
+          [
+            9,
+            86
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验1。回到最优配方，将三个批归一化层替换为四组分组归一化，保留其余设置。"
+    },
+    {
+      "id": "trial-03",
+      "round": 3,
+      "base_round": 1,
+      "title": "改用分组归一化",
+      "change": "回到最优配方，将三个批归一化层替换为四组分组归一化，保留其余设置。",
+      "macro_f1": 0.3861788617886179,
+      "delta_from_base": -0.4588192718433343,
+      "incumbent_after": 1,
+      "selected_epoch": 17,
+      "training": {
+        "epochs": 20,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.6291390728476821,
+        "macro_f1": 0.3861788617886179,
+        "confusion_matrix": [
+          [
+            0,
+            56
+          ],
+          [
+            0,
+            95
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验1。保留最优骨干，增加从原始输入到分类分数的零初始化仿射分支，联合训练。"
+    },
+    {
+      "id": "trial-04",
+      "round": 4,
+      "base_round": 1,
+      "title": "加入原始输入旁路",
+      "change": "保留最优骨干，增加从原始输入到分类分数的零初始化仿射分支，联合训练。",
+      "macro_f1": 0.8093434343434344,
+      "delta_from_base": -0.03565469928851783,
+      "incumbent_after": 1,
+      "selected_epoch": 19,
+      "training": {
+        "epochs": 20,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8278145695364238,
+        "macro_f1": 0.8093434343434344,
+        "confusion_matrix": [
+          [
+            39,
+            17
+          ],
+          [
+            9,
+            86
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验1。只将训练损失改为按训练类别频率倒数加权的交叉熵，权重为[449/332,449/566]，架构与样本暴露保持。"
+    },
+    {
+      "id": "trial-05",
+      "round": 5,
+      "base_round": 1,
+      "title": "使用类别加权损失",
+      "change": "只将训练损失改为按训练类别频率倒数加权的交叉熵，权重为[449/332,449/566]，架构与样本暴露保持。",
+      "macro_f1": 0.8427083333333334,
+      "delta_from_base": -0.002289800298618805,
+      "incumbent_after": 1,
+      "selected_epoch": 20,
+      "training": {
+        "epochs": 20,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8543046357615894,
+        "macro_f1": 0.8427083333333334,
+        "confusion_matrix": [
+          [
+            44,
+            12
+          ],
+          [
+            10,
+            85
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验1。将膨胀率从[1,1,1]改为[1,4,8]，填充改为[3,8,8]，保留其余设置。"
+    },
+    {
+      "id": "trial-06",
+      "round": 6,
+      "base_round": 1,
+      "title": "扩大卷积时间跨度",
+      "change": "将膨胀率从[1,1,1]改为[1,4,8]，填充改为[3,8,8]，保留其余设置。",
+      "macro_f1": 0.8893772893772893,
+      "delta_from_base": 0.04437915574533713,
+      "incumbent_after": 6,
+      "selected_epoch": 19,
+      "training": {
+        "epochs": 20,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8940397350993378,
+        "macro_f1": 0.8893772893772893,
+        "confusion_matrix": [
+          [
+            52,
+            4
+          ],
+          [
+            12,
+            83
+          ]
+        ]
+      },
+      "next_decision": "后续选择：沿用当前候选；实际起点为实验6。沿用实验6配方，从20轮延长到30轮，并检查共同训练前缀。"
+    },
+    {
+      "id": "trial-07",
+      "round": 7,
+      "base_round": 6,
+      "title": "延长至30轮训练",
+      "change": "沿用实验6配方，从20轮延长到30轮，并检查共同训练前缀。",
+      "macro_f1": 0.8953568953568953,
+      "delta_from_base": 0.005979605979606006,
+      "incumbent_after": 7,
+      "selected_epoch": 27,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.9006622516556292,
+        "macro_f1": 0.8953568953568953,
+        "confusion_matrix": [
+          [
+            51,
+            5
+          ],
+          [
+            10,
+            85
+          ]
+        ]
+      },
+      "next_decision": "后续选择：沿用当前候选；实际起点为实验7。前160次更新使用0.001，后80次更新使用0.0001，保留优化器状态和其他设置。"
+    },
+    {
+      "id": "trial-08",
+      "round": 8,
+      "base_round": 7,
+      "title": "训练后段降低学习率",
+      "change": "前160次更新使用0.001，后80次更新使用0.0001，保留优化器状态和其他设置。",
+      "macro_f1": 0.8893772893772893,
+      "delta_from_base": -0.005979605979606006,
+      "incumbent_after": 7,
+      "selected_epoch": 19,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8940397350993378,
+        "macro_f1": 0.8893772893772893,
+        "confusion_matrix": [
+          [
+            52,
+            4
+          ],
+          [
+            12,
+            83
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验7。以实验7为基准，将全局平均池化替换为时间均值与最大值的等权聚合。"
+    },
+    {
+      "id": "trial-09",
+      "round": 9,
+      "base_round": 7,
+      "title": "平均与最大统计融合",
+      "change": "以实验7为基准，将全局平均池化替换为时间均值与最大值的等权聚合。",
+      "macro_f1": 0.8674520674520675,
+      "delta_from_base": -0.027904827904827845,
+      "incumbent_after": 7,
+      "selected_epoch": 15,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8741721854304636,
+        "macro_f1": 0.8674520674520675,
+        "confusion_matrix": [
+          [
+            49,
+            7
+          ],
+          [
+            12,
+            83
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验7。只将三个批归一化层的动量从0.1改为累计平均方式。"
+    },
+    {
+      "id": "trial-10",
+      "round": 10,
+      "base_round": 7,
+      "title": "累计归一化统计",
+      "change": "只将三个批归一化层的动量从0.1改为累计平均方式。",
+      "macro_f1": 0.8789208056223763,
+      "delta_from_base": -0.016436089734519044,
+      "incumbent_after": 7,
+      "selected_epoch": 16,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8874172185430463,
+        "macro_f1": 0.8789208056223763,
+        "confusion_matrix": [
+          [
+            47,
+            9
+          ],
+          [
+            8,
+            87
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验7。用卷积核17的稠密卷积替换后两个膨胀卷积，保持有效跨度、序列长度和其他设置。"
+    },
+    {
+      "id": "trial-11",
+      "round": 11,
+      "base_round": 7,
+      "title": "稠密卷积替换膨胀卷积",
+      "change": "用卷积核17的稠密卷积替换后两个膨胀卷积，保持有效跨度、序列长度和其他设置。",
+      "macro_f1": 0.8856060606060605,
+      "delta_from_base": -0.009750834750834825,
+      "incumbent_after": 7,
+      "selected_epoch": 29,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8940397350993378,
+        "macro_f1": 0.8856060606060605,
+        "confusion_matrix": [
+          [
+            47,
+            9
+          ],
+          [
+            7,
+            88
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验7。回到实验7，在最后一个卷积与归一化块外增加无参数恒等连接，再使用原整流激活。"
+    },
+    {
+      "id": "trial-12",
+      "round": 12,
+      "base_round": 7,
+      "title": "增加恒等残差连接",
+      "change": "回到实验7，在最后一个卷积与归一化块外增加无参数恒等连接，再使用原整流激活。",
+      "macro_f1": 0.887271369914147,
+      "delta_from_base": -0.00808552544274832,
+      "incumbent_after": 7,
+      "selected_epoch": 20,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.8940397350993378,
+        "macro_f1": 0.887271369914147,
+        "confusion_matrix": [
+          [
+            49,
+            7
+          ],
+          [
+            9,
+            86
+          ]
+        ]
+      },
+      "next_decision": "后续选择：调整研究方案；实际起点为实验7。用隐藏层宽度64和32的原始坐标感知机，与保留的实验7最优候选进行固定验证协议和训练暴露下的对照。"
+    },
+    {
+      "id": "trial-13",
+      "round": 13,
+      "base_round": 7,
+      "title": "原始坐标多层感知机",
+      "change": "用隐藏层宽度64和32的原始坐标感知机，与保留的实验7最优候选进行固定验证协议和训练暴露下的对照。",
+      "macro_f1": 0.7273789294817332,
+      "delta_from_base": -0.16797796587516212,
+      "incumbent_after": 7,
+      "selected_epoch": 22,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.7748344370860927,
+        "macro_f1": 0.7273789294817332,
+        "confusion_matrix": [
+          [
+            27,
+            29
+          ],
+          [
+            5,
+            90
+          ]
+        ]
+      },
+      "next_decision": "后续选择：回到更优候选；实际起点为实验7。沿用实验7配方，在首个批归一化前加入零初始化的一阶差分卷积分支，其余科学设置保持。"
+    },
+    {
+      "id": "trial-14",
+      "round": 14,
+      "base_round": 7,
+      "title": "增加一阶差分卷积分支",
+      "change": "沿用实验7配方，在首个批归一化前加入零初始化的一阶差分卷积分支，其余科学设置保持。",
+      "macro_f1": 0.9154535274356104,
+      "delta_from_base": 0.020096632078715038,
+      "incumbent_after": 14,
+      "selected_epoch": 27,
+      "training": {
+        "epochs": 30,
+        "lr": 0.001,
+        "batch_size": 64,
+        "channels": 16,
+        "seed": 42,
+        "threads": 1
+      },
+      "validation": {
+        "accuracy": 0.9205298013245033,
+        "macro_f1": 0.9154535274356104,
+        "confusion_matrix": [
+          [
+            51,
+            5
+          ],
+          [
+            7,
+            88
+          ]
+        ]
+      },
+      "next_decision": "后续选择：结束当前研究；实际起点为实验14。登记验证目标已达到，保留实验14的最优结果，结束目标驱动训练；不额外扩展目标或开启新实验。"
+    }
+  ],
+  "sharing": {
+    "content": "真实远端运行的脱敏结果摘要与引导；不包含原任务、账号、运行配置、训练数据或权重",
+    "raw_platform_receipts_included": false,
+    "audit_claim": "数值与原始已核验产物摘要绑定；不是完整公开运行日志或全程零接管的证明"
+  }
+}

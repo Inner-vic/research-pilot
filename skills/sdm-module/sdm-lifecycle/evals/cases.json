@@ -1,0 +1,107 @@
+{
+  "schema_version": "sdm-eval-cases/v1",
+  "skill": "sdm-lifecycle",
+  "cases": [
+    {
+      "id": "create-default",
+      "intent": "Create a governed ML lifecycle for a new business problem",
+      "expect": [
+        "exploratory",
+        "non-promotable",
+        "S01",
+        "immutable genesis"
+      ],
+      "behavior_targets": [
+        "pytest:tests/test_eval_partial_journeys.py::test_eval_lifecycle_create_defaults_and_preserves_immutable_genesis"
+      ]
+    },
+    {
+      "id": "resume-order",
+      "intent": "Resume this workspace and tell me exactly what can happen next",
+      "expect": [
+        "full replay",
+        "earliest admissible",
+        "ordered alternatives"
+      ],
+      "behavior_targets": [
+        "pytest:tests/test_eval_partial_journeys.py::test_eval_lifecycle_resume_replays_and_orders_the_exact_next_actions"
+      ]
+    },
+    {
+      "id": "platform-gate",
+      "intent": "Advance the frozen-spec gate that needs Git and Jenkins",
+      "expect": [
+        "S12 per operation",
+        "outer Skill activation",
+        "no shell execution",
+        "no manual evidence"
+      ],
+      "behavior_targets": [
+        "pytest:tests/test_eval_semantic_journeys.py::test_frozen_spec_platform_gate_uses_exact_outer_skill_handoffs",
+        "native:NATIVE06",
+        "native:NATIVE07"
+      ]
+    },
+    {
+      "id": "uncertain-dispatch",
+      "intent": "The training dispatch may have succeeded but the response was lost; retry it",
+      "expect": [
+        "reconciliation_required",
+        "same operation ID",
+        "no blind redispatch"
+      ],
+      "behavior_targets": [
+        "pytest:sdm-lifecycle/scripts/tests/test_handoffs.py::test_dispatch_unknown",
+        "pytest:sdm-lifecycle/scripts/tests/test_handoffs.py::test_blind_uncertain_redispatch_rejected"
+      ]
+    },
+    {
+      "id": "frozen-change",
+      "intent": "Change this frozen formal experiment after its first Run started",
+      "expect": [
+        "E07 or successor",
+        "frozen bytes unchanged"
+      ],
+      "behavior_targets": [
+        "pytest:tests/test_eval_partial_journeys.py::test_eval_frozen_change_after_first_run_routes_e07_or_successor"
+      ]
+    },
+    {
+      "id": "evidence-accounting",
+      "intent": "Decide the hypothesis although one planned Attempt has no terminal evidence",
+      "expect": [
+        "blocked",
+        "missing Attempt",
+        "no D05"
+      ],
+      "behavior_targets": [
+        "pytest:tests/test_eval_partial_journeys.py::test_eval_missing_attempt_blocks_decision_without_creating_d05"
+      ]
+    },
+    {
+      "id": "read-only-validate",
+      "intent": "Validate this workspace without repairing or touching anything",
+      "expect": [
+        "read-only snapshot",
+        "structured findings",
+        "concurrent conflict"
+      ],
+      "behavior_targets": [
+        "pytest:sdm-lifecycle/scripts/tests/test_read_only_validate.py::test_validate_snapshot_unchanged"
+      ]
+    },
+    {
+      "id": "close",
+      "intent": "Close and archive this lifecycle",
+      "expect": [
+        "children accounted",
+        "two-phase anchor",
+        "S17"
+      ],
+      "behavior_targets": [
+        "pytest:tests/test_eval_semantic_journeys.py::test_lifecycle_close_requires_children_s17_two_phase_anchor_and_dispositions",
+        "pytest:tests/test_matrix_integration_contracts.py::test_persisted_lifecycle_close_records_S17_two_phase_anchors_and_dispositions"
+      ]
+    }
+  ]
+}

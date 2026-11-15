@@ -1,0 +1,11 @@
+{
+  "schema": "sdm-case-files/v1",
+  "files": {
+    "README.md": "def67a4ae909eac7f25136a4ce435d19b97dcff3e9a28200b458b1a76a2b3339",
+    "RUN-GUIDE.zh-CN.md": "b454f499514d89c1b9bf3a9354d2bfa8bbce99100f3d5e1958c462b69daff472",
+    "research-brief.json": "ee4c7c403f64c22536fd496662a35902c394520c19777e95ef44eacc5ed2ce91",
+    "case.json": "4be01ff33bfe8c2b0b0421a0b9bdcbb81581dcfb3aad25e0431f5da5c998dc39",
+    "provenance.json": "f82525414f63ebe638fd6e0ba9edf4ab8234b19e0ca43cca3557ba15f315a32d",
+    "verify_case.py": "137b626340d5da1bcd65d635f06f7074ea6c5e786d4e579599bb32f70f2a81cd"
+  }
+}

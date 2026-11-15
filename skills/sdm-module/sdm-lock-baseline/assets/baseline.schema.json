@@ -1,0 +1,1079 @@
+{
+  "$id": "https://schemas.bmad.dev/sdm/baseline.persisted.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "properties": {
+        "artifact_type": {
+          "const": "B01"
+        },
+        "content": {
+          "additionalProperties": false,
+          "properties": {
+            "baseline_id": {},
+            "data": {},
+            "evaluator": {},
+            "model": {},
+            "scope": {},
+            "tolerances": {}
+          },
+          "required": [
+            "baseline_id",
+            "scope",
+            "model",
+            "data",
+            "evaluator",
+            "tolerances"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifact_type",
+        "content"
+      ]
+    },
+    {
+      "properties": {
+        "artifact_type": {
+          "const": "B02"
+        },
+        "content": {
+          "additionalProperties": false,
+          "properties": {
+            "artifact_uri": {
+              "minLength": 1,
+              "pattern": "^[^?]+:[^?]+$",
+              "type": "string"
+            },
+            "authority": {
+              "items": {
+                "$ref": "#/$defs/digest"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "baseline_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "baseline_fingerprint": {
+              "$ref": "#/$defs/baselineFingerprint"
+            },
+            "baseline_fingerprint_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "baseline_id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "baseline_lock_id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "data_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "evaluator_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "receipts": {
+              "$ref": "#/$defs/platformReceipts"
+            },
+            "reviewer_role": {
+              "const": "independent-protocol-reviewer"
+            },
+            "timestamps": {
+              "$ref": "#/$defs/platformTimestamps"
+            }
+          },
+          "required": [
+            "baseline_lock_id",
+            "baseline_id",
+            "baseline_digest",
+            "data_digest",
+            "evaluator_digest",
+            "baseline_fingerprint",
+            "baseline_fingerprint_digest",
+            "artifact_uri",
+            "timestamps",
+            "receipts",
+            "reviewer_role",
+            "authority"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifact_type",
+        "content"
+      ]
+    },
+    {
+      "properties": {
+        "artifact_type": {
+          "const": "B03"
+        },
+        "content": {
+          "additionalProperties": false,
+          "properties": {
+            "authority": {
+              "items": {
+                "$ref": "#/$defs/digest"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "baseline_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "baseline_fingerprint": {
+              "$ref": "#/$defs/baselineFingerprint"
+            },
+            "baseline_fingerprint_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "baseline_id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "metrics": {
+              "minProperties": 1,
+              "type": "object"
+            },
+            "metrics_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "receipts": {
+              "$ref": "#/$defs/platformReceipts"
+            },
+            "reproduction_id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "run": {
+              "additionalProperties": false,
+              "properties": {
+                "attempt_id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "run_id": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "run_id",
+                "attempt_id"
+              ],
+              "type": "object"
+            },
+            "timestamps": {
+              "$ref": "#/$defs/platformTimestamps"
+            },
+            "tolerance_result": {
+              "additionalProperties": false,
+              "properties": {
+                "passed": {
+                  "const": true
+                },
+                "summary": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "passed",
+                "summary"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "reproduction_id",
+            "baseline_id",
+            "baseline_digest",
+            "baseline_fingerprint",
+            "baseline_fingerprint_digest",
+            "run",
+            "metrics",
+            "metrics_digest",
+            "tolerance_result",
+            "timestamps",
+            "receipts",
+            "authority"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifact_type",
+        "content"
+      ]
+    },
+    {
+      "properties": {
+        "artifact_type": {
+          "const": "B04"
+        },
+        "content": {
+          "additionalProperties": false,
+          "properties": {
+            "active_dependents": {},
+            "authority": {},
+            "baseline_id": {},
+            "deprecation_id": {},
+            "reason": {},
+            "replacement": {}
+          },
+          "required": [
+            "deprecation_id",
+            "baseline_id",
+            "reason",
+            "active_dependents",
+            "replacement",
+            "authority"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifact_type",
+        "content"
+      ]
+    }
+  ],
+  "$defs": {
+    "baselineFingerprint": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "baseline_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "baseline_spec_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "calibration_applicable": {
+          "type": "boolean"
+        },
+        "calibration_manifest_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "const": "not-applicable"
+            }
+          ]
+        },
+        "checkpoint_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "checkpoint_uri": {
+          "minLength": 1,
+          "pattern": "^[^?]+:[^?]+$",
+          "type": "string"
+        },
+        "code_revision": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "dataset_manifest_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "dataset_manifest_ref": {
+          "pattern": "^R04:.+$",
+          "type": "string"
+        },
+        "evaluator_contract_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "evaluator_contract_ref": {
+          "pattern": "^G10:.+$",
+          "type": "string"
+        },
+        "evaluator_identity": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "evaluator_owner_principal_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "model_artifact_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "repository_identity": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "resolved_config_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "run_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "runtime_environment_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "runtime_environment_manifest": {
+          "$ref": "#/$defs/runtimeEnvironmentManifest"
+        },
+        "split_manifest_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "split_manifest_ref": {
+          "pattern": "^R05:.+$",
+          "type": "string"
+        },
+        "tree_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "baseline_id",
+        "baseline_spec_digest",
+        "repository_identity",
+        "code_revision",
+        "tree_digest",
+        "resolved_config_digest",
+        "dataset_manifest_ref",
+        "dataset_manifest_digest",
+        "split_manifest_ref",
+        "split_manifest_digest",
+        "calibration_applicable",
+        "calibration_manifest_digest",
+        "evaluator_contract_ref",
+        "evaluator_contract_digest",
+        "evaluator_identity",
+        "evaluator_owner_principal_ids",
+        "runtime_environment_manifest",
+        "runtime_environment_digest",
+        "run_id",
+        "attempt_id",
+        "checkpoint_uri",
+        "checkpoint_digest",
+        "model_artifact_digest"
+      ],
+      "type": "object"
+    },
+    "digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "runtimeEnvironmentManifest": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "schema": {
+              "const": "sdm-runtime-environment/v1"
+            },
+            "environment_instance_identity": {
+              "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            "container_image_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "container_image_signature_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "operating_system": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "version": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "architecture": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "version",
+                "architecture"
+              ],
+              "type": "object"
+            },
+            "driver": {
+              "additionalProperties": false,
+              "properties": {
+                "vendor": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "version": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "vendor",
+                "version"
+              ],
+              "type": "object"
+            },
+            "cuda": {
+              "additionalProperties": false,
+              "properties": {
+                "toolkit_version": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "runtime_version": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "toolkit_version",
+                "runtime_version"
+              ],
+              "type": "object"
+            },
+            "libraries": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "version": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "artifact_digest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "name",
+                  "version",
+                  "artifact_digest"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "gpu": {
+              "additionalProperties": false,
+              "properties": {
+                "vendor": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "model": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "count": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "memory_bytes": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "compute_capability": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "vendor",
+                "model",
+                "count",
+                "memory_bytes",
+                "compute_capability"
+              ],
+              "type": "object"
+            },
+            "cpu": {
+              "additionalProperties": false,
+              "properties": {
+                "architecture": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "model": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "logical_cores": {
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "architecture",
+                "model",
+                "logical_cores"
+              ],
+              "type": "object"
+            },
+            "kernel": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "release": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "release"
+              ],
+              "type": "object"
+            },
+            "distributed_topology": {
+              "additionalProperties": false,
+              "properties": {
+                "backend": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "node_count": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "world_size": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "processes_per_node": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "interconnect": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "backend",
+                "node_count",
+                "world_size",
+                "processes_per_node",
+                "interconnect"
+              ],
+              "type": "object"
+            },
+            "dependency_lock_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "environment_variables": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "pattern": "^[A-Z][A-Z0-9_]{0,127}$",
+                    "type": "string"
+                  },
+                  "value_digest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value_digest"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "power_mode": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema",
+            "environment_instance_identity",
+            "container_image_digest",
+            "container_image_signature_digest",
+            "operating_system",
+            "driver",
+            "cuda",
+            "libraries",
+            "gpu",
+            "cpu",
+            "kernel",
+            "distributed_topology",
+            "dependency_lock_digest",
+            "environment_variables"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "schema": {
+              "const": "sdm-devspace-runtime-environment/v1"
+            },
+            "environment_instance_identity": {
+              "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            "container_image_digest": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/digest"
+                },
+                {
+                  "const": "not-provided"
+                }
+              ]
+            },
+            "container_image_signature_digest": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/digest"
+                },
+                {
+                  "const": "not-provided"
+                }
+              ]
+            },
+            "operating_system": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "version": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "architecture": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "version",
+                "architecture"
+              ],
+              "type": "object"
+            },
+            "driver": {
+              "additionalProperties": false,
+              "properties": {
+                "vendor": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "version": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "vendor",
+                "version"
+              ],
+              "type": "object"
+            },
+            "cuda": {
+              "additionalProperties": false,
+              "properties": {
+                "toolkit_version": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "runtime_version": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "toolkit_version",
+                "runtime_version"
+              ],
+              "type": "object"
+            },
+            "libraries": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "version": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "artifact_digest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "name",
+                  "version",
+                  "artifact_digest"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "gpu": {
+              "additionalProperties": false,
+              "properties": {
+                "vendor": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "model": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "count": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "memory_bytes": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "compute_capability": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "vendor",
+                "model",
+                "count",
+                "memory_bytes",
+                "compute_capability"
+              ],
+              "type": "object"
+            },
+            "cpu": {
+              "additionalProperties": false,
+              "properties": {
+                "architecture": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "model": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "logical_cores": {
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "architecture",
+                "model",
+                "logical_cores"
+              ],
+              "type": "object"
+            },
+            "kernel": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "release": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "release"
+              ],
+              "type": "object"
+            },
+            "distributed_topology": {
+              "additionalProperties": false,
+              "properties": {
+                "backend": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "node_count": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "world_size": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "processes_per_node": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "interconnect": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "backend",
+                "node_count",
+                "world_size",
+                "processes_per_node",
+                "interconnect"
+              ],
+              "type": "object"
+            },
+            "dependency_lock_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "environment_variables": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "pattern": "^[A-Z][A-Z0-9_]{0,127}$",
+                    "type": "string"
+                  },
+                  "value_digest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value_digest"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "power_mode": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "image_provenance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "backend",
+                "purpose",
+                "namespace",
+                "space_uid",
+                "image_reference",
+                "platform_spec_digest",
+                "content_status",
+                "signature_status"
+              ],
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "space_uid": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "image_reference": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "backend": {
+                  "const": "lpai-devspace"
+                },
+                "purpose": {
+                  "const": "diagnostic-only"
+                },
+                "platform_spec_digest": {
+                  "type": "string",
+                  "format": "sha256"
+                },
+                "content_status": {
+                  "enum": [
+                    "resolved",
+                    "not-provided"
+                  ]
+                },
+                "signature_status": {
+                  "enum": [
+                    "verified",
+                    "not-provided"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "schema",
+            "environment_instance_identity",
+            "container_image_digest",
+            "container_image_signature_digest",
+            "operating_system",
+            "driver",
+            "cuda",
+            "libraries",
+            "gpu",
+            "cpu",
+            "kernel",
+            "distributed_topology",
+            "dependency_lock_digest",
+            "environment_variables",
+            "image_provenance"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "platformReceipts": {
+      "additionalProperties": false,
+      "properties": {
+        "git.snapshot": {
+          "$ref": "#/$defs/receiptReference"
+        },
+        "ml.baseline-reproduction": {
+          "$ref": "#/$defs/receiptReference"
+        },
+        "ml.baseline-locked-evaluation": {
+          "$ref": "#/$defs/receiptReference"
+        }
+      },
+      "required": [
+        "git.snapshot",
+        "ml.baseline-reproduction",
+        "ml.baseline-locked-evaluation"
+      ],
+      "type": "object"
+    },
+    "platformTimestamps": {
+      "additionalProperties": false,
+      "properties": {
+        "git_snapshot_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "jenkins_completed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "jenkins_started_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "ml_completed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "ml_started_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "git_snapshot_at",
+        "jenkins_started_at",
+        "jenkins_completed_at",
+        "ml_started_at",
+        "ml_completed_at"
+      ],
+      "type": "object"
+    },
+    "receiptReference": {
+      "additionalProperties": false,
+      "properties": {
+        "producer_identity": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "producer_attestation_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "producer_principal_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "provider_receipt_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "provider_receipt_uri": {
+          "minLength": 1,
+          "pattern": "^[^?]+:[^?]+$",
+          "type": "string"
+        },
+        "receipt_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "request_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "request_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "result_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "result_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "request_digest",
+        "result_id",
+        "result_digest",
+        "receipt_digest",
+        "producer_identity",
+        "producer_principal_id",
+        "producer_attestation_digest",
+        "provider_receipt_uri",
+        "provider_receipt_digest"
+      ],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "artifact_type": {
+      "enum": [
+        "B01",
+        "B02",
+        "B03",
+        "B04"
+      ]
+    },
+    "content": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "content"
+  ],
+  "title": "Baseline Persisted Artifact Contract",
+  "type": "object"
+}

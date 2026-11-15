@@ -1,0 +1,416 @@
+{
+    "$id": "https://schemas.bmad.dev/sdm/contract-record.persisted.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "oneOf": [
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G01"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "exception_policy": {},
+                        "freeze_policy": {},
+                        "principles": {},
+                        "separation_of_duties": {},
+                        "source_refs": {}
+                    },
+                    "required": [
+                        "principles",
+                        "separation_of_duties",
+                        "freeze_policy",
+                        "exception_policy"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G02"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "references": {},
+                        "source_refs": {}
+                    },
+                    "required": [
+                        "references"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G03"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "dataset_identity": {},
+                        "lineage": {},
+                        "quality_policy": {},
+                        "schema": {},
+                        "source_refs": {},
+                        "version": {}
+                    },
+                    "required": [
+                        "dataset_identity",
+                        "version",
+                        "schema",
+                        "quality_policy",
+                        "lineage"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G04"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "conventions": {},
+                        "coordinate_frames": {},
+                        "golden_artifacts": {},
+                        "source_refs": {},
+                        "transforms": {},
+                        "units": {}
+                    },
+                    "required": [
+                        "coordinate_frames",
+                        "transforms",
+                        "units",
+                        "conventions",
+                        "golden_artifacts"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G05"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "calibration_identity": {},
+                        "frames": {},
+                        "source_refs": {},
+                        "uncertainty": {},
+                        "validity": {}
+                    },
+                    "required": [
+                        "calibration_identity",
+                        "frames",
+                        "validity",
+                        "uncertainty"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G06"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "alignment": {},
+                        "clock_domains": {},
+                        "missing_policy": {},
+                        "source_refs": {},
+                        "tolerance": {}
+                    },
+                    "required": [
+                        "clock_domains",
+                        "alignment",
+                        "tolerance",
+                        "missing_policy"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G07"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "classes": {},
+                        "ontology_identity": {},
+                        "semantics": {},
+                        "source_refs": {},
+                        "version": {}
+                    },
+                    "required": [
+                        "ontology_identity",
+                        "classes",
+                        "semantics",
+                        "version"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G08"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "geometry_effects": {},
+                        "operations": {},
+                        "ordering": {},
+                        "probabilities": {},
+                        "source_refs": {}
+                    },
+                    "required": [
+                        "operations",
+                        "probabilities",
+                        "ordering",
+                        "geometry_effects"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G09"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "dtype": {},
+                        "inputs": {},
+                        "outputs": {},
+                        "runtime_validator_digest": {},
+                        "shape": {},
+                        "source_refs": {},
+                        "units": {}
+                    },
+                    "required": [
+                        "inputs",
+                        "outputs",
+                        "shape",
+                        "dtype",
+                        "units",
+                        "runtime_validator_digest"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G10"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "evaluator_identity": {},
+                        "inconclusive_rule": {},
+                        "metric_definitions": {},
+                        "owner_principal_ids": {
+                            "items": {
+                                "minLength": 1,
+                                "type": "string"
+                            },
+                            "minItems": 1,
+                            "type": "array",
+                            "uniqueItems": true
+                        },
+                        "slices": {},
+                        "source_refs": {},
+                        "tolerances": {}
+                    },
+                    "required": [
+                        "evaluator_identity",
+                        "metric_definitions",
+                        "slices",
+                        "tolerances",
+                        "inconclusive_rule",
+                        "owner_principal_ids"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G11"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "artifacts": {},
+                        "source_refs": {},
+                        "stressors": {},
+                        "suite_identity": {},
+                        "thresholds": {}
+                    },
+                    "required": [
+                        "suite_identity",
+                        "stressors",
+                        "thresholds",
+                        "artifacts"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G12"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "health": {},
+                        "interface": {},
+                        "latency": {},
+                        "memory": {},
+                        "parity": {},
+                        "source_refs": {},
+                        "target": {}
+                    },
+                    "required": [
+                        "target",
+                        "interface",
+                        "parity",
+                        "latency",
+                        "memory",
+                        "health"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        },
+        {
+            "properties": {
+                "artifact_type": {
+                    "const": "G13"
+                },
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "closure": {},
+                        "edge_types": {},
+                        "node_types": {},
+                        "reciprocity": {},
+                        "source_refs": {}
+                    },
+                    "required": [
+                        "node_types",
+                        "edge_types",
+                        "reciprocity",
+                        "closure"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "artifact_type",
+                "content"
+            ]
+        }
+    ],
+    "properties": {
+        "artifact_type": {
+            "enum": [
+                "G01",
+                "G02",
+                "G03",
+                "G04",
+                "G05",
+                "G06",
+                "G07",
+                "G08",
+                "G09",
+                "G10",
+                "G11",
+                "G12",
+                "G13"
+            ]
+        },
+        "content": {
+            "type": "object"
+        }
+    },
+    "required": [
+        "artifact_type",
+        "content"
+    ],
+    "title": "Contract Record Persisted Artifact Contract",
+    "type": "object"
+}

@@ -1,0 +1,7 @@
+[agent]
+code = "evidence-review"
+name = "Evidence Review Agent"
+title = "Independent Evidence Reviewer"
+icon = "🔎"
+description = "Independently audits evidence completeness, validity, fairness, geometry, statistics, and deployment parity."
+agent_type = "stateless"

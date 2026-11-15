@@ -1,0 +1,205 @@
+{
+  "schema": "sdm-event-types/v1",
+  "schema_version": "1.0.0",
+  "event_schema": "schemas/event.schema.json",
+  "immutable": true,
+  "event_types": [
+    {
+      "name": "workspace.created",
+      "effect": "establish canonical genesis and exploratory research defaults"
+    },
+    {
+      "name": "lifecycle.advanced",
+      "effect": "record one successfully evaluated lifecycle-step transition"
+    },
+    {
+      "name": "lifecycle.step-skipped",
+      "effect": "record a replay-derived non-applicable lifecycle row without fabricating its outputs or gate facts"
+    },
+    {
+      "name": "engine.migrated",
+      "effect": "activate new pinned bundle for later events"
+    },
+    {
+      "name": "artifact.published",
+      "effect": "make version immutable"
+    },
+    {
+      "name": "baseline.locked",
+      "effect": "lock B01 via B02/B03"
+    },
+    {
+      "name": "baseline.deprecated",
+      "effect": "append B04 without rewriting pins"
+    },
+    {
+      "name": "readiness.approved",
+      "effect": "append immutable E02/S04 approval"
+    },
+    {
+      "name": "protocol.freeze-provisional",
+      "effect": "canonical two-phase freeze provisional event; no gate effect"
+    },
+    {
+      "name": "experiment.frozen",
+      "effect": "freeze canonical E01 only after anchor acceptance"
+    },
+    {
+      "name": "amendment.accepted",
+      "effect": "append pre-Run non-material E06"
+    },
+    {
+      "name": "deviation.observed",
+      "effect": "append E07 at authenticated affected sequence"
+    },
+    {
+      "name": "experiment.superseded",
+      "effect": "create reciprocal predecessor/successor links"
+    },
+    {
+      "name": "implementation.started",
+      "effect": "enter implementation in-progress"
+    },
+    {
+      "name": "implementation.reviewed",
+      "effect": "record S07 and review state"
+    },
+    {
+      "name": "implementation.accepted",
+      "effect": "record S08 and implementation done"
+    },
+    {
+      "name": "preflight.accepted",
+      "effect": "record S09 distinct from S04/E02"
+    },
+    {
+      "name": "run.materialized",
+      "effect": "create immutable R01/R02 and planned Attempt"
+    },
+    {
+      "name": "run.dispatched",
+      "effect": "record first affected dispatch sequence"
+    },
+    {
+      "name": "attempt.started",
+      "effect": "record authenticated Attempt start"
+    },
+    {
+      "name": "attempt.terminal",
+      "effect": "retain successful/failed/cancelled/invalid Attempt"
+    },
+    {
+      "name": "attempt.retry-created",
+      "effect": "new Attempt under same Run; prior terminal retained"
+    },
+    {
+      "name": "hpo.trial-recorded",
+      "effect": "retain every HPO trial and Attempt"
+    },
+    {
+      "name": "hpo.selection-recorded",
+      "effect": "bind replayable selected configuration"
+    },
+    {
+      "name": "confirmation.materialized",
+      "effect": "create independently seeded confirmation Run"
+    },
+    {
+      "name": "evaluation.accepted",
+      "effect": "bind locked-evaluator receipt"
+    },
+    {
+      "name": "robustness.assessed",
+      "effect": "retain pass/fail robustness evidence"
+    },
+    {
+      "name": "evidence.built",
+      "effect": "append D01-D04 bundle"
+    },
+    {
+      "name": "evidence.reviewed",
+      "effect": "append S10 independent review"
+    },
+    {
+      "name": "decision.provisional",
+      "effect": "record D05 proposal; no scientific gate effect"
+    },
+    {
+      "name": "decision.accepted",
+      "effect": "enact exactly one canonical scientific outcome after anchor acceptance"
+    },
+    {
+      "name": "decision.superseded",
+      "effect": "append successor D05 with exact immutable scientific evidence closure"
+    },
+    {
+      "name": "handoff.configuration-required",
+      "effect": "durably block an explicitly attempted request at its missing pinned binding without fabricating S12"
+    },
+    {
+      "name": "handoff.created",
+      "effect": "append immutable S12 logical request"
+    },
+    {
+      "name": "handoff.dispatched",
+      "effect": "record dispatch correlation without assuming success"
+    },
+    {
+      "name": "handoff.result-ingested",
+      "effect": "accept at most one exact terminal S13"
+    },
+    {
+      "name": "handoff.cancelled",
+      "effect": "cancel request without deleting it"
+    },
+    {
+      "name": "handoff.retry-created",
+      "effect": "create linked new request/idempotency key"
+    },
+    {
+      "name": "handoff.superseded",
+      "effect": "supersede request without changing old packet"
+    },
+    {
+      "name": "handoff.reconciliation-required",
+      "effect": "block possible external effect while retaining coordinator_disposition invoke_error or dispatch_unknown"
+    },
+    {
+      "name": "handoff.reconciled",
+      "effect": "commit exact result or proof of no effect"
+    },
+    {
+      "name": "anchor.accepted",
+      "effect": "enact associated formal transition"
+    },
+    {
+      "name": "substate.recorded",
+      "scope": "internal-control-plane",
+      "effect": "record a named orthogonal transition substate without flattening it"
+    },
+    {
+      "name": "exception.granted",
+      "effect": "append scoped S15; never bypass a Never rule"
+    },
+    {
+      "name": "lifecycle.cancelled",
+      "effect": "append S16 after all child dispositions"
+    },
+    {
+      "name": "lifecycle.archive-provisional",
+      "effect": "record S17 proposal; no closure effect"
+    },
+    {
+      "name": "closure.provisional",
+      "effect": "canonical two-phase closure provisional event; no gate effect"
+    },
+    {
+      "name": "lifecycle.archived",
+      "effect": "archive after anchor acceptance"
+    },
+    {
+      "name": "lifecycle.closed",
+      "effect": "terminal closure after anchor acceptance"
+    }
+  ]
+}

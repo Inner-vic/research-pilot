@@ -1,0 +1,116 @@
+# Collection template only. Empty strings and zeros are unresolved, not defaults.
+# Copy into the model project's owned branch; resolve from user/project evidence.
+# Never pass this file directly to a provider or treat it as execution approval.
+record_kind = "resource-confirmation-proposal"
+status = "preparation-only"
+purpose = ""
+defaults_source = ""
+defaults_revision = ""
+
+[identity]
+project = ""
+owned_branch = ""
+source_commit_or_manifest_digest = ""
+resolved_provider_config_path = ""
+resolved_provider_config_digest = ""
+image_version_or_digest = ""
+dataset_version = ""
+split_or_subset_digest = ""
+
+[allocation]
+provider_kind = ""
+namespace = ""
+cluster_and_region = ""
+gpu_type = ""
+queue = ""
+queue_id = ""
+resource_catalog_identity_and_revision = ""
+# Keep requests distinct from package size and model process/device caps.
+allocation_mode = ""
+total_allocated_gpus = 0
+max_allocated_gpus_per_task = 0
+max_active_compute_tasks = 0
+# For a paired study, bind the resolved comparison-group plan and both arm budgets.
+comparison_group_plan_path = ""
+comparison_group_plan_digest = ""
+scheduling_mode = ""
+# Repeat for every actual master/worker role; include idle allocated GPUs.
+[[allocation.roles]]
+role = ""
+instances = 0
+packages_per_instance = 0
+gpus_per_package = 0
+processes_per_instance = 0
+native_resource_fields_source = ""
+package_id = ""
+gpus_per_instance_resolved = 0
+gpu_memory_gib_per_device = 0
+cpu_request_cores_per_instance = 0
+cpu_limit_cores_per_instance = 0
+memory_request_gib_per_instance = 0
+memory_limit_gib_per_instance = 0
+network_and_rdma = ""
+node_selector_and_affinity = ""
+storage_and_data_locality = ""
+fixed_vs_custom_dimensions = ""
+runtime_demand_and_measurement_basis = ""
+
+[availability]
+# A snapshot is not a reservation; a current quota cannot explain a past wait.
+request_envelope_digest = ""
+observed_at = ""
+valid_until = ""
+queue_headroom_evidence = ""
+workspace_or_user_headroom_evidence = ""
+joint_per_node_placement_evidence = ""
+pending_work_reservations_priority_and_maintenance = ""
+catalogue_fit_status = "unknown"
+aggregate_headroom_status = "unknown"
+joint_placement_status = "unknown"
+unknown_dimensions_and_impact = ""
+configuration_suitability_and_alternatives = ""
+
+[training]
+profile = ""
+per_device_batch = 0
+gradient_accumulation = 0
+effective_batch = 0
+epochs_or_steps = 0
+optimizer_scheduler_clock = ""
+initial_checkpoint_identity = ""
+
+[budget]
+currency = ""
+billing_basis = ""
+quote_source_and_time = ""
+total_allocation_price_per_hour = 0.0
+max_resource_hours_including_setup_cleanup = 0.0
+gpu_hour_ceiling = 0.0
+cost_ceiling = 0.0
+billing_uncertainty = ""
+pending_and_initialization_billing_basis = ""
+approved_retry_scope = ""
+# Group caps include both arms and all other allocations inside this approval.
+group_peak_allocation_price_per_hour = 0.0
+group_gpu_hour_ceiling = 0.0
+group_cost_ceiling = 0.0
+
+[monitoring]
+poll_interval_seconds = 0
+max_queue_wait_seconds = 0
+max_startup_and_compile_seconds = 0
+minimum_useful_model_window_seconds = 0
+cleanup_reserve_seconds = 0
+queue_timeout_cancel_and_same_uid_readback = ""
+stop_conditions = []
+deadline_and_independent_enforcer = ""
+platform_stop_and_same_uid_readback = ""
+checkpoint_recovery_boundary = ""
+output_and_retention_locations = ""
+
+[confirmation]
+status = "pending"
+user_message_reference = ""
+user_statement = ""
+confirmed_provider_config_digest = ""
+confirmed_scope_and_expiry = ""
