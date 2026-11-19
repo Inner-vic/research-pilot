@@ -13,9 +13,21 @@ ResearchPilot 基于 BMAD ML / SDM 演进，把研究引导、远端执行、结
 ## 实现了什么
 
 - 通过 Codex Skill 引导确认任务、数据、指标、基线和资源范围。
-- 以 SDM 的五阶段、13 步组织研究；主会话与独立评审会话协作，按授权范围推进方案、实施和结果分析。
+- 继承 SDM 的研究规范，重组为五阶段、13 步；主会话与独立评审会话协作，按授权范围推进方案、实施和结果分析。
 - 展示当前最优、实验指标、分类明细与方案/结果图谱。
 - 暂停、继续和恢复沿用原研究身份，保留活动任务、冻结运行和未知请求。
+
+## 一轮研究如何衔接
+
+| 阶段 | 关键交付 |
+| --- | --- |
+| 研究起点（1–3） | 可检验的问题、数据评价约定、执行范围与比较依据 |
+| 实验准备（4–5） | 经复核的实验方案、准备检查与固定的研究依据 |
+| 实施与验证（6–8） | 实现版本、独立代码审查、工程与远端功能检查 |
+| 执行与评价（9–11） | 可追踪任务、完整产物及口径一致的评价结果 |
+| 复核与决策（12–13） | 证据复核、保留候选，以及继续、补证、回退或结束的判断 |
+
+后续实验可复用仍有效的约定，围绕新假设回到实验设计；最新结果不自动替换保留候选。任务执行完成、评价有效和目标达成分别判断。步骤编号表达职责，实际顺序服从环境依赖；完整说明见[研究流程](docs/WORKFLOW-GUIDE.zh-CN.md)。
 
 ## 公开案例：14 次实验的改进与回退
 
@@ -45,7 +57,7 @@ ResearchPilot 基于 BMAD ML / SDM 演进，把研究引导、远端执行、结
 
 ## 来源与实现边界
 
-ResearchPilot 继承并演进 BMAD ML / SDM 的治理规范，保留原来源与组件归属；框架扩展见[继承与整合说明](docs/COMPARISON-WITH-BMAD-ML.zh-CN.md)，持续推进机制见[自主迭代](docs/AUTONOMOUS-ITERATION.zh-CN.md)。
+研究方法、规范对象、校验与证据规则来自 BMAD ML / SDM；ResearchPilot 在此基础上补充 Codex 双会话、后台控制、平台接入、提交防重和工作台。流程重组保留原职责及历史身份，来源与实现分别说明。详见[继承与整合说明](docs/COMPARISON-WITH-BMAD-ML.zh-CN.md)和[自主迭代](docs/AUTONOMOUS-ITERATION.zh-CN.md)。
 
 当前通用结果契约支持规定格式的多类别分类与标量回归，提供 LPAI 组件和项目命令驱动入口。接口支持、离线测试和真实平台/模型验收分别记录，具体接入与限制见[项目接入](docs/GENERIC-DELIVERY.zh-CN.md)和[支持范围](docs/EXECUTION.md)。上述14轮曲线属于历史独立案例，不代表新接口的普遍性能收益。
 
@@ -62,4 +74,4 @@ ResearchPilot 继承并演进 BMAD ML / SDM 的治理规范，保留原来源与
 
 使用步骤、依赖和本地验证见[使用与验证](docs/project-guide.md)；源码来源与验证范围见[发布说明](https://github.com/Inner-vic/research-pilot/blob/main/PUBLICATION.md)。本页用于介绍实习阶段的实现与设计，具体结论以所链接的代码和证据为准。
 
-[IterLab Codex](https://github.com/Inner-vic/iterlab-codex)是独立的原生执行内核接入原型；两个仓库保留不同实现路径与验证结论。
+ResearchPilot 是这组项目当前采用的持续研究方案；[IterLab Codex](https://github.com/Inner-vic/iterlab-codex)保留为原生执行内核接入的探索参考，两者保留各自的实现路径与验证结论。
