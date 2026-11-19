@@ -1,0 +1,2 @@
+# Offline control suite, pinned to the version used for the accepted source.
+pytest==9.2.0

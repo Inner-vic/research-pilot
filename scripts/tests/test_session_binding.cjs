@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const target=process.argv[2]||path.resolve(__dirname,'../../skills/sdm-module/sdm-lifecycle/references/dashboard/dashboard.js');
+const source=fs.readFileSync(target,'utf8').split('\n').find(x=>x.startsWith('function renderBinding(s)'));
+assert(source);const node={innerHTML:''};const sandbox={$:()=>node,escapeHtml:x=>String(x).replaceAll('<','&lt;').replaceAll('>','&gt;')};
+vm.createContext(sandbox);vm.runInContext(source,sandbox);
+const binding={project_root:'root',study_id:'study',execution_thread_id:'old-native',explanation:'current records'};
+sandbox.renderBinding({binding});assert(node.innerHTML.includes('old-native'));assert(node.innerHTML.includes('研究实施会话'));
+sandbox.renderBinding({binding:{...binding,working_sessions:{main:{role_label:'研究主会话',thread_id:'main-id',turn_count:3},review:{role_label:'独立评审会话',thread_id:'<unsafe>',turn_count:2,pending:true}}}});
+assert(node.innerHTML.includes('研究主会话'));assert(node.innerHTML.includes('独立评审会话'));assert(node.innerHTML.includes('main-id'));
+assert(node.innerHTML.includes('3次工作记录'));assert(node.innerHTML.includes('等待原调用确认'));
+assert(!node.innerHTML.includes('<unsafe>'));assert(node.innerHTML.includes('&lt;unsafe&gt;'));assert(!node.innerHTML.includes('old-native'));
+console.log('Session binding: legacy view, two persistent contexts and HTML escaping passed');

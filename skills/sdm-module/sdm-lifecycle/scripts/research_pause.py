@@ -13,9 +13,10 @@ def generation(root):
 
 def active_review(root,current):
     selected=None;stage=current['stage']
-    if stage=='reviewing-code' or stage=='needs-attention' and str(current.get('reason','')).startswith('original-code-review:'):
+    initial=stage=='reviewing-initial' or stage=='needs-attention' and str(current.get('reason','')).startswith('original-initial-review:')
+    if initial or stage=='reviewing-code' or stage=='needs-attention' and str(current.get('reason','')).startswith('original-code-review:'):
         if current.get('code_review_project') and current.get('code_review_root'):
-            selected=(Path(current['code_review_project']),Path(current['code_review_root']),'reviewing-code','proposal-review')
+            selected=(Path(current['code_review_project']),Path(current['code_review_root']),'reviewing-initial' if initial else 'reviewing-code','proposal-review')
     elif stage=='reviewing-plan' or stage=='needs-attention' and str(current.get('reason','')).startswith('original-plan-review:'):
         if current.get('replan_root'):selected=(Path(current['replan_root']).parent/'replan-project.json',Path(current['replan_root']),'reviewing-plan','research-replan')
     if selected:

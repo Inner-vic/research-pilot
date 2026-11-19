@@ -1,6 +1,6 @@
 """Read-only validation and recovery for historical project entry installations.
 
-New installs use one native bmad-ml Skill in the Codex client. This legacy
+New installs use one native ResearchPilot Skill in the Codex client. This legacy
 maintenance tool cannot generate a launcher or install another conversation entry.
 """
 import argparse
@@ -56,7 +56,7 @@ def validate(root):
 
 def install(args):
     return {'status':'retired','reason':'legacy_entry_install_removed',
-        'next':'Install the native bmad-ml Skill and select BMAD ML through / in the Codex client.',
+        'next':'Load the ResearchPilot Skill in Codex, select ResearchPilot through /, or use $researchpilot.',
         'model_calls':0,'platform_writes':0,'project_writes':0}
 
 

@@ -1,0 +1,105 @@
+{
+  "schema": "researchpilot-core-lifecycle-docs-validation/v1",
+  "date": "2026-11-15",
+  "source_candidate": "0.3.0-rc6.41",
+  "deliverables": {
+    "current_core_steps": 13,
+    "future_versioned_evolution_allowed": true,
+    "original_steps_mapped": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "canonical_article": "skills/sdm-module/sdm-lifecycle/references/sdm21-to-13-evolution.zh-CN.md",
+    "code_ownership_corrections": [
+      2,
+      3,
+      5,
+      8
+    ],
+    "definition_not_acceptance": true,
+    "controller_or_scientific_rules_changed": false
+  },
+  "verification": {
+    "focused_tests_passed": 30,
+    "xml_sha256": "c0d25b4dea0d5ee01a8eadf841911bd24ff8ab70cacf25f40706dbe876c0cf7d",
+    "scope": "Metadata flexibility/projection integrity and legacy prompt bytes; no live model/platform transports.",
+    "call_chains_checked": [
+      "original schemas/semantics/row gates",
+      "shared dispatch verify/reconcile/apply",
+      "exact review/payload/intent/authority checks"
+    ],
+    "document_step_mapping": "13 headings and 21 original IDs consistent with current metadata",
+    "resolved_changed_source_links": 258,
+    "native_article_and_entry_links_checked": true,
+    "skill_creator_validation": "source entries passed; candidate bundled entry checked separately",
+    "prior_control_evidence": "rc6.40: 209 passed/1 privilege skip; historical evidence, not rerun or added to current 30."
+  },
+  "compatibility": {
+    "unchanged_python_files": 449,
+    "only_changed_python": "scripts/prepare-handover.py (source-export navigation)",
+    "unchanged_normative_asset_schema_files": 47,
+    "unchanged_frozen_configuration_guidance_files": 197,
+    "research_index_unchanged": true,
+    "installed_version": "0.3.0-rc6.37",
+    "installed_files_unchanged": 294,
+    "installed_bundle_sha256": "8713b5675e9e6bb1bea2aa9b3b0a657300b25db242d7c1e4595c579a4955b6dd",
+    "candidate_installed": false,
+    "old_studies_migrated": false
+  },
+  "package": {
+    "files_verified": 327,
+    "new_article_included": true,
+    "bundle_sha256": "78456289b1c39cfef04c7570575f69c22fb2f8f57ef172281e535623d2674b79",
+    "archive_sha256": "a24546952cfc874658db815c6ab81f7e67fa0cfc4b4ec2d2647314860433d445"
+  },
+  "operations": {
+    "real_models": 0,
+    "platform_calls": 0,
+    "new_training": false,
+    "research_controls": 0,
+    "timers_resumed": false,
+    "git_committed": false,
+    "git_pushed": false
+  },
+  "changed_source_files": {
+    "AGENTS.md": "4ffed3e340ee812fbca8f2b81172f20ec72c53926e7af86febc83b2269da20c2",
+    "README.md": "8259637f79cbf80cd02374b887562e3c09e9978dcc9e2d1a081f3a5b911cb1e3",
+    "VERSION": "0834f54a5ce41f2d8b1c5f94bbdf8166b869e7b0feeae7756a1aa5c28fefe05f",
+    "docs/ARCHITECTURE.md": "4a6cebea0b906a245d603a9e106884b7ebbe016b187f3f0d5eac4e182b49b9c5",
+    "docs/CHANGELOG.md": "8babe6f732f295f506eaef23984be99b45aa72ed4bd19aa0dd820d89ac832ec5",
+    "docs/COMPARISON-WITH-BMAD-ML.zh-CN.md": "3cb04515a8eacd9b9a0249e8ee3f7d6bb0e49ecd3ca3957b2fc0f0fa701810ca",
+    "docs/EXECUTION.md": "f95095e5185174a730bdb1929ef7d01d5fe73881d8d6ac079e52433a885e7475",
+    "docs/README.md": "13dd16534e10a65d1da0eb81f845ff0e3b96842fd2be434dd8fa78f4dce937c8",
+    "docs/RESEARCH-CONTRACT.md": "c00005c7d6c4d89237dd512c806b4cff174bd200eee64ffc3913a871460dda51",
+    "docs/SDM-REUSE-PLAN.zh-CN.md": "af7e52775f863a76372b15da2940a8ca97b2089aabb4049a74812088fdc00500",
+    "docs/TERMINOLOGY.zh-CN.md": "9d3d181b09aa2728f70a02f4fe3013f9d822bfbc5c049ab1817f3a78d4676167",
+    "docs/USER-GUIDE.zh-CN.md": "3434b322f33f92b5d436f51e363c32906049db784247168eb50de69b19ade8e4",
+    "docs/WORKFLOW-GUIDE.zh-CN.md": "24a7fb9329d98a973faac6904521e4bbe092a17a23b5911c68ccfd5ba997ae5e",
+    "scripts/prepare-handover.py": "2bc38704be36b97594455824ad4731b994aaaabc6b6bd1d3cbb6fa2bae7f54b1",
+    "skills/bmad-ml/SKILL.md": "3b52d910c9d4a611478fa27b6333031927d73b7992d79c87d29eb78427415f4d",
+    "skills/sdm-module/MODULE.md": "2dd9cf0d01dd9ea3d11c3fa6a8f3cd344d13c57f20b5d47961d80beeb67a5ad3",
+    "skills/sdm-module/sdm-lifecycle/SKILL.md": "6b430c9dc75cbbe61d307f590bdd71742e158593fc1ee0c1b736d3a5226b60e4",
+    "skills/sdm-module/sdm-lifecycle/references/lifecycle-map.json": "05de69d835d5efaf7b0d81a25d51a7a6a17e1fe11d57094004a2397aeee9c40d",
+    "skills/sdm-module/sdm-lifecycle/references/sdm-core.md": "3171093437fb91bc5a07c36b3b96c5bb099e13f4e8fe2fb28d42b6b1490ec751",
+    "skills/sdm-module/sdm-lifecycle/references/sdm21-to-13-evolution.zh-CN.md": "13da12b253f2feeb19e73425800a2be20cdd1402b5a9c2a499155e12cf0ca8a2"
+  }
+}

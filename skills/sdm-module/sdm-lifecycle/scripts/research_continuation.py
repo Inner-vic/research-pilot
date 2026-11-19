@@ -115,11 +115,29 @@ def take_resume(inbox,current,owner=None):
 
 
 
+def original_review_runner(policy,saved):
+    """Reconstruct the exact existing per-role runner, never trust arbitrary saved config."""
+    from model_runner import binding
+    runner=policy['model_runner'];request=saved['request']
+    if request.get('working_session'):
+        from working_sessions import select,context_config
+        role='a' if request.get('purpose') in ('proposal','result-analysis') else 'b'
+        runner,selected=select(policy,runner,role)
+        if request['working_session']!=selected:
+            raise ValueError('review_reconciliation_original_config_changed')
+        context_config(runner,request)
+    if saved['config']!=runner or saved['binding']!=binding(runner,request):
+        raise ValueError('review_reconciliation_original_config_changed')
+    return runner
+
+
 def reconcile_review(owner,state,current):
     """Read original completed SDK turns, then re-enter the same gate."""
     reason=current.get('reason','')
-    if reason not in {'original-plan-review:proposal-model-blocked','original-code-review:proposal-model-blocked'}:return None
-    code_review=reason.startswith('original-code-review:')
+    if reason not in {'original-plan-review:proposal-model-blocked','original-code-review:proposal-model-blocked',
+            'original-initial-review:proposal-model-blocked'}:return None
+    initial_review=reason.startswith('original-initial-review:')
+    code_review=initial_review or reason.startswith('original-code-review:')
     root=Path(current['code_review_root'] if code_review else current['replan_root'])
     project=Path(current['code_review_project']) if code_review else root.parent/'replan-project.json'
     config=read_json(project);runner=config['proposal_review']['model_runner']
@@ -130,11 +148,10 @@ def reconcile_review(owner,state,current):
     proofs=[];unresolved=[];retry=[]
     for request in root.glob('proposal-review/*/model-calls/*/request.json'):
         folder=request.parent;saved=checked(request,'sdm-model-runner-envelope/v1')
-        if saved['config']!=runner or saved['binding']!=binding(runner,saved['request']):
-            raise ValueError('review_reconciliation_original_config_changed')
+        actual_runner=original_review_runner(config['proposal_review'],saved)
         if not native_path(folder/'intent.json').exists():continue
         if not native_path(folder/'backend-completed.json').exists():
-            if not recover(runner,saved['request'],folder,saved['binding']):unresolved.append(str(folder))
+            if not recover(actual_runner,saved['request'],folder,saved['binding']):unresolved.append(str(folder))
         marker=folder/'reconciliation.json'
         if native_path(marker).exists():
             value=read_json(marker)
@@ -154,7 +171,7 @@ def reconcile_review(owner,state,current):
         {'mode':'proposal-review' if code_review else 'research-replan','project':{'path':str(project),
         'sha256':hashlib.sha256(native_path(project).read_bytes()).hexdigest()},'output':str(root)})
     history.append({'fingerprint':fingerprint,'proofs':proofs,'original_job':original_job,'continuation_job':job,'at':time.time(),'resend':False})
-    current.update(job=job,stage='reviewing-code' if code_review else 'reviewing-plan',
+    current.update(job=job,stage='reviewing-initial' if initial_review else 'reviewing-code' if code_review else 'reviewing-plan',
         continuation={'phase':'original-completion-recovered','proofs':proofs,'automatic_resubmit':False})
     current.pop('reason',None)
     return True

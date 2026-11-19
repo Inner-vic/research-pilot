@@ -33,15 +33,15 @@ def brief(project,intervention,level='方案调整'):
  return {'title':title,'description':'已登记'+title+'方案。这里是基于记录类型的中文索引；完整假设和反证请核对原始方案。',
   'kind':'类型索引','source_sha256':key(intervention)}
 
-def verdict(value):return {'approve':'通过','revise':'要求修改','needs-evidence':'要求补证','reject':'否决','stalled':'审议停滞'}.get(value,'已记录')
+def verdict(value):return {'approve':'审议接受','revise':'要求修改','needs-evidence':'要求补证','reject':'否决','stalled':'审议停滞'}.get(value,'已记录')
 
 def annotate(project,study):
  for row in study['rounds']:
   row['zh']=brief(project,row['intervention'],row['change_label'])
-  base=('实验'+str(row['base_number'])) if row['base_number'] else '初始基线'
+  base=('实验'+str(row['base_number'])) if row['base_number'] else '首个有效结果（探索起点）' if row['number']==1 else '未登记的比较对象'
   row['zh']['question']='检验“'+row['zh']['title']+'”在当前登记验证协议下的表现；这是一项待测假设，不是机制已被证实。'
-  row['zh']['comparison']=('实际比较基线为'+base+'，宏平均 F1 为 '+format(row['metric'],'.4f')+
-   ('，相对该基线变化 '+format(row['delta_base'],'+.4f') if row['delta_base'] is not None else '')+'。结果不自动证明因果或跨种子泛化。')
+  row['zh']['comparison']=('比较对象：'+base+'；本轮'+study.get('metric',{}).get('label','主要指标')+'为 '+format(row['metric'],'.4f')+
+   ('，相对该比较对象变化 '+format(row['delta_base'],'+.4f') if row['delta_base'] is not None else '')+'。结果不自动证明因果或跨种子泛化。')
  current=study['current']
  if current.get('governing_plan'):
   p=current['governing_plan'];p['zh']=brief(project,p.get('intervention',''),p.get('change_label','研究方案'))

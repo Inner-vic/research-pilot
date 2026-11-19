@@ -1,38 +1,86 @@
-/* A view-only projection. Every node ID and raw record stays in the SDM snapshot. */
+/* Read-only presentation: plans and experiments; all source records stay intact. */
 (function(root){
  "use strict";
- function project(data,expanded){
-  const groups=data.detail_groups||{},byId=new Map(data.nodes.map(n=>[n.id,n])),keep=new Set(data.nodes.filter(n=>n.id===data.root_id||["plan","result"].includes(n.kind)).map(n=>n.id));
-  for(const id of expanded)for(const member of groups[id]||[])keep.add(member);
-  const outgoing=new Map();for(const e of data.edges){if(e.primary===false)continue;if(!outgoing.has(e.source))outgoing.set(e.source,[]);outgoing.get(e.source).push(e);}
-  const edges=[],seen=new Set(),add=e=>{const key=e.source+">"+e.target+":"+e.kind;if(e.source!==e.target&&!seen.has(key)){seen.add(key);edges.push({...e,id:key});}};
-  for(const source of keep){
-   const queue=(outgoing.get(source)||[]).map(e=>({edge:e,hidden:[]})),visited=new Set();
-   while(queue.length){const {edge,hidden}=queue.shift(),target=edge.target;if(visited.has(target))continue;visited.add(target);
-    if(keep.has(target)){
-     // Expanded process placement is membership, not a claim that its upstream result executed this plan.
-     const owner=byId.get(target)?.detail_group;
-     if(owner&&expanded.has(owner)&&source!==owner&&source!=="result:"+owner.slice(5)&&!byId.get(source)?.detail_group){continue;}
-     add({...edge,source,target,kind:hidden.length?"evolves":edge.kind,label:hidden.length?"":"",hidden_node_ids:[]});
-    }else for(const next of outgoing.get(target)||[])queue.push({edge:next,hidden:[...hidden,target]});
-   }
+ function project(data,study={}){
+  const raw=new Map(data.nodes.map(n=>[n.id,n])),rows=new Map((study.rounds||[]).map(r=>[r.uid,r]));
+  const aliases=new Map(),nodes=[],experiments=new Map(),plans=data.nodes.filter(n=>n.kind==="plan");
+  const rootNode=raw.get(data.root_id);if(rootNode){nodes.push({...rootNode});aliases.set(rootNode.id,rootNode.id);}
+  for(const plan of plans){
+   const row=rows.get(plan.round_uid),records=(data.detail_groups?.[plan.id]||[]).map(id=>raw.get(id)).filter(n=>n&&!["trial","assessment","investigation"].includes(n.kind));
+   const reviews=records.filter(n=>n.kind==="plan_review"),pending=reviews.some(n=>n.status==="pending"),count=reviews.length;
+   nodes.push({...plan,kind_label:"研究方案",original_title:plan.title,
+    title:plan.round_number?"方案"+plan.round_number+(row?.change_label?" · "+row.change_label:""):"当前研究方案",
+    plan_summary:plan.summary,summary:(plan.summary||"")+(count?" · "+count+"条评审记录"+(pending?"，含待完成轮次":""):"")+" · 点击查看方案与评审",
+    record_ids:records.map(n=>n.id),presentation_only:true});
+   aliases.set(plan.id,plan.id);
   }
-  for(const e of data.edges)if(e.primary===false&&keep.has(e.source)&&keep.has(e.target))add(e);
-  for(const owner of expanded){const members=new Set(groups[owner]||[]);for(const member of members){
-   const incoming=edges.some(e=>e.target===member&&(members.has(e.source)||e.source===owner||e.source==="result:"+owner.slice(5)));
-   if(!incoming)add({source:owner,target:member,kind:"process_detail",primary:true,label:"过程记录",story_visible:true});
-  }}
-  const nodes=data.nodes.filter(n=>keep.has(n.id)).map(n=>({...n,summary:n.kind==="plan"&&(groups[n.id]||[]).length?n.summary+" · "+(expanded.has(n.id)?"已展开":"可展开")+" "+groups[n.id].length+" 条过程记录":n.summary}));
-  const location={...(data.execution_location||{})},anchor=id=>keep.has(id)?id:byId.get(id)?.detail_group||data.root_id;
-  location.focus_node_id=anchor(location.focus_node_id);location.active_node_ids=[...new Set((location.active_node_ids||[]).map(anchor))];
-  return {...data,nodes,edges,execution_location:location};
+  // One stable experiment identity spans queued/running/completed/failed states.
+  for(const n of data.nodes.filter(n=>["trial","result"].includes(n.kind))){
+   const uid=n.round_uid||n.task_uid||n.id.replace(/^(failed-trial|trial|result):/,""),id="experiment:"+uid;
+   let exp=experiments.get(id);
+   if(!exp){exp={id,kind:n.kind,kind_label:"实验",title:n.title,status:n.status,summary:n.summary,source_ids:[],round_uid:uid,
+    round_number:n.round_number,detail_group:n.detail_group||"plan:"+uid,presentation_only:true};experiments.set(id,exp);}
+   exp.source_ids.push(n.id);aliases.set(n.id,id);
+   if(n.kind==="result")Object.assign(exp,{kind:"result",status:n.status,summary:n.summary,conclusion:n.conclusion,round_number:n.round_number});
+  }
+  for(const n of data.nodes.filter(n=>["assessment","investigation"].includes(n.kind))){
+   let exp=[...experiments.values()].find(e=>e.detail_group===n.detail_group&&n.detail_group!==data.root_id);
+   if(!exp){const edge=data.edges.find(e=>e.target===n.id&&aliases.has(e.source)&&experiments.has(aliases.get(e.source)));if(edge)exp=experiments.get(aliases.get(edge.source));}
+   if(exp){exp.source_ids.push(n.id);aliases.set(n.id,exp.id);}
+  }
+  for(const exp of experiments.values()){
+   const row=rows.get(exp.round_uid),measured=exp.kind==="result",prefix=exp.round_number?"实验"+exp.round_number:exp.status==="failed"?"失败实验":"当前实验";
+   exp.title=row?prefix+" · "+(study.metric?.label||"主要指标")+" "+Number(row.metric).toFixed(4):
+    measured?prefix+" · 已完成":prefix+" · "+({running:"训练中",pending:"等待执行",failed:"执行失败",completed:"执行完成"}[exp.status]||"已登记");
+   exp.summary=(row?.next_decision_zh||row?.zh?.comparison||exp.summary||"")+" · 点击查看配置、执行、结果与分析";
+   nodes.push(exp);
+  }
+  for(const n of data.nodes)if(!aliases.has(n.id))aliases.set(n.id,aliases.get(n.detail_group)||data.root_id);
+  const ids=new Set(nodes.map(n=>n.id)),edges=[],seen=new Set();
+  const add=(source,target,kind,primary=true,label="")=>{
+   source=aliases.get(source)||source;target=aliases.get(target)||target;
+   if(source===target||!ids.has(source)||!ids.has(target))return;
+   const id=source+">"+target+":"+kind;if(!seen.has(id)){seen.add(id);edges.push({id,source,target,kind,primary,label});}
+  };
+  // Only registered plan ancestry and execution relationships form main edges.
+  // Membership of reviews/implementation never becomes a scientific branch.
+  for(const plan of plans){
+   const incoming=data.edges.filter(e=>e.target===plan.id&&(e.source===data.root_id||raw.get(e.source)?.kind==="result"));
+   const trigger=incoming.find(e=>e.kind==="informed_by"),base=incoming.find(e=>e.primary!==false);
+   const chosen=base||trigger;
+   if(chosen){add(chosen.source,plan.id,"evolves",true,base?"候选起点":"仅记录触发关系");
+    const number=raw.get(chosen.source)?.round_number,node=nodes.find(n=>n.id===plan.id);
+    if(number&&node)node.summary="候选起点：实验"+number+" · "+node.summary;
+   }
+   if(trigger&&base&&trigger.source!==base.source)add(trigger.source,plan.id,"informed_by",false,"结果触发");
+  }
+  for(const exp of experiments.values()){
+   const registered=data.edges.find(e=>exp.source_ids.includes(e.target)&&(raw.get(e.source)?.kind==="plan"||e.source===data.root_id)&&e.primary!==false);
+   if(registered)add(registered.source,exp.id,"executes");
+  }
+  for(const e of data.edges)if(e.primary===false&&e.kind!=="informed_by")add(e.source,e.target,e.kind,false,e.label||"");
+  const anchor=id=>ids.has(id)?id:aliases.get(id)||data.root_id,location={...(data.execution_location||{})};
+  location.focus_node_id=anchor(location.focus_node_id);
+  for(const key of ["active_node_ids","retained_node_ids"])location[key]=[...new Set((location[key]||[]).map(anchor))];
+  return {...data,nodes,edges,execution_location:location,selected_round_uids:study.mainline?.round_uids||[]};
  }
- // Coordinates are a presentation only: no layout edge is added to the record.
+ function detail(data,node,study={}){
+  const raw=new Map(data.nodes.map(n=>[n.id,n])),records=ids=>(ids||[]).map(id=>({node:raw.get(id),detail:data.details?.[id]})).filter(r=>r.node);
+  if(node.kind==="plan")return {node,document:{title:"方案内容与评审过程",content:{sdm_plan:{node,records:records(node.record_ids),issues:(data.review_issues||[]).filter(i=>i.owner===node.id)}}}};
+  if(node.source_ids){
+   const successors=(study.rounds||[]).filter(r=>r.plan?.parent_uid===node.round_uid).map(r=>({title:"方案"+r.number,plan:r.plan}));
+   if(study.current?.proposal?.parent_uid===node.round_uid)successors.push({title:"已登记的后续决策",plan:study.current.proposal});
+   const decisions=successors.filter((item,i,all)=>all.findIndex(x=>JSON.stringify(x.plan)===JSON.stringify(item.plan))===i);
+   return {node,document:{title:"实验配置、执行与分析",content:{sdm_experiment:{node,row:(study.rounds||[]).find(r=>r.uid===node.round_uid),decisions,records:records(node.source_ids)}}}};
+  }
+  return data.details?.[node.id]||{node,document:{title:"研究记录",content:{sdm_process_records:records(data.detail_groups?.[node.id])}}};
+ }
  function ownerOf(data,node){
   if(!node)return null;
   if(node.kind==="plan"||node.id===data.root_id)return node.id;
-  return node.detail_group||(node.round_uid?"plan:"+node.round_uid:node.id.startsWith("result:")?"plan:"+node.id.slice(7):null);
+  return node.detail_group||data.root_id;
  }
+
  function layout(data,{compact=false}={}){
   const width=compact?232:264,height=compact?104:116,gap=44,rankGap=54,pad=32;
   const byId=new Map(data.nodes.map(n=>[n.id,n])),order=new Map(data.nodes.map((n,i)=>[n.id,i]));
@@ -45,7 +93,7 @@
    else blocks.get(owner).items.push(n);belongs.set(n.id,owner);
   }
   // Milestone ancestry chooses the block parent. Reference edges never reorder the tree.
-  const base=project(data,new Set()),parents=new Map();
+  const base=data,parents=new Map();
   for(const edge of base.edges){
    if(edge.primary===false)continue;
    const source=belongs.get(edge.source),target=belongs.get(edge.target);
@@ -98,24 +146,12 @@
   if(!boxes.length||!view)return false;
   const x=Math.min(...boxes.map(b=>b.x)),y=Math.min(...boxes.map(b=>b.y));
   const width=Math.max(...boxes.map(b=>b.x+b.width))-x,height=Math.max(...boxes.map(b=>b.y+b.height))-y;
-  const fit=Math.min(maxScale,view.width/width,view.height/height),limited=fit<.65&&boxes.length>1;
-  const scale=Math.max(.04,limited?Math.min(.65,view.width/boxes[0].width):fit);
+  const fit=Math.min(maxScale,view.width/width,view.height/height),limited=fit<.8&&boxes.length>1;
+  const scale=Math.max(.04,limited?Math.min(.8,view.width/boxes[0].width):fit);
   const cx=limited?boxes[0].x+boxes[0].width/2:x+width/2;
   map.setViewport({scale,tx:view.x+view.width/2-cx*scale,ty:limited?view.y-y*scale:view.y+view.height/2-(y+height/2)*scale});
-  if(map.frameNote){map.frameNote.textContent=limited?"局部过程已展开 · 拖动画布查看其余记录":"";map.frameNote.hidden=!limited;}return true;
+  if(map.frameNote){map.frameNote.textContent=limited?"本轮流程已展开 · 沿纵向拖动画布查看":"";map.frameNote.hidden=!limited;}return true;
  }
- // Follow scientific descendants only; evidence-reference links do not own a branch.
- function branch(data,id){
-  const base=project(data,new Set()),byId=new Map(base.nodes.map(n=>[n.id,n]));
-  if(!byId.has(id))return {plans:[],node_ids:[],process_count:0};
-  const reached=new Set([id]),queue=[id];
-  if(byId.get(id).kind==="plan")while(queue.length){const source=queue.shift();for(const edge of base.edges){
-   if(edge.primary===false||edge.source!==source||reached.has(edge.target))continue;
-   reached.add(edge.target);queue.push(edge.target);
-  }}
-  const plans=[...reached].filter(key=>byId.get(key)?.kind==="plan"||key===data.root_id);
-  const ids=new Set(reached);for(const owner of plans)for(const member of data.detail_groups?.[owner]||[])ids.add(member);
-  return {plans,node_ids:[id,...[...ids].filter(key=>key!==id)],process_count:new Set(plans.flatMap(owner=>data.detail_groups?.[owner]||[])).size};
- }
- root.SDMLineageView={project,ownerOf,layout,frame,branch};
+
+ root.SDMLineageView={project,detail,ownerOf,layout,frame};
 })(typeof window!=="undefined"?window:globalThis);

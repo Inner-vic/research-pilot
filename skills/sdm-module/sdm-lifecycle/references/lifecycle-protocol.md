@@ -1,6 +1,6 @@
 # Lifecycle protocol
 
-`assets/lifecycle-steps.json` is the sole ordered 21-step lifecycle spine. A step advances only when its executable gate tree passes. A step may complete deterministic work, synchronously route to its owning SDM Skill, wait for one authority action, or create one S12 per required platform operation. An instruction or prose response is never evidence.
+For the complete governed ledger, `assets/lifecycle-steps.json` defines its ordered 21-step protocol. Current product activities may evolve and use separate display numbers; see [current lifecycle](sdm-core.md). A step advances only when its executable gate tree passes. A step may complete deterministic work, synchronously route to its owning SDM Skill, wait for one authority action, or create one S12 per required platform operation. An instruction or prose response is never evidence.
 
 Excluded work is triggered only through the four genesis-pinned bindings: `data_platform_skill` for the data platform, `source_control_platform_skill` for the source-control platform, `ci_platform_skill` for the CI/Jenkins platform, and `ml_execution_platform_skill` for HPO, training, locked evaluation, and robustness evaluation. The coordinator writes the immutable S12 packet and waits; outer Agent Skill activation executes the binding and returns an S13 carrying producer authentication material. Ingestion authenticates it against that workspace-bound request. The coordinator never imports or calls the configured Skill and there is no manual-evidence bypass.
 

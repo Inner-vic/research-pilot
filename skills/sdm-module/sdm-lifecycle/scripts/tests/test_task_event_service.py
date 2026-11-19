@@ -20,7 +20,7 @@ def pod(name='task-master-0',status='Running'):
 
 class ServiceTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name)
+        self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name).resolve()
         self.config={'task_event_collector':{'version':1,'store':str(self.root/'events.db'),'tasks':[TASK]},
                      'task_event_service':{'version':1,'read_only':True,'evidence_root':str(self.root/'evidence'),
                                            'bindings':[{**TASK,'cluster':'test-cluster'}]}}

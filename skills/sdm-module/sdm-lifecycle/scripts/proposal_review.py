@@ -100,7 +100,7 @@ def model_call(actor):
     return (model['provider'].strip().casefold(),model['id'].strip().casefold()),actor['call_ref'].strip()
 
 
-def validate_proposal(proposal,subject_digest,dual_model=False):
+def validate_proposal(proposal,subject_digest,dual_model=False,sdm_intent=None):
     if not isinstance(proposal,dict) or len(json.dumps(proposal).encode())>128*1024:
         raise ValueError('bounded_proposal_object_required')
     if proposal.get('schema')!='sdm-proposal/v1' or proposal.get('subject_digest')!=subject_digest:
@@ -113,6 +113,9 @@ def validate_proposal(proposal,subject_digest,dual_model=False):
         raise ValueError('proposal_author_provenance_required')
     if dual_model:model_call(actor)
     evidence_refs(proposal)
+    if sdm_intent is not None:
+        from research_intent import validate_proposal as validate_intent
+        validate_intent(proposal,sdm_intent)
 
 
 def validate_response(value,packet,proposal,previous,minimum,round_number):
@@ -253,7 +256,7 @@ def advance(config,root,subject,evidence_query=None):
             accepted=json.loads((saved/'accepted.json').read_bytes())
             packet=json.loads((saved/'request.json').read_bytes())
             if dynamic:supplements.append(supplied(packet,saved))
-            validate_proposal(accepted['proposal'],bound,policy['version']>=2)
+            validate_proposal(accepted['proposal'],bound,policy['version']>=2,config.get('sdm_intent'))
             if route=='pro':
                 verified=accepted_pro(config,packet,saved,historical=True)
                 if verified is None or verified[0]!=accepted['response'] or verified[1]!=accepted['pro_binding']:
@@ -290,7 +293,7 @@ def advance(config,root,subject,evidence_query=None):
             return {'status':'awaiting-proposal','proposal_path':str(proposal_path),'subject_digest':bound,
                     'required_fields':list(FIELDS),'review_mode':route,'execution_authority':False,
                     **({'proposer_model_required':True,'model_provenance':'actual call trace required; declarations are not provider attestation'} if policy['version']>=2 else {})}
-        proposal=json.loads(proposal_path.read_bytes());validate_proposal(proposal,bound,policy['version']>=2)
+        proposal=json.loads(proposal_path.read_bytes());validate_proposal(proposal,bound,policy['version']>=2,config.get('sdm_intent'))
         if dynamic:
             if previous and previous[-1]['response']['verdict']=='needs-evidence':
                 saved=folder/state['rounds'][-1]['directory'];prior_packet=json.loads((saved/'request.json').read_bytes())

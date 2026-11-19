@@ -12,7 +12,7 @@ import time
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from urllib.parse import urlsplit,parse_qs
 from research_dashboard_data import DashboardData
-from review_storage import atomic_json
+from review_storage import atomic_json,native_path
 
 ASSETS=Path(__file__).resolve().parents[1]/'references/dashboard'
 FILES={'/':('index.html','text/html; charset=utf-8'),
@@ -28,6 +28,14 @@ FILES={'/':('index.html','text/html; charset=utf-8'),
  '/assets/exploration-map.NOTICE.txt':('exploration-map.NOTICE.txt','text/plain; charset=utf-8')}
 
 
+def web_runtime_digest():
+ import hashlib
+ root=native_path(Path(__file__).resolve().parent)
+ files=[*root.glob('*.py'),*(p for p in native_path(ASSETS).rglob('*') if p.is_file())]
+ return hashlib.sha256(json.dumps({str(p.relative_to(root.parent)):hashlib.sha256(p.read_bytes()).hexdigest()
+     for p in sorted(files)},sort_keys=True).encode()).hexdigest()
+
+
 class Server(ThreadingHTTPServer):
  daemon_threads=True
  allow_reuse_address=False
@@ -36,6 +44,7 @@ class Server(ThreadingHTTPServer):
   super().server_bind()
  def __init__(self,project,port=0):
   self.data=DashboardData(project);self.data.snapshot();self.token=secrets.token_urlsafe(32)
+  self.runtime_digest=web_runtime_digest()
   self.instance=secrets.token_hex(12);self.done=threading.Event();self.lock=threading.RLock();self.snapshots={}
   super().__init__(('127.0.0.1',port),Handler)
   self.url=f'http://127.0.0.1:{self.server_port}/#token={self.token}'
@@ -89,9 +98,9 @@ class Handler(BaseHTTPRequestHandler):
   if not self.local():self.reply(403,{'error':'local_origin_required'});return
   path=urlsplit(self.path);query=parse_qs(path.query)
   if path.path=='/health':
-   self.reply(200,{'service':'sdm-research-dashboard','instance':self.server.instance,'pid':os.getpid(),'read_only':False,'data_read_only':True,'control_actions':['pause-study','resume-study']});return
+   self.reply(200,{'service':'sdm-research-dashboard','runtime_digest':self.server.runtime_digest,'instance':self.server.instance,'pid':os.getpid(),'read_only':False,'data_read_only':True,'control_actions':['pause-study','resume-study']});return
   if path.path in FILES:
-   name,kind=FILES[path.path];self.reply(200,(ASSETS/name).read_bytes(),kind);return
+   name,kind=FILES[path.path];self.reply(200,native_path(ASSETS/name).read_bytes(),kind);return
   if not self.authorized():self.reply(403,{'error':'dashboard_session_required'});return
   try:
    study=query.get('study',[None])[0]
@@ -128,7 +137,7 @@ def main():
  parser.add_argument('--port',type=int,default=8792);parser.add_argument('--ready',type=Path)
  args=parser.parse_args();server=Server(args.project_root,args.port)
  ready=args.ready or Path(args.project_root)/'.bmad-ml/dashboard/ready.json'
- atomic_json(ready,{'schema':'sdm-dashboard-ready/v1','url':server.url,'pid':os.getpid(),'instance':server.instance,
+ atomic_json(ready,{'schema':'sdm-dashboard-ready/v1','runtime_digest':server.runtime_digest,'url':server.url,'pid':os.getpid(),'instance':server.instance,
   'project_root':str(Path(args.project_root).resolve()),'read_only':False,'data_read_only':True,'control_actions':['pause-study','resume-study'],'started_at':time.time()})
  print(json.dumps({'url':server.url,'data_read_only':True,'control_actions':['pause-study','resume-study']}),flush=True)
  try:server.serve_forever()

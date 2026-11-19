@@ -25,6 +25,6 @@
 
 任务指纹包含`exploration_revision: 2`。rc3等旧实验日志必须使用其冻结代码恢复，禁止热迁移到修订2。已接受准备、提交、计算、停止不会因为补记录而重新执行；未知提交仍先对账。
 
-理由见[34项职责审计](../../../../docs/delivery/NODE-CONSOLIDATION-AUDIT-20261026.md)。查看实际图：`orchestration.py --catalog --profile exploration --format checks-mermaid`；`--profile legacy`查看默认图。界面可按工作包收敛展示，不能用展示数量替代实际依赖。
+理由见34项职责审计（历史原件未随公开源码导出）。查看实际图：`orchestration.py --catalog --profile exploration --format checks-mermaid`；`--profile legacy`查看默认图。界面可按工作包收敛展示，不能用展示数量替代实际依赖。
 
 研究沿同一方案主线迭代；修改、重试和常规工程修复留在主线，只有具体证据支持相互独立的问题时才新开研究分支。方案审议次数不增加调度节点或训练轮数，见[审议合同](proposal-deliberation.md)。

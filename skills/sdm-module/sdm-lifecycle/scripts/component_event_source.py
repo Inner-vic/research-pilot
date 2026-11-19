@@ -25,6 +25,9 @@ def file_ref(ref):
 
 
 def settings(spec, cfg, registered=None):
+    if spec.get('version')==4:
+        from research_execution_source import settings as project_settings
+        return project_settings(spec,cfg,registered)
     if spec.get('version') not in (1, 2, 3) or cfg.get('schema') not in ('sdm-event-service/v2','sdm-event-service/v3'):
         raise ValueError('component_source_requires_new_event_service_v2')
     if spec.get('binding') not in cfg.get('tasks',{}) and registered is None:
@@ -100,6 +103,7 @@ def read_logs(manager, task, pod, errors_only=False, worker=None):
 
 def publish_bytes(path, raw):
     path = native_path(path)
+    path.parent.mkdir(parents=True,exist_ok=True)
     if path.exists():
         if path.read_bytes() != raw:
             raise ValueError('original_component_artifact_changed')
@@ -127,7 +131,7 @@ class ComponentSource:
     def reconcile(self):
         # Original Manager/Guard performs read-only discovery/configuration
         # verification. It is never replaced by another submission ledger.
-        from lpai_manager import Manager
+        from research_execution import Manager
         manager = Manager(self.manager_config)
         receipt = self.root/'verified-submission.json'
         if receipt.exists():
@@ -175,10 +179,13 @@ class ComponentSource:
             expected['submission_identity']={'version':1,'manager_plan':self.spec['plan']}
         if task['status'] == 'succeeded':
             logs = read_logs(self.manager_config, task, pod, worker=workers[0])
-            facts, artifacts = verify(task, receipt, marker_lines(logs, namespace, pod), expected)
+            result_verifier=verify
+            if expected.get('result_contract')=='sdm-project-result/v1':
+                from project_results import verify as result_verifier
+            facts, artifacts = result_verifier(task, receipt, marker_lines(logs, namespace, pod), expected)
             for name, raw in artifacts.items():
                 publish_bytes(self.root/name, raw)
-            ready = {'schema':'sdm-component-result-ready/v1', **facts,
+            ready = {'schema':'sdm-project-result-ready/v1' if expected.get('result_contract')=='sdm-project-result/v1' else 'sdm-component-result-ready/v1', **facts,
                      'artifact_root':str(self.root), 'original_plan_sha256':self.spec['plan']['sha256']}
             phase = 'exited'
         else:

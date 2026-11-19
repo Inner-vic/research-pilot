@@ -2,7 +2,7 @@
 
 Read this for actual training, evaluation using paid compute, or a bounded model
 probe. Apply it through the existing task/Loop and project providers. It preserves
-the unified five-phase work-package workflow and task-scoped lightweight delivery; it does not
+the generic work-package execution view and task-scoped lightweight delivery; it does not
 add a second qualification workflow or make every experiment a full-data run.
 
 For complete CPU/RAM/GPU requests, queue/workspace headroom, per-node placement,

@@ -12,6 +12,10 @@ import pytest
 LIFECYCLE_MODULE_NAMES = (
     "canonical",
     "contracts",
+    "lifecycle_rules",
+    "windows_assets",
+    "research_intent",
+    "lifecycle_view",
     "journal",
     "ledger",
     "projection",

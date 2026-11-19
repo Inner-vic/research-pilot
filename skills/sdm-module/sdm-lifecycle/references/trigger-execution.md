@@ -1,6 +1,8 @@
-# 能力触发、执行与证据生产合同
+# 触发、驱动与回执合同
 
-本合同保留graph revision3的驱动/回执身份；workflow_revision1将业务合并为五阶段11个工作包，最终依赖由workflow_definition维护。材料合并、条件评审与清理恢复见[work-packages.md](work-packages.md)。
+先按 [从 SDM 演进的当前生命周期](sdm-core.md)理解研究职责。本页仅说明通用驱动的交付聚合；以下分组不是原 SDM 的五阶段，不能作为另一套生命周期或科学接受标准。组件路径不会自动遍历本图。
+
+本合同保留graph revision3的驱动/回执身份；workflow_revision1将业务合并为五组11个交付工作包，最终依赖由workflow_definition维护。材料合并、条件评审与清理恢复见[work-packages.md](work-packages.md)。
 能力目录、配置绑定、实际执行、证据验收是四种不同事实，不可相互代替。
 
 ## 执行顺序

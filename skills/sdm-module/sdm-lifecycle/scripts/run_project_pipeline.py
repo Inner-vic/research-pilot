@@ -222,7 +222,7 @@ def main():
     p.add_argument('--supervise-devspace',action='store_true',help='Supervise the same bound observer process; never resubmit computation')
     p.add_argument('--watch-devspace',action='store_true',help='Run shared observer until a wait, terminal result or deadline; no scheduling')
     p.add_argument('--background-devspace',action='store_true',help='Detach the existing supervisor and return a yield-turn handoff')
-    p.add_argument('--research-worker',action='store_true',help='Independent observation and A/B result decisions; no chat wakeup')
+    p.add_argument('--research-worker',action='store_true',help='Independent observation and Generator-Critic result decisions; no chat wakeup')
     p.add_argument('--pause-research-worker',action='store_true',help='Pause new research decisions; does not stop an existing workload')
     p.add_argument('--resume-research-worker',action='store_true',help='Revise paused decision control; does not launch a daemon')
     p.add_argument('--study-accounting',action='store_true',help='Read retained Study timing and delivery evidence; no execution or platform calls')

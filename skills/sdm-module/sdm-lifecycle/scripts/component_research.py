@@ -1,7 +1,7 @@
 """Component evidence adapter for original SDM proposal/research semantics.
 
-Current producer adapter is explicitly binary-classification/v1, not a claim of
-multi-class/IoU support. No model loop or platform driver. A finished training is evidence for the next
+Project-specific and legacy binary result facts share the original research
+semantics and gates. Supported metric recounts do not qualify arbitrary evaluators. No model loop or platform driver. A finished training is evidence for the next
 plan; it does not by itself satisfy the multi-round research objective.
 """
 import hashlib
@@ -24,6 +24,9 @@ def reference(ref):
 
 def round_evidence(ref):
     path = reference(ref); ready = read_json(path)
+    if ready.get('schema')=='sdm-project-result-ready/v1':
+        from project_results import round_evidence as project_round
+        return project_round(ref)
     if ready.get('schema') != 'sdm-component-result-ready/v1' or ready.get('valid_training_round') is not True:
         raise ValueError('verified_component_training_round_required')
     root = Path(ready.get('artifact_root',''))
@@ -63,6 +66,9 @@ def analyze(rows):
     This is descriptive evidence, not a hard-coded scientific decision. The
     author and critic still see the original curves, predictions and code.
     """
+    if rows and read_json(reference(rows[0]['result'])).get('schema')=='sdm-project-result-ready/v1':
+        from project_results import analyze as project_analysis
+        return project_analysis(rows)
     actual = [round_evidence(row['result']) for row in rows]
     if not actual or any(row['fair_comparison'] != actual[0]['fair_comparison'] for row in actual):
         raise ValueError('verified_comparable_results_required_for_analysis')
@@ -70,7 +76,7 @@ def analyze(rows):
     for index, row in enumerate(actual):
         result = row['result']; history = result.get('history', [])
         base=actual[index-1] if index else None
-        base_kind='legacy chronological predecessor' if base else 'initial baseline'
+        base_kind='legacy chronological predecessor' if base else 'initial exploration result'
         if rows[index].get('accepted_plan'):
             accepted=read_json(reference(rows[index]['accepted_plan']))
             selected=accepted.get('selected_candidate')
@@ -188,25 +194,25 @@ def progress(rows, minimum_rounds=3, minimum_revisions=2):
     delta=rounds[-1]['primary_metric']-rounds[0]['primary_metric']
     return {'valid_training_rounds':len(rounds),'result_driven_plan_revisions':revisions,
             'baseline_primary_metric':rounds[0]['primary_metric'],'final_primary_metric':rounds[-1]['primary_metric'],
-            'primary_metric_delta':delta,'goal_met':len(rounds)>=minimum_rounds and revisions>=minimum_revisions and delta>0,
+            'primary_metric_delta':delta,'goal_met':len(rounds)>=minimum_rounds and revisions>=minimum_revisions and (delta<0 if rounds[-1].get('metric_operator')=='<=' else delta>0),
             'fair_comparison':rounds[0]['fair_comparison'],'metric_scope':'fixed validation, not untouched test',
             'execution_authority':False}
 
 
 def advance(config, root, evidence_query=None):
-    """Use the original condition-driven A/B gate, with component raw evidence."""
+    """Use the original condition-driven Generator-Critic gate, with component raw evidence."""
     from proposal_review import gate, subject
-    from research_replan import once, validate_direction, validate_goal_claim
+    from research_replan import once, validate_direction, validate_goal_claim, IMPLEMENTATION_ACTIONS
     from required_skills import inspect, inherit
     from review_context import validate_context
     spec=config['research_replan']
-    if (spec.get('version') not in (2,3) or spec.get('parent_route')!='lpai-component'
-            or spec.get('result_contract')!='sdm-binary-classification/v1'
+    if (spec.get('version') not in (2,3) or spec.get('parent_route') not in ('lpai-component','project')
+            or spec.get('result_contract') not in ('sdm-binary-classification/v1','sdm-project-result/v1')
             or not isinstance(spec.get('objective'),str) or not spec['objective'].strip()):
         raise ValueError('component_research_replan_v2_required')
     if config.get('devspace_execution') or config.get('drivers'):
         raise ValueError('component_replan_cannot_carry_execution_drivers')
-    if inspect(config)['status']!='required-skills-available':raise ValueError('official_lpai_skill_required')
+    if inspect(config)['status']!='required-skills-available':raise ValueError('configured_platform_capabilities_required')
     rows=spec.get('rounds',[]);diagnosis=None
     if spec.get('parent_diagnosis'):
         path=reference(spec['parent_diagnosis']);diagnosis=read_json(path)
@@ -238,7 +244,8 @@ def advance(config, root, evidence_query=None):
     root=Path(root).resolve();root.mkdir(parents=True,exist_ok=True)
     continuous=bool(candidates and spec['decision_policy']['version'] in (2,3))
     files=[]
-    if continuous:
+    archive_history=continuous or bool(candidates and spec['decision_policy']['version']==5)
+    if archive_history:
         # Growing research history is not a growing inline checklist. Keep
         # every verified raw result in a line-addressable registered archive,
         # and full sample-level artifacts for baseline/incumbent/latest.
@@ -269,6 +276,11 @@ def advance(config, root, evidence_query=None):
                            'against the incumbent on the same evaluation scope. State tradeoffs and missing metrics explicitly; '
                            'never equate an absent metric with zero, invent class meanings, or promote a candidate past a registered guardrail. '
                            'If no guardrail was agreed, report regressions without inventing a new veto or changing the target.',
+                       'comparison_roles':'The initial recipe/result is an exploration starting point, not an automatically locked or stable baseline. '
+                           'Choose the actual comparison candidate explicitly through the original candidate decision; it may be a later verified result. '
+                           'Keep the initial result, the chosen comparison reference and the metric incumbent distinct. '
+                           'A phase baseline can be proposed after evidence accumulates, but reproduction/locking/replacement requires the applicable original SDM evidence. '
+                           'Never infer formal baseline qualification from one result, the highest score, or a display label.',
                        'reasoning':'Use observed failure patterns to question model/representation, data/measurement, and training assumptions as relevant. '
                            'Do not always start with the model or keep making parameter tweaks after a comparable plateau. '
                            'Select one informative main-line intervention, name alternatives/counterevidence and its falsifying observation.'},
@@ -320,14 +332,14 @@ def advance(config, root, evidence_query=None):
         raise ValueError('three_round_component_goal_not_reached')
     # Absolute project targets, if declared, remain additionally required.
     if spec.get('targets') and rows:validate_goal_claim(spec,revision,assessment)
-    if preparation and revision['action']!='diagnose':
-        raise ValueError('initial_preparation_requires_diagnosis_not_scientific_exit')
-    if diagnosis and revision['action'] not in ('diagnose','stop-research'):
+    # Failure evidence and its reviewed repair are not a scored baseline.
+    # Reuse original SDM implementation actions instead of forcing a correct
+    # parameter/model repair to be mislabeled as read-only diagnosis.
+    if diagnosis and revision['action'] not in (*IMPLEMENTATION_ACTIONS,'stop-research'):
         raise ValueError('failed_component_requires_diagnosis_before_new_scientific_claim')
-    status={'revise-plan':'research-plan-approved-awaiting-implementation','diagnose':'research-plan-approved-awaiting-diagnosis',
-            'refine-current':'research-refinement-approved','continue-plan':'research-refinement-approved',
-            'goal-met':'research-goal-met','stop-research':'research-stopped'}[revision['action']]
-    plan={'schema':'sdm-research-plan/v1','status':status,'parent_route':'lpai-component','objective':spec['objective'],
+    from research_replan import DIRECTION_STATUSES
+    status=DIRECTION_STATUSES[revision['action']]
+    plan={'schema':'sdm-research-plan/v1','status':status,'parent_route':spec['parent_route'],'objective':spec['objective'],
           'parent_result_sha256':rows[-1]['result']['sha256'].removeprefix('sha256:') if rows else None,
           'parent_task_uid':diagnosis['uid'] if diagnosis else parent['uid'],
           **({'parent_diagnosis_ref':spec['parent_diagnosis']} if diagnosis else {}),
@@ -346,7 +358,7 @@ def advance(config, root, evidence_query=None):
         request={'schema':'sdm-research-implementation-request/v1','parent_plan_digest':digest(plan),
                  'change_level':revision['change_level'],'intervention':revision['intervention'],
                  'comparison':proposal['comparison'],'outcome_actions':proposal['outcome_actions'],
-                 'parent_route':'lpai-component','parent_result_sha256':plan['parent_result_sha256'],
+                 'parent_route':spec['parent_route'],'parent_result_sha256':plan['parent_result_sha256'],
                  'next':'Implement in a new frozen profile, then original code/proposal/preflight/Manager Guard; never resubmit parent',
                  'execution_authority':False}
         inherit(config,request);once(root/'implementation-request.json',request)

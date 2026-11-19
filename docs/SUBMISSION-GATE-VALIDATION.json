@@ -1,0 +1,36 @@
+{
+  "schema": "sdm-submission-gate-validation/v1",
+  "date": "2026-11-14",
+  "source_version": "0.3.0-rc6.37",
+  "control_test_cases": {
+    "component_gate_and_continuation": 54,
+    "manager_review_pause_dashboard": 86,
+    "total_unique": 140
+  },
+  "result": "passed",
+  "test_transports": "Explicit synthetic model and platform substitutes; original validators and local state remain real.",
+  "checks": [
+    "initial and successor use the same SDM gate",
+    "two initial review subjects with original A/B provenance",
+    "no model calls on accepted-review replay",
+    "missing forged changed or wrong-subject approval is rejected",
+    "plan and component changes block new submission",
+    "review approval cannot create authority",
+    "pause before/during replay prevents write",
+    "original unknown Guard only reconciles",
+    "initializer freezes review-required configuration without tasks/models",
+    "large raw code keeps full digest and bounded view",
+    "original Manager authorization AST preserved",
+    "original Manager effect body preserved",
+    "dashboard JavaScript syntax and three existing lineage checks"
+  ],
+  "not_claimed": [
+    "real model calls",
+    "new ML training",
+    "new platform qualification",
+    "full formal 21-step acceptance",
+    "D05"
+  ],
+  "formal_asset_delivery": "Unchanged: full governed asset bundle is not included in the native Skill.",
+  "legacy_policy": "Existing frozen runs unchanged; new initializer emits gate v1 and initial submission v2."
+}

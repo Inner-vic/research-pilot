@@ -16,10 +16,20 @@ from task_pipeline import digest
 
 
 def reviewed(cfg,project,folder):
+    runtime=cfg['runtime_root']
+    owner_config=None
+    if cfg.get('prepared_submission_adoption'):
+        adoption=read_json(reference(cfg['prepared_submission_adoption']))
+        original=read_json(reference(adoption['original_config']))
+        if Path(project).resolve().is_relative_to(Path(original['root']).resolve()):
+            runtime=original['runtime_root']
+            owner_config=str(reference(adoption['original_config']))
     code=('import json,sys;sys.path.insert(0,sys.argv[1]);from proposal_model_runner import drive;'
+          'from research_event_service import configuration;'
+          'configuration(json.load(open(sys.argv[4],encoding="utf-8"))) if len(sys.argv)>4 else None;'
         'r=drive(json.load(open(sys.argv[2],encoding="utf-8")),sys.argv[3],verify_only=True);'
         'print(json.dumps({"status":r["status"],"receipt":r.get("receipt")}))')
-    process=subprocess.run([sys.executable,'-I','-S','-B','-c',code,cfg['runtime_root'],str(project),str(folder)],
+    process=subprocess.run([sys.executable,'-I','-S','-B','-c',code,runtime,str(project),str(folder),*([owner_config] if owner_config else [])],
         capture_output=True,encoding='utf-8',timeout=120,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     if process.returncode:raise ValueError('continuous_chain_original_review_invalid')
     value=json.loads(process.stdout)
@@ -102,7 +112,8 @@ def audit(cfg,state):
         'host_best_gain':max(metrics+[baseline['primary_metric']])-baseline['primary_metric'] if baseline else None,
         'jobs':counts,'qualified_reproduction_only':policy.get('version')==3,
         'iteration_budget_created':False,'new_model_calls':0,'platform_writes':0,
-        'scope':'One frozen host. Evidence for an actual successor is not a trial count or quality termination rule.'}
+        'engineering_takeover_occurred':bool(cfg.get('prepared_submission_adoption')),
+        'scope':('Controlled checkpoint handoff retaining original review owners, Context, requests and budget; not uninterrupted single-host autonomy.' if cfg.get('prepared_submission_adoption') else 'One frozen host. Evidence for an actual successor is not a trial count or quality termination rule.')}
 
 
 if __name__=='__main__':

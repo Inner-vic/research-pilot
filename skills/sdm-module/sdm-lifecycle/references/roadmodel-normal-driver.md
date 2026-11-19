@@ -1,6 +1,6 @@
 # RoadModel正常训练执行合同（normal-v2）
 
-该入口复用当前五阶段工作包与横向能力，保留驱动wire revision3和旧检查ID；最终DAG以workflow_definition为准，不改写旧诊断驱动、旧工作区或在途任务。留存材料仍走默认project-workspace链路；此处是通用RoadModel训练执行器，不为每个材料项目编写脚本。
+该入口复用通用项目交付工作包与横向能力，保留驱动wire revision3和旧检查ID；最终DAG以workflow_definition为准，不改写旧诊断驱动、旧工作区或在途任务。留存材料仍走默认project-workspace链路；此处是通用RoadModel训练执行器，不为每个材料项目编写脚本。
 
 ## 入口与顺序
 
@@ -175,4 +175,3 @@ torchrun 使用每节点8进程、固定 nnodes、零自动重启，现有训练
 每 worker 最多32768项；不适用于会新增同名高优先级文件或变更映射的可变资产。
 固定资产被移除后读取应失败，不静默改读其他候选。不得以 CPU 缓存命中测试
 宣称实际 GPU 吞吐提高，首次读取仍有元数据开销。
-

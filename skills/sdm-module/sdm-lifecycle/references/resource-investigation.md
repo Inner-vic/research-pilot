@@ -11,7 +11,7 @@ for this capability; unrelated workflow steps can continue within their scope.
 
 ## Node 26: account resource inventory and scheduling investigation
 
-In the five-phase v2 design, reuse node **26**, stable machine name
+In the generic project graph v2 design, reuse node **26**, stable machine name
 `account-resource-inventory`; do not add another node for the same capability or
 renumber historical tasks. The node belongs to research/planning. It supplies
 resource evidence to node 27 (resource/budget proposal), followed by proposal

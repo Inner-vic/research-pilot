@@ -8,9 +8,9 @@ import json
 from pathlib import Path
 
 from component_research import reference
-from research_replan import once
+from research_replan import once, IMPLEMENTATION_ACTIONS
 from required_skills import inspect, inherit
-from review_storage import read_json
+from review_storage import read_json, native_path
 from task_pipeline import digest
 
 
@@ -22,7 +22,7 @@ def strict_json(raw):
 def spec(config):
     value=config.get('research_implementation',{})
     if value.get('version') not in (1,2):raise ValueError('research_implementation_version_required')
-    if inspect(config)['status']!='required-skills-available':raise ValueError('official_lpai_skill_required')
+    if inspect(config)['status']!='required-skills-available':raise ValueError('configured_platform_capabilities_required')
     for name in ('approved_plan','implementation_request','review_project','execution_contract'):
         reference(value[name])
     if 'validation_feedback' in value:
@@ -41,7 +41,7 @@ def execution_contract(selected):
             or set(identity)!={'protocol','source_sha256','split_sha256','selection'}
             or any(not isinstance(v,str) or not v for v in identity.values())
             or not isinstance(contract.get('protected_inputs'),list) or not contract['protected_inputs']
-            or scope.get('provider')!='lpai'
+            or not isinstance(scope.get('provider'),str) or not scope['provider']
             or any(not isinstance(scope.get(k),str) or not scope[k] for k in ('namespace','owner','component_uid'))):
         raise ValueError('protected_component_evaluation_contract_required')
     for row in contract['protected_inputs']:reference(row)
@@ -70,7 +70,7 @@ def prepare(config,root,reviewer=None):
     for original in (plan,request,review_cfg):
         if original.get('platform_requirements')!=config.get('platform_requirements'):
             raise ValueError('implementation_cannot_drop_required_skill_policy')
-    if plan.get('research_revision',{}).get('action') not in ('revise-plan','diagnose','refine-current','continue-plan'):
+    if plan.get('research_revision',{}).get('action') not in IMPLEMENTATION_ACTIONS:
         raise ValueError('accepted_plan_does_not_request_implementation')
     original_review=read_json(reference(plan['accepted_review_ref']))
     if (original_review.get('approved') is not True or original_review.get('response',{}).get('verdict')!='approve'
@@ -87,11 +87,11 @@ def prepare(config,root,reviewer=None):
     checked=reviewer(review_cfg,Path(selected['review_root']))
     if checked.get('status')!='proposal-approved':return {**checked,'implementation_started':False}
     approved=Path(checked['receipt']).resolve()
-    if approved!=Path(plan['accepted_review']).resolve() or hashlib.sha256(approved.read_bytes()).hexdigest()!=plan['accepted_review_ref']['sha256']:
+    if approved!=Path(plan['accepted_review']).resolve() or hashlib.sha256(native_path(approved).read_bytes()).hexdigest()!=plan['accepted_review_ref']['sha256']:
         raise ValueError('implementation_review_receipt_changed')
     root=Path(root).resolve();workspace=Path(selected['workspace']).resolve()
     if root.is_relative_to(workspace):raise ValueError('implementation_control_outside_model_workspace_required')
-    root.mkdir(parents=True,exist_ok=True);workspace.mkdir(parents=True,exist_ok=True)
+    native_path(root).mkdir(parents=True,exist_ok=True);native_path(workspace).mkdir(parents=True,exist_ok=True)
     for row in selected.get('sources',[]):reference(row)
     identity={'plan':selected['approved_plan'],'request':selected['implementation_request'],
               'contract':selected['execution_contract'],'workspace':str(workspace)}
@@ -104,7 +104,7 @@ def prepare(config,root,reviewer=None):
          'output':str(workspace/'implementation.json'),'execution_authority':False,
          'instructions':'Read the bound approved plan and original evidence. Implement its intervention only inside this workspace. '
              'Do not allocate resources, run ML locally, query/write platform resources, alter authorization or reset budgets. '
-             'Retain the frozen evaluation identity and required official lpai Skill. '
+             'Retain the frozen evaluation identity and the exact platform capabilities declared by this job. '
              'The parameters file must preserve comparison_identity and execution_scope from the contract and platform_requirements from this job exactly. '
              'Write implementation.json with schema=sdm-research-implementation-output/v1, job_id, parent_plan_digest, contract_sha256, status=implemented, '
              'and files=[{path:relative workspace path,sha256:exact file hash}]. Do not claim code review or execution passed.'}
@@ -121,7 +121,7 @@ def prepare(config,root,reviewer=None):
             'The reason and evidence do not authorize scope or protected-file changes.')
     bound=execution_contract(selected)
     if 'next_round' in bound:
-        job['instructions']+=' Set parameters.json.training.round='+str(bound['next_round'])+' exactly as host identity metadata, including exact scientific reproduction. Preserve the scientific settings independently.'
+        job['instructions']+=' Set '+bound.get('parameters_file','parameters.json')+'.training.round='+str(bound['next_round'])+' exactly as host identity metadata, including exact scientific reproduction. Preserve the scientific settings independently.'
     inherit(config,job);once(root/'implementation-job.json',job)
     return {'status':'implementation-job-prepared','job_path':str(root/'implementation-job.json'),
             'job_id':key,'execution_authority':False,'platform_actions':0}
@@ -159,13 +159,14 @@ def _freeze(config,root,snapshot=None):
             raise ValueError('typed_implementation_file_reference_required')
         name=row.get('path');path=workspace/str(name)
         if (name not in allowed or name in files or Path(name).is_absolute() or '..' in Path(name).parts
-                or not path.resolve().is_relative_to(workspace.resolve()) or path.is_symlink()
-                or (snapshot is None and (not path.is_file() or path.stat().st_size>2*1024*1024))):
+                or not path.resolve().is_relative_to(workspace.resolve()) or native_path(path).is_symlink()
+                or (snapshot is None and (not native_path(path).is_file() or native_path(path).stat().st_size>2*1024*1024))):
             raise ValueError('declared_implementation_files_only')
-        raw=snapshot[name] if snapshot is not None else path.read_bytes()
+        raw=snapshot[name] if snapshot is not None else native_path(path).read_bytes()
         if hashlib.sha256(raw).hexdigest()!=row.get('sha256'):raise ValueError('implementation_file_changed')
         if path.suffix=='.py':compile(raw,name,'exec')  # syntax only, no import/local fitting
         elif path.suffix=='.json':strict_json(raw)
+        elif contract.get('integration')=='project/v1':raw.decode('utf-8')
         else:raise ValueError('implementation_source_or_json_required')
         files[name]=raw
     if set(files)!=set(allowed):raise ValueError('complete_implementation_file_set_required')
@@ -181,10 +182,10 @@ def _freeze(config,root,snapshot=None):
         raise ValueError('implementation_execution_scope_changed')
     manifest={name:hashlib.sha256(raw).hexdigest() for name,raw in files.items()}
     version=digest({'job':job['job_id'],'files':manifest}).removeprefix('sha256:')
-    frozen=root/'frozen'/version;frozen.mkdir(parents=True,exist_ok=True)
+    frozen=root/'frozen'/version;native_path(frozen).mkdir(parents=True,exist_ok=True)
     from component_event_source import publish_bytes
     for name,raw in files.items():
-        path=frozen/name;path.parent.mkdir(parents=True,exist_ok=True);publish_bytes(path,raw)
+        path=frozen/name;publish_bytes(path,raw)
     result={'schema':'sdm-implemented-profile/v1','status':'requires-original-code-and-execution-preflight',
             'job_id':job['job_id'],'parent_plan_digest':digest(plan),'files':manifest,'root':str(frozen),
             'execution_contract':selected['execution_contract'],'comparison_identity':contract['comparison_identity'],

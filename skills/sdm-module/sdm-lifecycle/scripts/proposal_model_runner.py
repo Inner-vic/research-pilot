@@ -21,10 +21,11 @@ class ModelInputBlocked(ValueError):
 def bind_sources(folder):
     names=('proposal_model_runner.py','proposal_review.py','review_context.py','research_worker.py',
         'research_model_runner.py','research_model_receipts.py','model_runner.py','model_runner_transport.py',
-        'model_runner_recovery.py','model_context.py','model_process_receipts.py','model_containment.py','model_process_guard.py',
+        'model_runner_recovery.py','model_context.py','planner_session.py','working_sessions.py','research_context.py','model_process_receipts.py','model_containment.py','model_process_guard.py',
         'review_storage.py','task_pipeline.py','proposal_dialogue.py','research_replan.py','component_research.py','agent_roles.py','proposal_evidence.py',
         'implementation_code_review.py','bounded_evidence.py','component_candidates.py','component_reproduction.py',
-        'research_diagnostics.py','research_workloads.py','research_chain.py','proposal_input.py','research_language.py','review_resume.py')
+        'research_diagnostics.py','research_workloads.py','research_chain.py','proposal_input.py','research_language.py','review_resume.py',
+        'research_intent.py','lifecycle_rules.py','contracts.py','canonical.py','windows_assets.py')
     value={'schema':'sdm-proposal-implementation/v1','sha256':{
         name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in names}}
     path=folder/'implementation.json'
@@ -47,6 +48,10 @@ def settings(config):
     runner=policy.get('model_runner')
     if not isinstance(runner,dict):raise ValueError('explicit_proposal_model_runner_required')
     configuration(runner)
+    from planner_session import selection
+    selection(policy,runner)
+    from working_sessions import settings as working_settings
+    working_settings(policy,runner)
     if runner['backend']=='sdk':
         if runner['version']!=4:raise ValueError('proposal_sdk_explicit_context_v4_required')
         from model_context import sdk_options
@@ -54,13 +59,16 @@ def settings(config):
     return policy,runner
 
 
-def schemas(role,source_ids,strategy=False,registered_evidence=False,candidates=None):
+def schemas(role,source_ids,strategy=False,registered_evidence=False,candidates=None,sdm_intent=None,sdm_governance=None):
     string={'type':'string'}
     if role=='a':
         props={**{key:string for key in review.FIELDS},
             'addresses':{'type':'array','items':object_schema({'challenge_id':string,'reason':string})},
             'advice_dispositions':{'type':'array','items':object_schema({'challenge_id':string,
                 'decision':{'type':'string','enum':['accept','modify','reject']},'applicability':string,'reason':string})}}
+        if sdm_intent is not None:
+            from research_intent import proposal_schema
+            props['sdm_brief']=proposal_schema(sdm_intent)
         if strategy:
             from research_replan import direction_schema
             props['research_revision']=direction_schema(source_ids)
@@ -77,6 +85,13 @@ def schemas(role,source_ids,strategy=False,registered_evidence=False,candidates=
         'evidence_assessment':object_schema({'source_ids':{'type':'array','items':{'type':'string','enum':source_ids}},
             'judgment':{'type':'string','enum':['supported','hypothesis','insufficient']},
             'limitations':{'type':'array','items':string}})})
+    if sdm_governance:
+        lenses=('protocol','statistics','failure_cases','reproducibility','deployment')
+        result['properties']['sdm_evidence_review']=object_schema({
+            'five_lenses':object_schema({name:{'type':'string','enum':['pass','fail','inconclusive']} for name in lenses}),
+            'reasons':object_schema({name:{'type':'string','minLength':8} for name in lenses}),
+            'deviation_disposition':{'type':'string','enum':['none','resolved','unresolved','not_applicable']}})
+        result['required'].append('sdm_evidence_review')
     if registered_evidence:
         from proposal_evidence import query_schema
         result['properties']['evidence_queries']=query_schema(source_ids,registered_evidence)
@@ -114,11 +129,14 @@ def proposal_evidence(payload,call):
 
 def validate(role,value,payload):
     if role=='b':
+        if payload.get('sdm_governance'):
+            from research_acceptance import evidence_review
+            evidence_review(payload['sdm_governance'],value,digest(payload['shared']))
         if payload.get('registered_evidence_policy'):
             from proposal_evidence import validate as validate_queries
             validate_queries(value,payload)
         return review.validate_response(value,payload['packet'],payload['packet']['proposal'],payload['previous'],None,payload['revision'])
-    review.validate_proposal(value,payload['subject_digest'],True)
+    review.validate_proposal(value,payload['subject_digest'],True,payload.get('sdm_intent'))
     if payload['shared']['project'].get('kind')=='research-replan':
         from research_replan import validate_direction
         validate_direction(value.get('research_revision'),[row['id'] for row in payload['shared']['packet']['context']['sources']],strategy=True)
@@ -140,6 +158,8 @@ def validate(role,value,payload):
 
 def invoke(config,folder,role,revision,shared,previous,control_revision,packet=None):
     policy,runner=settings(config)
+    from working_sessions import select as select_session
+    runner,working_session=select_session(policy,runner,role)
     from proposal_evidence import enabled
     registered_evidence=(policy['evidence_policy']['version'] if enabled(policy) else False)
     payload={'shared':shared,'subject_digest':shared['packet']['subject_digest'],'revision':revision,
@@ -149,6 +169,14 @@ def invoke(config,folder,role,revision,shared,previous,control_revision,packet=N
         # their full text a second time in the same bounded tool output.
         payload['previous']=[{k:v for k,v in row.items() if k!='registered_supplements'} for row in previous]
     if packet is not None:payload['packet']=packet
+    if config.get('sdm_intent') is not None:
+        from research_intent import review_context
+        payload['sdm_intent']=config['sdm_intent']
+        payload['sdm_intent_context']=review_context(config['sdm_intent'])
+    if config.get('sdm_governance'):
+        from research_acceptance import load as load_governance
+        payload['sdm_governance']=config['sdm_governance']
+        payload['sdm_governance_context']=load_governance(config['sdm_governance'])
     if registered_evidence:payload['registered_evidence_policy']=registered_evidence
     value={'schema':'sdm-model-request/v1','purpose':'proposal' if role=='a' else 'method-review',
         'contract_id':'sdm-proposal/v1' if role=='a' else 'sdm-proposal-review/v1','model':policy['models'][role],
@@ -156,7 +184,20 @@ def invoke(config,folder,role,revision,shared,previous,control_revision,packet=N
         'evidence':payload,'prompt':dialogue_prompt(role,policy.get('dialogue_version',1)),
         'output_schema':schemas(role,[row['id'] for row in shared['packet']['context']['sources']],shared['project'].get('kind')=='research-replan',registered_evidence,
             (shared['packet']['context']['configuration'].get('candidate_management')
-                if isinstance(shared['packet']['context']['configuration'],dict) else None))}
+                if isinstance(shared['packet']['context']['configuration'],dict) else None),config.get('sdm_intent'),config.get('sdm_governance'))}
+    if config.get('sdm_intent') is not None:
+        value['prompt']+=(' Return sdm_brief using original SDM S02 fields. Keep hypothesis identical to the proposal hypothesis. '
+            'Bind the exact S01 reference/digest from sdm_intent_context. State mechanism and uncertainty explicitly; '
+            'target_as_must must be false: the operational target is not a predetermined scientific outcome. '
+            'When fixed_brief is present, reproduce that exact brief; critique it without silently replacing the frozen intent. '
+            'A needed scientific change blocks this intent and requires a newly bound plan. Review is not execution authority.')
+    if config.get('sdm_governance'):
+        value['prompt']+=(' The pinned sdm_governance_context is the shared SDM acceptance basis. '
+            'Inspect applicability, original contracts, fixed baseline/evaluation, experiment kernel and nonrenewing budget. '
+            'Review independent evidence through the original five lenses: protocol, statistics, failure_cases, reproducibility, deployment. Return sdm_evidence_review with a disposition and grounded reason for each lens. For deployment outside this scope, retain inconclusive and explain non-applicability rather than claiming a deployment pass. '
+            'Missing remote tiny-fit or checkpoint-continuation evidence is pending, never inferred from compilation or review agreement. '
+            'Operational validation target attainment is distinct from scientific support; adaptive validation remains exploratory. '
+            'An unresolved/failed attempt remains in accounting. Approval grants no execution authority.')
     if policy.get('revision_target')=='implementation':
         value['prompt']+=(' Review the exact frozen implementation against the already approved plan and protected evaluation. '
             'Neither read-only reviewer can edit these files. A promise or suggested patch does not resolve a code defect. '
@@ -181,6 +222,10 @@ def invoke(config,folder,role,revision,shared,previous,control_revision,packet=N
             'rather than every epoch curve. Selected fields are NOT the whole source. Follow next_start_line '
             'for omitted records and narrow a field if it alone exceeds capacity. Preserve unresolved decisive '
             'gaps; never approve by treating omitted bytes as inspected or demand irrelevant full archives. ')
+    from planner_session import attach
+    attach(value,policy,runner,implementation=policy.get('revision_target')=='implementation')
+    from working_sessions import attach as attach_session
+    attach_session(value,working_session)
     attempt=1;feedback=None;seen=set()
     while True:
         from research_worker import check_control
@@ -241,10 +286,15 @@ def invoke(config,folder,role,revision,shared,previous,control_revision,packet=N
 
 
 def verify_calls(config,folder,shared,control_revision,historical=False):
-    policy,runner=settings(config);outputs=[]
+    policy,base_runner=settings(config);outputs=[]
     for path in sorted((folder/'model-calls').glob('*/canonical.json')):
         proof=checked(path,'sdm-proposal-model-output/v1');call=path.parent
         saved=checked(call/'request.json','sdm-model-runner-envelope/v1');value=saved['request'];role=proof['role']
+        from working_sessions import select as select_session
+        runner,working_session=select_session(policy,base_runner,role)
+        if value.get('working_session')!=working_session:raise ValueError('working_role_call_binding_changed')
+        expected_context=(policy.get('planner_context') if role=='a' and policy.get('revision_target')!='implementation' else None)
+        if value.get('planner_context')!=expected_context:raise ValueError('proposal_planner_context_binding_changed')
         payload=value['evidence']
         if (role not in {'a','b'} or saved['config']!=runner or value['model']!=policy['models'][role] or digest(value)!=proof['request_digest']
                 or value['purpose']!=('proposal' if role=='a' else 'method-review')
@@ -316,6 +366,9 @@ def drive(config,root,evidence_query=None,verify_only=False):
         ctx=context(context_path,bound)
         sources={row['path']:'sha256:'+row['sha256'].removeprefix('sha256:') for row in ctx['sources']}
         sources[str(context_path)]='sha256:'+hashlib.sha256(context_path.read_bytes()).hexdigest();guidance_sources(sources)
+        if config.get('sdm_intent') is not None:
+            from component_research import reference
+            path=reference(config['sdm_intent']['seed']);sources[str(path)]='sha256:'+hashlib.sha256(path.read_bytes()).hexdigest()
         shared=shared_evidence(subject,{}, {'subject_digest':bound,'context':ctx},sources,folder,
             **({'source_visibility':1} if registered_evidence else {}),
             **({'source_budget':policy['source_budget']} if 'source_budget' in policy else {}))

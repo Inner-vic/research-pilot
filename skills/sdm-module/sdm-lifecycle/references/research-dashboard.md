@@ -1,9 +1,29 @@
 # Research dashboard
 
-Use when the user asks to see research progress, experiment records, metrics or
-research lineage. Keep guidance and new instructions in the current Codex chat.
-This optional local Web service projects existing SDM records and exposes one
-explicit user action: pause-study, delegated to the original frozen controller.
+## Task scope and result handoff
+
+The shared research_task_scope module records project-local immutable task
+intent separately from evidence bindings. It is not a scheduler, authority or
+scientific acceptance record. Entry task artifacts must remain within the
+project, bounded and digest-verified. A single evaluation has a dedicated card:
+result, analysis and why no continuous iteration follows. Completion requires
+registered result and analysis files; it does not claim platform acceptance.
+
+Continuous intent without a verified registered controller remains pending.
+Binding an original configuration merges its card with the real study only
+after that study is discoverable. The original configuration is never changed.
+The shared handoff distinguishes dispatched result-driven continuation,
+analysis completion, current worker activity and concrete blocking reasons.
+Historical handoff survives pause/offline states; current activity does not.
+Unconfirmed old scope stays unconfirmed. No web action changes scope or starts
+research; existing pause/resume routes remain restricted to registered studies.
+
+
+Open automatically at Skill activation after current-project inspection; also use for research progress, experiment records, metrics or
+research lineage. The current SDM-derived activity catalog is shared with the
+progress report through lifecycle_view.py. It associates the current action with current activities and original provenance; it never infers accepted steps or D05 from runtime status. Keep guidance and new instructions in the current Codex chat.
+This optional local Web service projects existing SDM records. Pause/continue
+actions delegate to the original frozen controller or restricted restore broker.
 It never submits training, invokes models or owns a coordinator. User pause/continue controls delegate to the original SDM host or the restricted restore broker.
 
 1. Use the project's active-study index from inspect. Resolve bundled scripts
@@ -12,7 +32,7 @@ It never submits training, invokes models or owns a coordinator. User pause/cont
    data_read_only flag (legacy services use read_only) and `/health` service/instance/PID before reusing its URL.
    A stale ready file is not proof of a live service. Do not stop a process whose
    identity cannot be established. Do not create a second study to populate a UI.
-3. If no matching dashboard is listening, start `scripts/research_dashboard.py
+3. Prefer the public Skill command `scripts/researchpilot.py workbench --project-root PROJECT`; it reuses the SAME bundled starter as installation. Use its open_target with the current desktop open_in_codex tool, placement right, and verify visible project/status. Add `--study ACTUAL_ID` after registration. A returned URL is not an opened panel. On a host without an embedded browser use its supported browser. If no matching dashboard is listening, the shared helper starts `scripts/research_dashboard.py
    --project-root PROJECT --port PORT` in a hidden background process using the
    project's configured Python interpreter. Default port is 8792; on conflict
    choose a free port, preserving any unrelated service. The script writes the
@@ -24,8 +44,8 @@ It never submits training, invokes models or owns a coordinator. User pause/cont
 Only loopback 127.0.0.1 is served. Data endpoints require the session token,
 Host and Origin checks. The token is delivered through the URL fragment, stored
 in browser session storage and removed from the visible URL; never publish it
-externally. No CDN or external analytics. Record edits and all PUT/PATCH/DELETE requests are rejected. The sole POST
-control route is `/api/study/pause`, described below.
+externally. No CDN or external analytics. Record edits and all PUT/PATCH/DELETE requests are rejected. POST control routes are capability-scoped pause/continue/restore operations described below;
+the Web never owns execution authority.
 
 The dashboard discovers `.bmad-ml/CURRENT.json` and one-level subdirectory
 CURRENT indexes. It validates study config/result digests, reads registered
@@ -40,12 +60,19 @@ The Web view separates two complementary projections:
   chronological adjacency as scientific ancestry. A result that triggered a
   proposal can be a separate evidence reference. The old ordered history list
   remains selectable inside this view.
-- Research lineage: reuse the user's IterLab X6/Dagre component. Include all
-  registered positive/negative trials and outcomes, recoverable historical
-  reviews, analysis, implementation, diagnosis and blocked records. Show explicit
-  recorded relationships; graph branches do not schedule research. Distinguish
-  a source result from the proposal/code work that follows it. Group/fold/search
-  affect presentation only, never delete evidence. Unrecorded thoughts/chat
+- Research lineage: reuse the user's IterLab X6/Dagre component, with a read-only
+  presentation of **plan → experiment → next plan**. An experiment has a stable
+  task-UID identity from queue/run/failure through measured result; configuration,
+  execution, result and registered analysis belong in its inspector. Plan details
+  contain separate science/code review timelines: every completed receipt and
+  outstanding request, proposal revision versus review round, objections,
+  dispositions, resolutions and original evidence. One approve verdict is not
+  final approval unless the original receipt says approved=true. Initial review
+  bindings remain visible alongside successor reviews. Never invent absent rounds
+  or pending completion. Record problems are shown explicitly.
+  Keep real candidate branches; distinguish the recorded iteration trigger from
+  a different selected comparison candidate. Grouping is presentation_only and
+  never changes SDM evidence, authority or transitions. Unrecorded thoughts/chat
   messages are not invented as nodes.
 
 Bind the page to project_root and the registered SDM study_id. Display the
@@ -69,8 +96,7 @@ SSE refreshes the visible snapshot when SDM files change. Its bounded file
 observation is presentation only: it cannot wake Codex or drive the research
 loop. Original supervisor/model/Guard receipts remain authoritative. Timers stay
 paused. Unknown/blocked states must be displayed honestly; this UI does not fix
-or conceal core execution failures. Host status is the last supervisor record,
-not a guarantee that its process is alive.
+or conceal core execution failures. Host state combines saved supervision with a read-only check of the original owner.
 
 New source/install versions include this optional module. Existing frozen
 research runtimes need no migration to be viewed. The user may continue using
@@ -79,6 +105,36 @@ ready/health/process identity, then stop only that owned Web process; never stop
 the research host. Guidance edits remain in Codex. Host restoration is delegated to the core broker. Pause/resume is a
 separate authenticated delegation; research records remain read-only. UI style attribution is in dashboard/NOTICE.txt.
 
+
+
+### Register the current project using the existing index contract
+
+Create the project's `.bmad-ml/CURRENT.json` after preparation, using the original
+`bmad-ml-active-study/v1` schema (the internal name is retained for compatibility).
+Do not invent a new index schema. `study_id` must equal the prepared service's
+`project_id`. The `config` and its store/root must be descendants of the SAME
+current project root supplied to the dashboard; an index in a code subfolder
+cannot register a service stored in a sibling or parent directory.
+
+For example, Codex prepares these real absolute paths internally:
+
+```json
+{
+  "schema": "bmad-ml-active-study/v1",
+  "study_id": "ACTUAL_PREPARED_PROJECT_ID",
+  "root": "/absolute/current-model-project",
+  "config": "/absolute/current-model-project/.bmad-ml/research/study/service.json",
+  "progress": "/absolute/current-model-project/.bmad-ml/research/study/store/component-pipeline/progress.json",
+  "supervision": "/absolute/current-model-project/.bmad-ml/research/study/store/supervision.json"
+}
+```
+
+These are placeholders, not paths to copy. Preserve inspect.origin_codex_chat_id
+when available; do not replace an existing study's origin or create a second
+controller while registering its view. Read `/api/snapshot` and verify the same
+study_id with no integrity errors, then open the ready URL. A fresh empty project
+has no study until registration; adding a display index grants no execution authority.
+The user should not be asked to write this internal JSON.
 
 ## User pause takes precedence
 
@@ -272,3 +328,12 @@ location control remains there too. Normal navigation stays compact and focus
 mode retains the original research control. Moved controls return to their homes
 before destroying a map, so changing studies or views never loses a button or
 creates duplicate controls. This is presentation only and never starts research.
+
+### Progress versus a live process
+
+The view and managed launcher share research_progress. A verified live worker
+can still be blocked: controller_running remains true while
+automatic_iteration_active is false. Display the phase, next owner/action and
+recorded blocking reason. Result handoff distinguishes receipt from analysis
+dispatch. The view does not dispatch that analysis, retry a submission, migrate
+a freeze or resume a host. Unavailable health is unverified, never active.

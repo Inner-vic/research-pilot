@@ -1,0 +1,4 @@
+interface:
+  display_name: "ResearchPilot"
+  short_description: "在当前会话引导模型研究、分析实验结果，并通过 SDM 持续迭代"
+  default_prompt: "使用 $researchpilot，先看看当前项目，再一步步引导我说明研究任务、数据和目标；已有信息不用重复问，先不提交训练。"

@@ -14,6 +14,12 @@ def inspect(cfg):
         'action':'start-original-host','unresolved':[],'recoverable_receipts':[],
         'platform_writes':0,'model_calls':0,'scope':'same frozen config, Inbox, Context and original Guards only'}
     if state and state.get('config_digest')!=digest(cfg):raise ValueError('recovery_original_configuration_changed')
+    if state and cfg.get('component_pipeline',{}).get('sdm_governance'):
+        from research_acceptance import project as acceptance_project
+        try:report['sdm_acceptance']=acceptance_project(cfg,state)
+        except (ValueError,KeyError) as error:
+            report['can_restart_host']=False
+            report['unresolved'].append({'kind':'sdm-acceptance','action':'reconcile-original-evidence-no-resend','reason':str(error)[:180]})
     context_path=Path(cfg['research_context']['root'])/'context.json'
     context=read_json(context_path) if context_path.exists() else {}
     jobs=[]

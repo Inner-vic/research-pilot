@@ -1,0 +1,49 @@
+{
+  "schema": "researchpilot-engineering-validation/v1",
+  "date": "2026-11-18",
+  "scope": "Original-controller runtime diagnosis and complete scientific graph presentation",
+  "offline_controls": {
+    "passed": 151,
+    "elapsed_seconds": 516.03,
+    "real_transports_prohibited": true
+  },
+  "targeted_controls": {
+    "passed": 30,
+    "resident_loop_result_events": 3,
+    "unique_successor_submissions": 2,
+    "foreground_step_calls": 0,
+    "effects": "explicit substitutes"
+  },
+  "unit_checks": {
+    "progress": 5,
+    "deployment": 3,
+    "dashboard": 15,
+    "installation": 11,
+    "workbench": 3
+  },
+  "frontend_checks": [
+    "projection and evidence ownership",
+    "candidate-base versus trigger",
+    "original tree style with every candidate retained",
+    "review history and escaping",
+    "reconnection",
+    "session binding",
+    "acceptance view"
+  ],
+  "actual_history_graph": {
+    "experiments": 41,
+    "plans": 42,
+    "nodes": 84,
+    "layout": "original tree style",
+    "records_changed": false
+  },
+  "model_calls": 0,
+  "training_tasks_submitted": 0,
+  "old_studies_resumed": 0,
+  "limits": [
+    "No new ML acceptance",
+    "Colleague RoadModel deployment not revalidated",
+    "Old frozen studies retain original runtime",
+    "Long-term unattended operation not established"
+  ]
+}

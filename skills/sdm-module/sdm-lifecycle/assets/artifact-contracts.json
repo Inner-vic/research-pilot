@@ -133,7 +133,6 @@
       "executor": "contracts.validate_label_ontology",
       "required": [
         "ontology_identity",
-        "classes",
         "semantics",
         "version"
       ]

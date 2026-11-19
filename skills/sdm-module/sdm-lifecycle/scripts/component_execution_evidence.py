@@ -5,6 +5,7 @@ the original read-only review; original Manager/Guard still owns every write.
 """
 import ast
 import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -17,6 +18,10 @@ from review_storage import read_json
 
 
 def fingerprint(request,default_loss_compatibility=False):
+    from project_payload import command
+    if command(request).endswith('\nSDM_PROJECT_PAYLOAD'):
+        from project_execution_evidence import fingerprint as project_fingerprint
+        return project_fingerprint(request)
     files,proof=executed_request_files(request)
     if set(files)!={'trainer.py','model.py','parameters.json'}:
         return {'comparable':False,'reason':'original monolithic baseline, retained as separate code format',
@@ -62,6 +67,23 @@ def differences(wanted,actual,path='data'):
     return result
 
 
+def inventory_fingerprint(task,default_loss_compatibility=False):
+    """Inventory is heterogeneous; actual parent/candidate decoding stays strict."""
+    native=task['data']['lpai_task']
+    if not isinstance(native.get('roles'),list) or not native['roles']:
+        raise ValueError('owned_task_launch_payload_required')
+    commands=[native.get('cmd',''),*[r.get('cmd','') for r in native.get('roles',[])]]
+    if any(not isinstance(cmd,str) or not cmd for cmd in commands):raise ValueError('owned_task_launch_payload_required')
+    if all(isinstance(cmd,str) and 'SDM_PAYLOAD' not in cmd and 'SDM_PROJECT_PAYLOAD' not in cmd for cmd in commands):
+        return {'comparable':False,'reason':'Foreign non-SDM launch format; not an AST/parameter recipe in this adapter.',
+            'native_data_sha256':sha(task['data']),
+            'command_sha256':[hashlib.sha256(cmd.encode()).hexdigest() for cmd in commands],
+            'authority':'Retained in complete owned inventory. No execution qualification or retry permission.'}
+    # Any claimed SDM role/wrapper still must pass exact decoding. A mixed or
+    # damaged SDM command cannot hide as foreign history.
+    return fingerprint({'data':task['data']},default_loss_compatibility)
+
+
 def preparation(manager,candidate,parent_plan,parent_result,root,workload):
     """A failed task is evidence for repair, never a low-scoring baseline."""
     root=Path(root);root.mkdir(parents=True,exist_ok=True)
@@ -101,8 +123,17 @@ def preparation(manager,candidate,parent_plan,parent_result,root,workload):
 
 
 def produce(manager,candidate,parent_plan,parent_result,history,root,reproduction_scope=None,workload=None,preparation_recovery=None,on_progress=None):
+    if workload and workload.get('adapter')=='project/v1':
+        from project_execution_evidence import produce as project_evidence
+        return project_evidence(manager,candidate,parent_plan,parent_result,history,root,reproduction_scope,workload,preparation_recovery,on_progress)
     if preparation_recovery is not None:
         if preparation_recovery!={'version':1} or history or reproduction_scope is not None:raise ValueError('explicit_initial_preparation_recovery_scope_required')
+        return preparation(manager,candidate,parent_plan,parent_result,root,workload)
+    if read_json(reference(parent_result)).get('valid_training_round') is False:
+        if reproduction_scope is not None:raise ValueError('failed_task_cannot_qualify_reproduction')
+        for row in history:round_evidence(row['result'])
+        # Same authenticated failed-UID/Guard/native-payload checks as initial
+        # repair. Previously valid rounds remain evidence, never the failed UID.
         return preparation(manager,candidate,parent_plan,parent_result,root,workload)
     root=Path(root);root.mkdir(parents=True,exist_ok=True)
     report=root/'operational-verification.json'
@@ -136,7 +167,7 @@ def produce(manager,candidate,parent_plan,parent_result,history,root,reproductio
     compatibility=bool(workload and workload['training_loss_hook'])
     current=fingerprint(candidate,compatibility);recipes=[]
     for item in inventory['tasks']:
-        recipe=fingerprint({'data':item['data']},compatibility)
+        recipe=inventory_fingerprint(item,compatibility)
         recipes.append({'uid':item['uid'],'status':item['status'],'name':item['name'],**recipe})
     matches=[row['uid'] for row in recipes if current.get('comparable') and row.get('recipe_sha256')==current['recipe_sha256']]
     reproduction=None
@@ -166,6 +197,8 @@ def produce(manager,candidate,parent_plan,parent_result,history,root,reproductio
         'interpretation':'Raw provider metadata/catalog/default filling can change the data hash. The original Manager field comparison and the actual remote code/data/config/split/artifact identities were verified; raw-hash inequality alone is not an unresolved intent or command change.',
         'candidate_recipe':current,'owned_component_declared_recipes':recipes,'matching_exact_recipe_uids':matches,
         'default_loss_compatibility':compatibility,'workload':workload,
+        'recipe_comparison_coverage':{'comparable':sum(bool(r.get('comparable')) for r in recipes),
+            'not_comparable':[{'uid':r['uid'],'reason':r.get('reason')} for r in recipes if not r.get('comparable')]},
         'explicit_reproduction':reproduction,
         'scope':'Complete official owned-component task inventory at read time; exact declared AST/parameter comparison, not global semantic equivalence or an approval grant.',
         'project_accepted_interventions':[{'uid':round_evidence(row['result'])['uid'],

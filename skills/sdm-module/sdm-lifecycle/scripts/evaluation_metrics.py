@@ -42,6 +42,6 @@ def classification_metrics(result,baseline=None):
 def reported_scalar_metrics(result):
  """Retain optional evaluator-reported metrics; do not manufacture IoU from class CM."""
  names={'accuracy':'总体准确率','balanced_accuracy':'平衡准确率','precision':'精确率','recall':'召回率','macro_f1':'宏平均 F1',
-  'micro_f1':'微平均 F1','weighted_f1':'加权 F1','iou':'IoU','mean_iou':'平均 IoU','miou':'平均 IoU','dice':'Dice','loss':'验证损失'}
+  'micro_f1':'微平均 F1','weighted_f1':'加权 F1','iou':'IoU','mean_iou':'平均 IoU','miou':'平均 IoU','dice':'Dice','loss':'验证损失','mae':'平均绝对误差','mse':'均方误差'}
  return [{'key':k,'label':label,'value':result.get('validation',{}).get(k),'source':'evaluator-reported'}
          for k,label in names.items() if finite(result.get('validation',{}).get(k))]

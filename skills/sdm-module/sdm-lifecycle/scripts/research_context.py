@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
-from review_storage import atomic_json, locked, read_json
+from review_storage import atomic_json, locked, read_json, native_path
 
 
 class Context:
@@ -20,6 +20,11 @@ class Context:
         self.path = self.root/'context.json'
         self.scope = {k: cfg[k] for k in ('project_id', 'cwd', 'codex_home', 'model', 'sandbox')}
         self.scope['model_provider'] = cfg.get('model_provider')
+        self.history_required=spec.get('history_required',False)
+        if type(self.history_required) is not bool:raise ValueError('boolean_native_history_policy_required')
+        if self.history_required:
+            if spec.get('session_role') not in ('main','review'):raise ValueError('bound_working_session_role_required')
+            self.scope.update(history_required=True,session_role=spec['session_role'])
         if self.root.resolve().is_relative_to(Path(cfg['cwd']).resolve()):
             raise ValueError('context_state_must_be_outside_model_writable_workspace')
 
@@ -27,9 +32,19 @@ class Context:
         return locked(self.root, '.context.lock', 'research_context_already_owned')
 
     def load(self):
-        value = read_json(self.path) if self.path.exists() else {'schema':'sdm-research-context/v1', 'scope':self.scope, 'phase':'new'}
+        if self.history_required and not native_path(self.path).exists() and native_path(self.root/'identity.json').exists():
+            raise ValueError('working_context_missing_reconcile_only')
+        value = read_json(self.path) if native_path(self.path).exists() else {'schema':'sdm-research-context/v1', 'scope':self.scope, 'phase':'new'}
         if value.get('schema') != 'sdm-research-context/v1' or value.get('scope') != self.scope:
             raise ValueError('research_context_scope_changed')
+        if self.history_required:
+            ids=set();jobs=set()
+            for row in value.get('turns',[]):
+                raw=native_path(row['receipt']).read_bytes();receipt=json.loads(raw);detail=receipt.get('detail',{})
+                if (hashlib.sha256(raw).hexdigest()!=row['receipt_sha256'] or receipt.get('job_id')!=row['job_id']
+                        or detail.get('thread_id')!=value.get('thread_id') or detail.get('turn_id')!=row['turn_id']
+                        or row['turn_id'] in ids or row['job_id'] in jobs):raise ValueError('working_history_receipt_changed')
+                ids.add(row['turn_id']);jobs.add(row['job_id'])
         return value
 
     def open(self, codex, arguments, job_id=None):
@@ -69,15 +84,21 @@ class Context:
             if self.first_turn_journal:
                 value.update(opening_job=job_id,first_turn_journal_version=1)
             atomic_json(self.path, {**value, 'phase':'creating'})
+            if self.history_required:atomic_json(self.root/'identity.json',{'scope':self.scope})
             thread = codex.thread_start(ephemeral=False, **arguments)
             value.update(phase='created' if self.first_turn_journal else 'ready', thread_id=thread.id)
             atomic_json(self.path, value)
             return thread
         if value['phase'] != 'ready' or not value.get('thread_id'):
             raise ValueError('persistent_thread_identity_required')
-        thread = codex.thread_resume(value['thread_id'], **arguments)
+        thread = codex.thread_resume(value['thread_id'], **arguments, **({'include_turns':True} if self.history_required else {}))
         if thread.id != value['thread_id']:
             raise ValueError('native_resumed_thread_identity_changed')
+        if self.history_required:
+            actual=thread.read(include_turns=True).model_dump(mode='json',by_alias=True)['thread']
+            if (actual['id']!=value['thread_id'] or [t['id'] for t in actual.get('turns',[])]!=[r['turn_id'] for r in value.get('turns',[])]
+                    or [t['status'] for t in actual.get('turns',[])]!=[r['terminal'] for r in value.get('turns',[])]):
+                raise ValueError('working_native_history_changed_before_turn')
         return thread
 
     def empty_for(self,job,value=None):
@@ -105,7 +126,7 @@ class Context:
     def acknowledge(self, job, receipt):
         """Only a durable exact worker receipt releases the next model delivery."""
         value = self.load()
-        raw = Path(receipt).read_bytes(); result = json.loads(raw)
+        raw = native_path(receipt).read_bytes(); result = json.loads(raw)
         detail = result.get('detail', {})
         if (result.get('job_id') != job or result.get('status') not in ('completed','failed')
                 or detail.get('thread_id') != value.get('thread_id')
@@ -117,6 +138,11 @@ class Context:
             return
         if value.get('pending_job') != job or detail.get('turn_id') != value.get('pending_turn'):
             raise ValueError('native_turn_receipt_identity_mismatch')
+        logical_receipt=Path(receipt).resolve()
+        stored_receipt=str(native_path(logical_receipt) if len(str(logical_receipt))>240 else logical_receipt)
+        if self.history_required:
+            value['turns']=[*value.get('turns',[]),{'job_id':job,'turn_id':detail['turn_id'],
+                'terminal':detail['terminal'],'receipt':stored_receipt,'receipt_sha256':hashlib.sha256(raw).hexdigest()}]
         value.update(last_job=job, last_turn=value['pending_turn'], pending_job=None, pending_turn=None,
-                     receipt=str(Path(receipt).resolve()), receipt_sha256=hashlib.sha256(raw).hexdigest())
+                     receipt=stored_receipt, receipt_sha256=hashlib.sha256(raw).hexdigest())
         atomic_json(self.path, value)

@@ -1,44 +1,26 @@
-# Five phases and task-scoped delivery
+# Task purpose within the SDM lifecycle
 
-Read when opening, resuming or reporting an ordinary ML task. Select purpose,
-execution scope and evidence needs before invoking existing project/task drivers.
-The five phases organize work and reporting. New ordinary tasks use the
-[v2 execution graph](five-phase-orchestration.md), including explicit dependency
-nodes and evidence gates. Existing attempts import verified observations into the
-current workflow with legacy check identities; ordinary recovery does not select the old21-node route.
-The formal qualification protocol remains separate from this task graph.
+Read [the current SDM-derived lifecycle](sdm-core.md) when opening,
+resuming or reporting ML research. Select the task purpose, applicable duties,
+execution scope and evidence needs before invoking existing project drivers.
+Training, reproduction, evaluation and diagnostics serve the same lifecycle.
+Reuse valid evidence and explain inapplicability; do not manufacture receipts.
 
-## Organize work through five phases
+## Execution views and recovery
 
-| Phase | Minimum useful output | Exit and continuation | Current task-node mapping |
-| --- | --- | --- | --- |
-| 问题定义与需求梳理 | Agreed question, metrics, scope and data basis. | Human–agent alignment. | 1, 2, 3, 22 |
-| 方案设计与实验规划 | Model/baseline selection, hypothesis, protocol, method checks and reviewed plan. | Resolve material plan questions. | 4, 6, 24, 25, 34 |
-| 实验开发与训练验证 | Implementation, engineering checks, runtime checks, baseline reproduction and training observations. | Preserve actual model/process evidence. | 9, 10, 11, 12, 7, 13, 5, 15 |
-| 结果评估与评审 | Metrics, error/specialty analysis, evidence and conclusion quality. | Grounded results after appropriate review. | 16, 17, 18, 19, 32 |
-| 结论输出与迭代决策 | Conclusion, grounded decision, delivery and continuation. | No implicit successor execution. | 20, 33, 21 |
+The generic project's eleven work packages and legacy34 internal check IDs are
+delivery/driver identities, documented in [the aggregation view](five-phase-orchestration.md).
+Their five groups are not the original SDM five phases. Component studies invoke
+selected review/implementation modes, not this whole graph. Original governed
+ledger execution retains its pinned authority, anchoring and replay requirements.
+These interfaces do not constitute separate scientific methods; their current
+acceptance integration gaps must be disclosed.
 
-R.1–R.5 (26, 27, 28, 14, 30), W.1–W.2 (23, 8), and V.1–V.2
-(29, 31) are independently owned capability steps, not phase members. Use
-`node_registry.py` for current display identities and report capability coverage
-separately from business work packages. The34 internal IDs are not34 peer steps. Workflow revision1 uses11 work packages; driver wire revision3
-reconnects actual acquisition before runtime checks and complete plan context.
-
-Independent preparations can overlap; the real dependencies and current provider
-contract determine order. Evidence requests can return to planning/collection.
-Resume from the affected phase, retaining completed evidence elsewhere. Report
-phase status, current blocker, owned-resource state and the next concrete action;
-use existing attempt summaries/journals, cleanup and review records as sources.
-Do not synthesize successful receipts from this reporting view. Phase labels do
-not alter CLI status values or the numbered ledger.
-
-The legacy34-check mapping is a compatibility detail, not an immutable product
-requirement or a target completion count. First choose required/reused/optional
-work. Repeated or low-value nodes may be consolidated through an explicit,
-versioned framework change with affected contracts/drivers/tests and migrations
-where needed. Do not silently renumber old evidence or relabel an unmeasured
-check as passed. An explicitly requested governed qualification continues to use
-its pinned engine and protocol until a valid migration.
+Resume from the affected responsibility with the original attempt, task, model
+call and Guard identities. Preserve verified evidence elsewhere; reconcile unknown
+effects before any new action. Report the actual blocker, owned-resource state,
+next action and associated SDM duties. Runtime completion does not infer scientific
+acceptance. Frozen histories are not renumbered or relabeled by a new view.
 
 ## Select purpose independently of experiment size
 

@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-16",
+  "scope": "Persistent science planning over the existing SDM gate and ModelRunner",
+  "context_and_model_regressions": {
+    "passed": 84,
+    "synthetic_transport": true
+  },
+  "governance_submission_recovery_controls": {
+    "passed": 71,
+    "synthetic_transport": true
+  },
+  "real_sdk_diagnostic": {
+    "model_calls": 3,
+    "same_planner_thread": true,
+    "distinct_planner_turns": true,
+    "second_request_contains_memory_tag": false,
+    "memory_recalled": true,
+    "independent_critic_isolated": true,
+    "original_result_replay_new_calls": 0,
+    "research_or_platform_actions": 0
+  },
+  "scientific_quality_improvement_measured": false,
+  "training_metric_improvement_measured": false,
+  "token_or_cost_reduction_measured": false,
+  "pro_integration": false,
+  "default_delivery": "New qualified component studies prepared by research_initialize",
+  "legacy_frozen_studies_migrated": false,
+  "existing_timers_resumed": false,
+  "protected_frozen_files_unchanged": 197,
+  "remaining_limits": [
+    "Native context may compact; registered current evidence remains mandatory",
+    "Long-running scientific decision quality and cost benefits not benchmarked",
+    "Unknown calls or changed native history block; no silent new-chat fallback",
+    "Result-analysis workers may opt in explicitly; no migration of other workload configurations"
+  ],
+  "installation": {
+    "regressions_passed": 5,
+    "installed_files_matching_source": 333,
+    "actual_entry_inspect": "passed"
+  },
+  "source_model_regressions_passed": 84,
+  "publication": {
+    "repository": "[private local reference retained by maintainer]",
+    "branch": "main",
+    "verification": "Consult this commit and its GitLab pipeline for publication and CI status; original local qualification scope remains unchanged."
+  }
+}

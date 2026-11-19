@@ -1,0 +1,59 @@
+{
+  "schema": "researchpilot-release-verification/v1",
+  "date": "2026-11-15",
+  "scope": "Qualified 13-activity univariate binary fixed-validation component delivery; not universal formal qualification.",
+  "release_version": "0.3.0",
+  "accepted_workflow_record_sha256": "77f57eb466b80114a78b11e5fbe1958c364d308dd346f7d5852cf64bfe6dbc53",
+  "sealed_final_acceptance_sha256": "7fdc1f8df8874ab33874731450077b301b8910caa79e43e8bf4367bd58cf6534",
+  "original_rule_reuse": {
+    "original_step_semantics_unchanged": true,
+    "original_decision_ast_equivalent_after_shared_validator_inlining": true,
+    "original_E01_ast_equivalent_after_shared_kernel_inlining": true
+  },
+  "preservation": {
+    "protected_original_files": 197,
+    "all_unchanged": true,
+    "original_project_index_unchanged": true,
+    "original_git_index_unchanged": true,
+    "old_studies_or_timers_resumed": false
+  },
+  "real_research": {
+    "authorized": true,
+    "accepted": true,
+    "scope": "Univariate binary fixed-validation component; two-task CPU workflow smoke acceptance.",
+    "tasks": 2,
+    "epochs_each": 10,
+    "cpu": 1,
+    "memory_gib": 4,
+    "gpu": 0,
+    "total_preflight_updates": 15,
+    "macro_f1": [
+      0.8190750059908938,
+      0.849265579692922
+    ],
+    "scientific_outcome": "inconclusive",
+    "quality_goal_met": false,
+    "same_pending_plan_handoff": true,
+    "uninterrupted_autonomy_claimed": false,
+    "supervisor_completed": true
+  },
+  "reproducible_release_checks": {
+    "commands": [
+      "python -B scripts/verify-handover.py --root .",
+      "python -B scripts/run-offline-controls.py --junit build/offline-controls.xml",
+      "node scripts/tests/test_lineage_view.cjs",
+      "node scripts/tests/test_acceptance_view.cjs",
+      "node scripts/tests/test_dashboard_reconnect.cjs",
+      "python -B scripts/setup.py --skip-model-sdk --no-dashboard --no-install"
+    ],
+    "execution_records": "GitLab pipeline jobs and downloadable JUnit/package artifacts for the published commit; local release record retained by maintainer.",
+    "live_models_platform_or_training_required": false
+  },
+  "limitations": [
+    "Single seed and adaptive validation do not establish statistical superiority.",
+    "Controlled foreground engineering handoff occurred; uninterrupted autonomy is not claimed.",
+    "Full signed qualification, other workloads, unknown POST effects, OS restart and long-term autonomy remain unqualified.",
+    "External webpage opening a native Codex chat is not implemented."
+  ],
+  "raw_evidence_publication": "Immutable raw records are retained privately; this export contains summaries and digests only."
+}

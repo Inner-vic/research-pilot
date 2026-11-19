@@ -1,7 +1,7 @@
 """Bound shared evidence and local, allowlisted reviewer investigation. No tools run."""
 import hashlib
 from pathlib import Path
-from review_storage import read_json
+from review_storage import read_json,native_path
 from task_pipeline import digest
 
 FIELDS = ('goal', 'constraints', 'data', 'code_revision', 'configuration', 'history', 'unknowns')
@@ -26,12 +26,13 @@ def validate_context(value, subject):
             raise ValueError('unique_typed_review_source_required')
         ids.add(row['id'])
         p = Path(row.get('path', ''))
-        if not p.is_absolute() or not p.is_file() or p.is_symlink():
+        io=native_path(p)
+        if not p.is_absolute() or not io.is_file() or io.is_symlink():
             raise ValueError('regular_local_review_source_required')
-        if p.stat().st_size > 8*1024*1024:
+        if io.stat().st_size > 8*1024*1024:
             raise ValueError('review_source_requires_bounded_snapshot')
         h = hashlib.sha256()
-        with p.open('rb') as f:
+        with io.open('rb') as f:
             for chunk in iter(lambda:f.read(1024*1024), b''): h.update(chunk)
         if row.get('sha256','').removeprefix('sha256:') != h.hexdigest():
             raise ValueError('review_source_changed')
@@ -56,7 +57,7 @@ def supplement(packet, query):
         start, count = row.get('start_line',1), row.get('line_count',80)
         if source is None or not row.get('question') or type(start) is not int or type(count) is not int or start < 1 or not 1 <= count <= 200:
             raise ValueError('allowlisted_bounded_evidence_query_required')
-        data = Path(source['path']).read_bytes()
+        data = native_path(source['path']).read_bytes()
         if len(data) > 8*1024*1024: raise ValueError('review_source_requires_bounded_snapshot')
         if hashlib.sha256(data).hexdigest() != source['sha256'].removeprefix('sha256:'):
             raise ValueError('review_source_changed')

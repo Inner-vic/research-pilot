@@ -1,7 +1,7 @@
 # Quality-first Pro dialogue
 
 Pro is an optional backend, not required merely because a binding exists. New
-proposal-review v2/v3 policies select `model` for provider-neutral A/B handoff or
+proposal-review v2/v3 policies select `model` for provider-neutral 生成—质询 handoff or
 `pro` for this fixed-chat protocol. See [proposal-deliberation.md](proposal-deliberation.md).
 Only a selected Pro attempt requires this transport; missing/failed delivery
 waits without silently changing that attempt. Frozen v1 policies keep their route.

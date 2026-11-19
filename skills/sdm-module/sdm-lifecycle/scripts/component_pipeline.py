@@ -18,6 +18,27 @@ from task_pipeline import digest
 
 def validate(cfg):
     spec=cfg.get('component_pipeline',{})
+    from component_submission import enabled
+    governed_submission=enabled(spec)
+    if 'sdm_governance' in spec:
+        from research_acceptance import load as load_governance
+        governance=load_governance(spec['sdm_governance'],spec)
+        project_profile=spec.get('workload',{}).get('adapter')=='project/v1'
+        if (spec.get('decision_policy',{}).get('version')!=(5 if project_profile else 4) or spec['decision_policy'].get('budget')!=
+                {'known_task_uids':[],'max_new_submissions':governance['max_submissions']}):
+            raise ValueError('same_nonrenewing_governance_and_candidate_budget_required')
+        if reference(spec['sdm_governance']['seed']).resolve().is_relative_to(Path(cfg['cwd']).resolve()):
+            raise ValueError('governance_outside_model_workspace_required')
+    if spec.get('sdm_intent') is not None and spec.get('submission_gate') != {'version':2}:
+        raise ValueError('original_sdm_intent_cannot_downgrade_submission_gate')
+    if spec.get('submission_gate') == {'version':2}:
+        from research_intent import load
+        _, intent = load(spec.get('sdm_intent'))
+        if (intent['project_id'] != cfg['project_id'] or cfg.get('engine_contract_digest') != intent['engine_contract_digest']
+                or not cfg.get('normative_manifest')):
+            raise ValueError('pipeline_requires_pinned_original_sdm_intent')
+        if reference(spec['sdm_intent']['seed']).resolve().is_relative_to(Path(cfg['cwd']).resolve()):
+            raise ValueError('sdm_intent_outside_model_workspace_required')
     if 'workload' in spec:
         from research_workloads import settings
         settings(spec['workload'])
@@ -32,7 +53,7 @@ def validate(cfg):
             raise ValueError('pipeline_trusted_inputs_outside_model_workspace_required')
     from component_event_source import settings
     settings(spec['initial_source'],cfg,{'kind':'component-source'})
-    if spec['initial_source'].get('version') == 3:
+    if spec['initial_source'].get('version') in (3,4):
         from research_model_runner import guidance_sources
         required = {}; guidance_sources(required)
         declared = {row['path']: row['sha256'] for row in cfg.get('guidance_manifest', [])}
@@ -64,11 +85,19 @@ def validate(cfg):
     delegation=read_json(reference(spec['delegation']))
     if 'initial_submission' in spec:
         initial=spec['initial_submission']
-        if set(initial)!={'version','authorization','confirmed_plan'} or initial['version']!=1 or history:
+        if (set(initial)!={'version','authorization','confirmed_plan'} or type(initial['version']) is not int
+                or initial['version'] not in (1,2) or history
+                or initial['version']==2 and (not governed_submission or spec['version']!=4)):
             raise ValueError('explicit_fresh_initial_submission_required')
         original=read_json(reference(spec['initial_source']['plan']))
         confirmed=read_json(reference(initial['confirmed_plan']))
         auth=read_json(reference(initial['authorization']))
+        if ('sdm_intent' in confirmed or 'sdm_intent' in spec) and (
+                confirmed.get('sdm_intent') != spec.get('sdm_intent')
+                or spec.get('submission_gate') != {'version':2}):
+            raise ValueError('initial_sdm_intent_cannot_be_removed_or_replaced')
+        if confirmed.get('sdm_governance') != spec.get('sdm_governance'):
+            raise ValueError('initial_governance_cannot_be_removed_or_replaced')
         if (original['request']!=request or confirmed.get('comparison_identity')!=comparison
                 or confirmed.get('source_ref')!=delegation.get('source_ref')
                 or confirmed.get('target')!=spec.get('decision_policy',{}).get('target')
@@ -89,7 +118,7 @@ def validate(cfg):
         limits=delegation.get('training_limits',{})
         if (set(limits)!={'min_epochs','max_epochs','default_epochs'}
                 or any(type(v) is not int for v in limits.values())
-                or not 10<=limits['min_epochs']<=limits['default_epochs']<=limits['max_epochs']<=30):
+                or not ((1<=limits['min_epochs']<=limits['default_epochs']<=limits['max_epochs']) if spec.get('workload',{}).get('adapter')=='project/v1' else (10<=limits['min_epochs']<=limits['default_epochs']<=limits['max_epochs']<=30))):
             raise ValueError('structured_delegated_training_limits_required')
         if 'resume_approved_plan' in spec or 'resume_result' in spec:
             raise ValueError('cross_runtime_review_replay_requires_original_frozen_verifier')
@@ -99,7 +128,7 @@ def validate(cfg):
     return spec
 
 
-class ComponentPipeline:
+class ResearchPipeline:
     def __init__(self,inbox):
         self.inbox=inbox;self.spec=validate(inbox.cfg)
         self.root=inbox.root/'component-pipeline';self.root.mkdir(parents=True,exist_ok=True)
@@ -126,6 +155,8 @@ class ComponentPipeline:
             if health is not None:
                 atomic_json(self.root/'health.json',{**health,'config_sha256':digest(self.inbox.cfg),
                     'state_sha256':digest(state)})
+            from research_acceptance import project as acceptance_project,publish_projection
+            publish_projection(self.inbox.cfg,state,acceptance_project(self.inbox.cfg,state))
             from research_progress import publish
             publish(self.inbox.cfg,state)
         except Exception as error:
@@ -163,10 +194,11 @@ class ComponentPipeline:
         return receipt['detail']
 
     def base_project(self):
-        return {'platform_requirements':self.manager_config['platform_requirements'],
+        return {**({'sdm_governance':copy.deepcopy(self.spec['sdm_governance'])} if self.spec.get('sdm_governance') else {}),
+                'platform_requirements':self.manager_config['platform_requirements'],
                 'proposal_review':self.spec['proposal_review']}
 
-    def replan(self,state,current,folder):
+    def record_result(self,state,current,folder):
         ready=read_json(reference(current['result']))
         rows=copy.deepcopy(state['rounds'])
         if ready.get('valid_training_round') is True:
@@ -199,6 +231,15 @@ class ComponentPipeline:
                 'diagnosis':current['result'],'model_calls':0,'platform_writes':0,
                 'next':'Repair the evidenced input/runtime prerequisite before any scientific ranking or new submission.'})
             return
+        return ready,rows
+
+    def replan(self,state,current,folder):
+        if self.spec.get('workload',{}).get('adapter')=='project/v1':
+            from project_pipeline_facts import replan
+            return replan(self,state,current,folder)
+        recorded=self.record_result(state,current,folder)
+        if recorded is None:return
+        ready,rows=recorded
         config=self.base_project()
         delegation=read_json(reference(self.spec['delegation']))
         execution_limits=delegation.get('resources','Preserve the delegated component resource scope.')
@@ -214,6 +255,7 @@ class ComponentPipeline:
                 +execution_limits,
             'sources':[self.spec['baseline_source'],self.spec['initial_request'],current['source']['plan']]}
         spec['sources'].extend(self.spec.get('additional_evidence',[]))
+        if self.spec.get('sdm_governance'):spec['sources'].append(self.spec['sdm_governance']['seed'])
         refusals=[*self.spec.get('previous_implementation_feedback',[]),*state.get('implementation_block_history',[]),
             *current.get('capability_feedback',[])]
         if refusals:
@@ -315,7 +357,24 @@ class ComponentPipeline:
             config['proposal_review']=copy.deepcopy(config['proposal_review'])
             config['proposal_review']['source_budget']={'version':1,'serialized_bytes':96*1024,
                 'max_file_bytes':32768,'priority':[str(p) for p in dict.fromkeys(priority)]}
-        if ready.get('valid_training_round') is not True:spec['parent_diagnosis']=current['result']
+        if ready.get('valid_training_round') is not True:
+            spec['parent_diagnosis']=current['result']
+            spec['constraints']+=(' This terminal task is not a comparable result. Diagnose its actual error and '
+                'propose a concrete supported repair within model.py/parameters.json; an approved repair proceeds '
+                'through original implementation, independent code review and submission checks. '
+                'Do not repeat its recipe, change protected data/evaluation/preflight, or infer a quality score.')
+            if rows:
+                from component_payload import executed_request_files
+                from component_event_source import publish_bytes
+                failed=read_json(reference(current['source']['plan']))
+                files,proof=executed_request_files(failed['request'],current['source']['expected'].get('code_sha256'))
+                code_root=folder/'executed-parent';code_root.mkdir(exist_ok=True)
+                for name,text in files.items():
+                    path=code_root/name;publish_bytes(path,text.encode('utf-8'));spec['sources'].append(ref(path))
+                path=code_root/'proof.json'
+                once(path,{**proof,'manager_plan':current['source']['plan'],'diagnosis':current['result'],
+                    'scope':'Failed-task payload, never a verified candidate.'})
+                spec['sources'].append(ref(path))
         if not rows:
             spec['preparation_recovery']={'version':1}
             spec['constraints']+=(' No valid training baseline exists. Diagnose the actual failed task and repair only '
@@ -340,6 +399,9 @@ class ComponentPipeline:
                 'scope':'Declared failed-task payload under original verified Manager identity, not a successful training result.'})
             spec['sources'].append(ref(path))
         config['research_replan']=spec
+        if self.spec.get('sdm_intent') is not None:
+            from research_intent import for_review
+            config['sdm_intent']=for_review(self.spec['sdm_intent'])
         project=folder/'replan-project.json';once(project,config)
         current['replan_root']=str(folder/'replan')
         current['job']=self.coordinator('research-replan',project,folder/'replan')
@@ -362,8 +424,13 @@ class ComponentPipeline:
             'execution_contract':bound,'sources':[current['result'],self.spec['baseline_source']]}
         if self.spec['version']==4:
             config['research_implementation']['capability_feedback']=self.spec.get('implementation_feedback',{'version':1})
-        if self.spec['version']==4 and read_json(plan).get('selected_candidate'):
-            selected=read_json(plan)['selected_candidate']
+        if read_json(plan).get('parent_diagnosis_ref'):
+            replan=read_json(plan.parent/'replan-config.json')['research_replan']
+            config['research_implementation']['sources'].extend(r for r in replan['sources']
+                if Path(r['path']).parent.name=='executed-parent')
+        if self.spec['version']==4 and (read_json(plan).get('selected_candidate') or read_json(plan).get('candidate_management')):
+            from component_candidates import selected_reference
+            selected=selected_reference(read_json(plan))
             config['research_implementation']['sources'].append(selected['result'])
             replan=read_json(plan.parent/'replan-config.json')['research_replan']
             config['research_implementation']['sources'].extend(r for r in replan['sources']
@@ -464,7 +531,7 @@ class ComponentPipeline:
         request,expected,manifest=task_request(profile,current['execution_contract'],
             read_json(reference(self.spec['initial_request'])),self.inbox.cfg['project_id'],len(state['rounds'])+1)
         plan=read_json(reference(current['science_plan']));proposal=plan['proposal']
-        parameters=read_json(Path(profile['root'])/'parameters.json')['training']
+        parameters=read_json(Path(profile['root'])/read_json(reference(current['execution_contract']))['parameters_file'])['training']
         # All five fields describe the exact accepted intervention and runtime.
         request['task_info']={'problem_statement':plan['objective'],
             'solution_approach':plan['research_revision']['intervention'],
@@ -478,12 +545,16 @@ class ComponentPipeline:
             'implemented_profile':ref(Path(current['implementation_root'])/'implemented-profile.json'),
             'accepted_plan':current['science_plan'],'execution_contract':current['execution_contract'],
             'request':ref(request_path),'payload_manifest':manifest}
+        if self.spec.get('sdm_intent') is not None:
+            from research_intent import for_review
+            config['sdm_intent']=for_review(self.spec['sdm_intent'],proposal['sdm_brief'])
         if self.spec.get('code_review_feedback'):
             config['proposal_review']=copy.deepcopy(config['proposal_review'])
             config['proposal_review']['revision_target']='implementation'
         project=folder/'code-review-project.json'
         sources=[Path(profile['root'])/name for name in profile['files']]
         sources.extend([reference(current['execution_contract']),reference(current['science_plan']),request_path])
+        if self.spec.get('sdm_governance'):sources.append(reference(self.spec['sdm_governance']['seed']))
         scientific_sources=[]
         if self.spec['version']==4:
             from component_scientific_evidence import handoff
@@ -509,7 +580,7 @@ class ComponentPipeline:
             # Current platform evidence is a read-only Manager plan, not a
             # model assertion or the stale parent component snapshot. No
             # Guard intent or write is created until the original code gate.
-            from lpai_manager import Manager
+            from research_execution import Manager
             preflight_path=folder/'manager-preflight.json'
             if not preflight_path.exists():once(preflight_path,Manager(self.manager_config).plan(request))
             preflight=read_json(preflight_path)
@@ -519,7 +590,7 @@ class ComponentPipeline:
                 raise ValueError('reviewed_current_manager_preflight_changed')
             current['preflight_plan']=ref(preflight_path)
             runtime=copy.deepcopy(request['data'])
-            for section in [runtime['lpai_task'],*runtime['lpai_task']['roles']]:
+            for section in ([runtime['lpai_task'],*runtime['lpai_task']['roles']] if 'lpai_task' in runtime else []):
                 section['cmd']={'sha256':hashlib.sha256(section['cmd'].encode()).hexdigest(),
                                 'projection':'command bytes retained in original request and decoded proof'}
             operational=folder/'current-execution-binding.json'
@@ -533,7 +604,9 @@ class ComponentPipeline:
                     'Unknown writes reconcile only; no automated stop, retry or transport fallback.',
                 'qualification':'Current official read and static command contract; not a claim of platform cancellation/cleanup or availability qualification.',
                 'execution_authority':False})
-            sources.extend([preflight_path,operational])
+            from component_submission import execution_binding_view
+            binding_view=execution_binding_view(ref(preflight_path),preflight_path,folder)
+            sources.extend([preflight_path,operational,binding_view])
         from component_payload import verify_request_payload
         proof=folder/'payload-verification.json';once(proof,verify_request_payload(request,manifest))
         sources.append(proof)
@@ -575,7 +648,7 @@ class ComponentPipeline:
             parent_priority=[p for p in parent_code if ref(p)['sha256'] not in trainer_hashes]
             # A large owned-recipe inventory must not displace the actual
             # protected trainer, complete launch proof or current execution.
-            priority += [view,reference(current['execution_contract']),
+            priority += [binding_view,view,reference(current['execution_contract']),
                 *[reference(row) for row in contract_value['protected_inputs']],proof,operational,
                 *parent_priority,reference(verified)]
             config['proposal_review']=copy.deepcopy(config['proposal_review'])
@@ -610,6 +683,66 @@ class ComponentPipeline:
         current['job']=self.coordinator('proposal-review',project,output)
         current.update(stage='reviewing-code',code_review_project=str(project),code_review_root=str(output))
 
+    def start_initial_review(self,current,folder,phase):
+        from component_submission import initial_review
+        science=current.get('submission_reviews',{}).get('science') if phase=='code' else None
+        output=folder/('initial-'+phase+'-review')
+        project=initial_review(self.inbox.cfg,self.spec,self.manager_config,phase,output,science)
+        current['job']=self.coordinator('proposal-review',project,output)
+        current.update(stage='reviewing-initial',initial_review_phase=phase,
+            code_review_project=str(project),code_review_root=str(output))
+
+    def complete_initial_review(self,current,folder,result):
+        if result.get('status')!='proposal-approved':
+            current.update(stage='needs-attention',reason='original-initial-review:'+str(result.get('status')));return
+        from component_submission import binding,verified_review
+        selected=binding(current['code_review_project'],current['code_review_root'],result['receipt'])
+        verified_review(selected)
+        phase=current['initial_review_phase']
+        if phase not in ('science','code'):raise ValueError('original_initial_review_phase_required')
+        current.setdefault('submission_reviews',{})[phase]=selected
+        if phase=='science':self.start_initial_review(current,folder,'code')
+        else:current.update(stage='initial-submitting',initial_review_phase='complete')
+
+    def dispatch_submission(self,current,folder,plan_ref,authorization_ref,initial=False,state=None):
+        """Both intents share one SDM gate; known Guard intent always reconciles."""
+        from research_execution import Manager
+        manager=Manager(self.manager_config);plan=read_json(reference(plan_ref));guard=manager.guard(plan)
+        with guard.lock():guard.load();phase=guard.state['phase']
+        if phase!='new':return manager.reconcile(str(reference(plan_ref)))
+        if (self.inbox.root/'PAUSED').exists():return None
+        from component_submission import enabled,verify,successor_reviews
+        if enabled(self.spec):
+            reviews=current.get('submission_reviews') if initial else None
+            if not initial:
+                authorization=read_json(reference(authorization_ref))
+                reviews=successor_reviews(current,reference(authorization['code_review']))
+            payload=(read_json(reference(self.spec['initial_submission']['confirmed_plan']))['payload_manifest']
+                     if initial else current['payload_manifest'])
+            acceptance=verify(self.spec,self.manager_config,plan_ref,authorization_ref,reviews,payload,
+                **({} if initial else {'science_plan':current['science_plan']}))
+            # The initial Attempt also produces its first successor. Bind each
+            # new receipt directory to the exact Manager plan, never reuse the
+            # baseline's immutable receipt in the same Attempt folder.
+            receipts=folder if initial else folder/'submissions'/plan_ref['sha256'].removeprefix('sha256:')
+            receipts.mkdir(parents=True,exist_ok=True)
+            once(receipts/'submission-acceptance.json',acceptance)
+            current['submission_acceptance']=ref(receipts/'submission-acceptance.json')
+            if self.spec.get('sdm_governance'):
+                if state is None:raise ValueError('governance_requires_original_pipeline_state')
+                from research_acceptance import submission as governance_submission
+                registered=governance_submission(self.spec,acceptance,state,initial)
+                registered['submission_receipt']=current['submission_acceptance']
+                path=receipts/('initial-core-submission.json' if initial else 'successor-core-submission.json')
+                once(path,registered)
+                if ref(path) not in state.setdefault('governance_runs',[]):state['governance_runs'].append(ref(path))
+                # Durable Run/Attempt registration before crossing Guard effect boundary.
+                atomic_json(self.path,state)
+        elif initial:raise ValueError('fresh_initial_submission_requires_sdm_review_gate')
+        # Pause may arrive while original review receipts are being replayed.
+        if (self.inbox.root/'PAUSED').exists():return None
+        return manager.apply(str(reference(plan_ref)),str(reference(authorization_ref)))
+
     def prepare_submission(self,current,folder,result):
         if self.spec.get('code_review_feedback') and result.get('status')=='proposal-revision-required':
             from implementation_code_review import feedback
@@ -623,7 +756,7 @@ class ComponentPipeline:
             current.update(stage='needs-attention',reason='original-code-review:'+str(result.get('status')));return
         receipt=read_json(reference(ref(result['receipt'])))
         if receipt.get('approved') is not True:raise ValueError('original_code_review_approval_required')
-        from lpai_manager import Manager
+        from research_execution import Manager
         request=read_json(reference(current['successor_request']))
         path=folder/'manager-plan.json'
         if path.exists():
@@ -645,17 +778,8 @@ class ComponentPipeline:
         current.update(stage='submitting',manager_plan=ref(path),manager_authorization=ref(authorization))
 
     def submit(self,state,current,folder):
-        from lpai_manager import Manager
-        manager=Manager(self.manager_config);plan=read_json(reference(current['manager_plan']))
-        guard=manager.guard(plan)
-        with guard.lock():
-            guard.load();phase=guard.state['phase']
-        # The original Guard's durable intent is the effect boundary. An
-        # interrupted apply is reconciled, never resent with a new identity.
-        if phase=='new':
-            if (self.inbox.root/'PAUSED').exists():return
-            result=manager.apply(str(reference(current['manager_plan'])),str(reference(current['manager_authorization'])))
-        else:result=manager.reconcile(str(reference(current['manager_plan'])))
+        result=self.dispatch_submission(current,folder,current['manager_plan'],current['manager_authorization'],state=state)
+        if result is None:return
         atomic_json(folder/'submission-observation.json',result)
         if result.get('status') not in ('verified','already-completed','pending_approval','pending-approval-unresolved',
                                      'submission-outcome-unresolved'):
@@ -663,7 +787,7 @@ class ComponentPipeline:
         # Preserve every completed attempt and its original scientific plan;
         # the next source observes exactly the new Manager plan/Guard.
         source=copy.deepcopy(self.spec['initial_source']);source.update(
-            version=3 if source.get('version')==3 else 1,
+            version=source['version'] if source.get('version') in (3,4) else 1,
             binding='component-source:'+current['manager_plan']['sha256'],plan=current['manager_plan'],expected=current['expected'])
         # A repair binds only the original old plan. Fresh successor plans use
         # this runtime; never inherit an initial intent's recovery exception.
@@ -676,6 +800,9 @@ class ComponentPipeline:
     def step(self,state):
         if state['status']!='running':return None
         if (self.inbox.root/'PAUSED').exists():return 15
+        if self.spec.get('sdm_governance'):
+            from research_acceptance import project as acceptance_project
+            acceptance_project(self.inbox.cfg,state)
         current=state['attempts'][-1]
         from research_continuation import enabled,take_resume,attention
         if enabled(self.inbox.cfg):
@@ -688,28 +815,37 @@ class ComponentPipeline:
         folder=Path(current.get('continuation_folder',self.root/current['id']));folder.mkdir(parents=True,exist_ok=True)
         stage=current['stage']
         if stage=='initial-submitting':
-            from lpai_manager import Manager
+            from research_execution import Manager
             initial=self.spec['initial_submission'];manager=Manager(self.manager_config)
             path=reference(current['source']['plan']);plan=read_json(path);guard=manager.guard(plan)
             with guard.lock():guard.load();phase=guard.state['phase']
+            if phase=='new' and current.get('initial_review_phase')!='complete':
+                from component_submission import enabled
+                if initial.get('version')!=2 or not enabled(self.spec):
+                    raise ValueError('fresh_initial_submission_requires_sdm_review_gate')
+                self.start_initial_review(current,folder,'science');return 0
+            result=self.dispatch_submission(current,folder,current['source']['plan'],initial['authorization'],initial=True,state=state)
+            if result is None:return 15
             once(folder/'initial-dispatch.json',{'config_sha256':digest(self.inbox.cfg),
                 'plan':current['source']['plan'],'authorization':initial['authorization'],
                 'scope':'original initial intent owned by this frozen host; Guard owns the effect boundary'})
-            result=(manager.apply(str(path),str(reference(initial['authorization']))) if phase=='new'
-                    else manager.reconcile(str(path)))
             if result.get('status') not in ('verified','already-completed','pending_approval',
                     'pending-approval-unresolved','submission-outcome-unresolved'):
                 raise ValueError('initial_submission_requires_original_reconciliation')
             atomic_json(folder/'initial-submission-observation.json',result)
             current.update(stage='watching',initial_submission=initial,initial_submission_status=result['status'])
             return 0
+        if stage=='reviewing-initial':
+            detail=self.completed(current['job'])
+            if detail is None:return 15
+            self.complete_initial_review(current,folder,detail['coordinator_result']);return 0
         if stage=='watching':
             remaining=current.get('poll_at',0)-time.time()
             if remaining>0:return remaining
             spec=current['source']
             self.inbox.register(spec['binding'],{'template':self.spec['source_template'],
                 'origin':ref(self.origin),'data':{'evidence':spec['plan']}})
-            from component_event_source import ComponentSource
+            from research_execution_source import Source as ComponentSource
             def record(event):
                 current['result']=event['state']['result_ready']
                 current['stage']='result-ready'
@@ -727,18 +863,43 @@ class ComponentPipeline:
             detail=self.completed(current['job'])
             if detail is None:return 15
             result=detail['coordinator_result']
+            if self.spec.get('sdm_governance') and result.get('plan_path'):
+                from research_acceptance import completion
+                path=folder/'core-decision.json'
+                once(path,completion(self.spec,state,ref(result['plan_path'])))
+                current['governance_decision']=ref(path)
             if result.get('status') in ('research-goal-met','research-stopped'):
+                if self.spec.get('sdm_governance'):state['governance_completion']=current['governance_decision']
                 current['stage']=result['status'];state['status']=result['status'];return None
             if not result.get('agent_continuation_required'):
                 current.update(stage='needs-attention',reason='original-plan-review:'+str(result.get('status')));return None
             if (self.spec['version']==4 and self.spec['decision_policy']['version']==3
                     and state['candidate_goal']['verification']['status']=='mismatch'):
                 current.update(stage='needs-attention',reason='actual-reproduction-mismatch-reconcile-only');return None
+            accepted=read_json(reference(ref(result['plan_path'])))
+            if accepted.get('parent_diagnosis_ref') is not None:
+                # A reviewed failed-task repair has no successful result to
+                # aggregate. Preserve that terminal UID and use the SAME
+                # implementation, code review and submission gate as science.
+                failure=read_json(reference(current['result']))
+                if (accepted['parent_diagnosis_ref']!=current['result']
+                        or accepted.get('parent_task_uid')!=failure.get('uid')
+                        or failure.get('schema')!='sdm-component-diagnosis-ready/v1'
+                        or failure.get('valid_training_round') is not False
+                        or failure.get('platform_status') not in {'failed','stopped','cancelled','canceled'}
+                        or failure.get('original_plan_sha256')!=current['source']['plan']['sha256'].removeprefix('sha256:')
+                        or bool(accepted.get('preparation_recovery'))!= (not state['rounds'])):
+                    raise ValueError('accepted_repair_requires_exact_failed_parent')
+                if accepted['research_revision']['change_level']!='none':
+                    self.implementation(current,folder,Path(result['plan_path']))
+                    return 0
             if result.get('status')=='research-plan-approved-awaiting-diagnosis':
                 # An existing-evidence plan is not a model.py implementation.
                 from component_diagnostics import prepare
-                diagnostics=prepare(state['rounds'],folder/'accepted-diagnostics')
-                fingerprint=digest({'adapter':'existing-evidence/v1','results':[r['result']['sha256'] for r in state['rounds']]})
+                failure_ref=accepted.get('parent_diagnosis_ref')
+                diagnostics=prepare(state['rounds'],folder/'accepted-diagnostics',**({'failure':failure_ref} if failure_ref else {}))
+                fingerprint=digest({'adapter':'failed-task-evidence/v1' if failure_ref else 'existing-evidence/v1',
+                    'results':[r['result']['sha256'] for r in state['rounds']],**({'failure':failure_ref['sha256']} if failure_ref else {})})
                 seen=state.setdefault('diagnostic_history',[])
                 if any(row['fingerprint']==fingerprint for row in seen):
                     current.update(stage='needs-attention',reason='diagnosis-requires-new-supported-evidence')
@@ -875,3 +1036,7 @@ class ComponentPipeline:
                         notify=getattr(self.inbox.condition,'notify_all',None)
                         if notify:notify()
                 with self.inbox.condition:self.inbox.condition.wait(timeout=max(0,delay) if enabled(self.inbox.cfg) else min(delay,15))
+
+
+# Historical import compatibility: one shared lifecycle controller.
+ComponentPipeline = ResearchPipeline

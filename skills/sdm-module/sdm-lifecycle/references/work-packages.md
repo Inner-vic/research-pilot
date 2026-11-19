@@ -1,6 +1,8 @@
-# 合并工作包与材料入口
+# 通用项目工作包及兼容身份
 
-普通任务使用workflow_revision=1：五阶段11个主步骤。旧ID1—34是内部检查和驱动回执身份，保留历史兼容，不再作为34个同级业务步骤。主步骤、条件触发和流程见[five-phase-orchestration.md](five-phase-orchestration.md)。
+先按 [从 SDM 演进的当前生命周期](sdm-core.md)理解研究职责。本页仅说明通用驱动的交付聚合；以下分组不是原 SDM 的五阶段，不能作为另一套生命周期或科学接受标准。组件路径不会自动遍历本图。
+
+普通任务使用workflow_revision=1：五组11个交付工作包。旧ID1—34是内部检查和驱动回执身份，保留历史兼容，不再作为34个同级业务步骤。工作包、条件触发和实现关系见[five-phase-orchestration.md](five-phase-orchestration.md)。
 
 ## 执行与依赖
 

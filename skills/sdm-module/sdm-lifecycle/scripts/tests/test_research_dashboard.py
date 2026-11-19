@@ -46,6 +46,47 @@ class DashboardTests(unittest.TestCase):
   self.assertEqual(study['status_label'],'需要关注')
   self.assertTrue(study['rounds'][0]['next_plan_pending_execution'])
   self.assertEqual(study['rounds'][0]['result_decision'],proposal['decision'])
+ def test_registration_failures_are_visible_without_loading_other_projects(self):
+  outside=self.root/'other';outside.mkdir()
+  bad={'schema':'bmad-ml-active-study/v1','study_id':'bad','config':str(self.root.parent/'unrelated.json')}
+  self.write(self.root/'.bmad-ml/CURRENT.json',bad)
+  snap=self.data.snapshot()
+  self.assertEqual(snap['studies'],[]);self.assertEqual(len(snap['errors']),1)
+  self.assertIn('当前项目',snap['errors'][0]['message'])
+  self.write(self.root/'.bmad-ml/CURRENT.json',{'schema':'wrong'})
+  self.assertEqual(len(self.data.snapshot()['errors']),1)
+
+ def test_dead_owner_is_visible_even_if_saved_supervision_says_running(self):
+  from unittest.mock import patch
+  cfg={'schema':'sdm-event-service/v3','project_id':'dead','root':str(self.root/'run'),'component_pipeline':{}}
+  state={'config_digest':digest(cfg),'status':'running','rounds':[],'attempts':[]}
+  self.write(self.root/'run/component-pipeline/pipeline.json',state)
+  self.write(self.root/'run/supervision.json',{'status':'running'})
+  with patch.object(self.data,'current',return_value={'stage':'reviewing-plan','needs_attention':False,'label':'方案审议'}),patch('research_runtime.owner_alive',return_value=False):
+   value=self.data.study({},cfg,self.root/'run')
+  self.assertTrue(value['needs_attention']);self.assertEqual(value['host_status'],'offline')
+  self.assertIn('不会自行触发',value['current']['reason_text'])
+  state['status']='research-stopped';self.write(self.root/'run/component-pipeline/pipeline.json',state)
+  with patch.object(self.data,'current',return_value={'stage':'research-stopped','needs_attention':False,'label':'研究已结束'}):
+   value=self.data.study({},cfg,self.root/'run')
+  self.assertEqual(value['status_label'],'研究已结束');self.assertFalse(value['needs_attention'])
+
+ def test_current_titles_do_not_rejudge_or_rewrite_frozen_baseline_evidence(self):
+  from unittest.mock import patch
+  from lifecycle_view import catalog
+  cfg={'schema':'sdm-event-service/v3','project_id':'legacy-title','root':str(self.root/'run'),'component_pipeline':{}}
+  state={'config_digest':digest(cfg),'status':'research-stopped','rounds':[],'attempts':[{'stage':'research-stopped'}]}
+  path=self.root/'run/component-pipeline/pipeline.json';self.write(path,state);before=path.read_bytes()
+  steps=[{**r,'status':'evidence-pending','evidence':[]} for r in catalog()['steps']]
+  steps[2].update(title='建立可信基线',status='operational-verified',evidence=[{'path':'original-evidence','sha256':'a'*64}])
+  original={'schema':'sdm-core-acceptance-view/v1','steps':steps,'scientific_qualification':False}
+  with patch('research_acceptance.read_projection',return_value=original):value=self.data.study({},cfg,self.root/'run')
+  row=value['sdm_acceptance']['steps'][2]
+  self.assertEqual(row['title'],'明确比较起点与基线依据');self.assertEqual(row['recorded_title'],'建立可信基线')
+  self.assertEqual(row['status'],steps[2]['status']);self.assertEqual(row['evidence'],steps[2]['evidence'])
+  self.assertEqual(original['steps'][2]['title'],'建立可信基线');self.assertEqual(path.read_bytes(),before)
+  self.assertFalse(value['sdm_acceptance']['scientific_qualification'])
+
  def test_http_access_and_sse_change(self):
   server=Server(self.root);thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
   def request(method,path,headers=None):
@@ -78,6 +119,21 @@ class DashboardTests(unittest.TestCase):
    server.done.set()
    if stream:stream.close()
    server.shutdown();server.server_close();thread.join(3)
+
+ def test_same_entry_projects_both_persistent_contexts_without_transcript_sync(self):
+  from unittest.mock import patch
+  spec={'main':{'root':str(self.root/'sessions/main')},'review':{'root':str(self.root/'sessions/review')}}
+  cfg={'schema':'sdm-event-service/v3','project_id':'paired','root':str(self.root/'run'),'component_pipeline':{},
+       'research_context':{'root':spec['main']['root']},'working_sessions':spec}
+  self.write(self.root/'run/component-pipeline/pipeline.json',{'config_digest':digest(cfg),'status':'running','rounds':[],'attempts':[]})
+  self.write(self.root/'sessions/main/context.json',{'thread_id':'main-thread','turns':[{}, {}, {}]})
+  self.write(self.root/'sessions/review/context.json',{'thread_id':'review-thread','turns':[{}, {}],'pending_job':'review-pending'})
+  with patch.object(self.data,'current',return_value={'stage':'needs-attention','needs_attention':False,'label':'Checking'}):
+   study=self.data.study({},cfg,self.root/'run')
+  self.assertEqual(study['binding']['working_sessions']['main']['thread_id'],'main-thread')
+  self.assertEqual(study['binding']['working_sessions']['review']['turn_count'],2)
+  self.assertTrue(study['binding']['working_sessions']['review']['pending'])
+  self.assertFalse(study['binding']['conversation_sync'])
 
  def test_control_receipt_read_survives_unavailable_study_index(self):
   import uuid
@@ -138,5 +194,80 @@ class DashboardTests(unittest.TestCase):
   self.assertTrue(result['paused']);self.assertEqual(result['status_label'],'已暂停')
   self.assertFalse(result['completed']);self.assertFalse(result['control']['can_pause'])
   self.assertEqual(result['lineage']['execution_location']['state'],'paused')
+
+
+ def test_review_history_preserves_rounds_revisions_and_pending_request(self):
+  from dashboard_review_history import history
+  folder=self.root/'review/proposal-review/subject'
+  proposal={'revision':1,'hypothesis':'待验证假设','research_revision':{'intervention':'单一改动'}}
+  self.write(folder/'round-01/accepted.json',{'proposal':proposal,'response':{'verdict':'revise',
+   'rationale':'需要调整','challenges':[{'id':'C1','question':'比较条件是否一致'}]},'approved':False})
+  self.write(folder/'round-02/accepted.json',{'proposal':{**proposal,'revision':2,
+   'advice_dispositions':[{'challenge_id':'C1','decision':'accept','reason':'固定比较条件'}]},
+   'response':{'verdict':'approve','rationale':'本轮认可','resolutions':[{'challenge_id':'C1','status':'resolved'}]},'approved':False})
+  self.write(folder/'round-03/request.json',{'proposal':{**proposal,'revision':2}})
+  before={str(p):p.read_bytes() for p in folder.rglob('*.json')}
+  rows,issues=history(self.data,self.root/'review','方案评审')
+  self.assertEqual(issues,[]);self.assertEqual([r['round'] for r in rows],[1,2,3])
+  self.assertEqual([r['revision'] for r in rows],[1,2,2])
+  self.assertEqual(rows[0]['challenges'][0]['id'],'C1')
+  self.assertEqual(rows[1]['advice_dispositions'][0]['reason'],'固定比较条件')
+  self.assertFalse(rows[1]['approved']);self.assertIn('尚未最终通过',rows[1]['disposition'])
+  self.assertTrue(rows[2]['pending']);self.assertIsNone(rows[2]['verdict'])
+  self.assertEqual(before,{str(p):p.read_bytes() for p in folder.rglob('*.json')})
+  self.write(folder/'round-03/accepted.json',{'proposal':proposal,'response':{'verdict':'approve'},'approved':True})
+  updated,_=history(self.data,self.root/'review','方案评审')
+  self.assertEqual(len(updated),3);self.assertTrue(updated[-1]['approved']);self.assertFalse(updated[-1]['pending'])
+
+ def test_unreadable_review_is_reported_without_fake_approval(self):
+  from dashboard_review_history import history
+  self.write(self.root/'review/proposal-review/subject/round-01/accepted.json',{'broken':True})
+  rows,issues=history(self.data,self.root/'review','代码评审')
+  self.assertEqual(rows,[]);self.assertEqual(len(issues),1)
+
+ def test_graph_keeps_initial_review_and_successor_history_with_correct_owner(self):
+  from dashboard_lineage import project
+  initial=self.root/'component-pipeline/initial/initial-science-review'
+  successor=self.root/'replan'
+  proposal={'revision':1,'hypothesis':'待验证的初始方案'}
+  self.write(initial/'proposal-review/initial/round-01/accepted.json',
+   {'proposal':proposal,'response':{'verdict':'approve','rationale':'初始评审完成'},'approved':True})
+  self.write(successor/'proposal-review/next/round-01/accepted.json',
+   {'proposal':proposal,'response':{'verdict':'revise','challenges':[{'id':'C1','question':'需要说明'}]},'approved':False})
+  self.write(successor/'proposal-review/next/round-02/request.json',{'proposal':{**proposal,'revision':2}})
+  a=self.result(1,.7);b=self.result(2,.8)
+  state={'rounds':[{'result':a},{'result':b,'accepted_plan':{'path':str(successor/'research-plan.json')}}],
+   'attempts':[{'id':'initial','result':a,'replan_root':str(successor)}]}
+  self.write(self.root/'component-pipeline/pipeline.json',state)
+  rows=[{'number':n,'uid':str(n),'base_uid':str(n-1) if n>1 else None,'metric':v,'plan':None,
+   'new_best':True,'zh':{'title':'研究方案','description':'改动','comparison':'固定比较'}} for n,v in [(1,.7),(2,.8)]]
+  study={'id':'fixture','title_zh':'测试研究','rounds':rows,'completed':True,'needs_attention':False,
+   'latest':{'uid':'2'},'incumbent':{'uid':'2'},'current':{'stage':'research-stopped','label':'结束','needs_attention':False}}
+  graph=project(self.data,{},self.root,state,study)
+  reviews=[n for n in graph['nodes'] if n['kind']=='plan_review']
+  self.assertEqual(len(reviews),3)
+  first=next(n for n in reviews if n['status']=='approved')
+  self.assertEqual(first['detail_group'],'plan:1')
+  later=[n for n in reviews if n['detail_group']=='plan:2']
+  self.assertEqual([n['review_round'] for n in later],[1,2])
+  pending=next(n for n in later if n['status']=='pending')
+  self.assertTrue(graph['details'][pending['id']]['review']['pending'])
+
+
+ def test_live_but_blocked_controller_is_not_presented_as_active_iteration(self):
+  from unittest.mock import patch
+  cfg={'schema':'sdm-event-service/v3','project_id':'fixture','root':str(self.root/'run'),'component_pipeline':{}}
+  state={'config_digest':digest(cfg),'status':'running','rounds':[],
+   'attempts':[{'id':'initial','stage':'needs-attention','reason':'original-initial-review:awaiting-proposal-evidence',
+    'continuation':{'phase':'blocked'}}]}
+  self.write(self.root/'run/component-pipeline/pipeline.json',state)
+  with patch('research_progress.probe',return_value={'owner_alive':True,'worker_ready':True,'paused':False}):
+   value=self.data.study({},cfg,self.root/'run')
+  self.assertEqual(value['status_label'],'等待评审证据')
+  self.assertTrue(value['progress']['controller_running'])
+  self.assertFalse(value['progress']['automatic_iteration_active'])
+  self.assertEqual(value['progress']['state'],'blocked')
+  self.assertTrue(value['needs_attention'])
+
 
 if __name__=='__main__':unittest.main()

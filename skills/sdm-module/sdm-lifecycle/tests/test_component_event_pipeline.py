@@ -122,7 +122,7 @@ def test_readonly_repair_is_bound_before_reads_and_forwarded_only_to_reconcile(t
     atomic_json(config_path,manager)
     spec['manager_config']['sha256']=hashlib.sha256(config_path.read_bytes()).hexdigest()
     save_proof(bound)
-    with pytest.raises(ValueError,match='requires_component_source_v2'):settings(spec,inbox.cfg)
+    with pytest.raises(ValueError,match='requires_supported_component_source'):settings(spec,inbox.cfg)
     spec['version']=2
     settings(spec,inbox.cfg)
     original=ComponentSource(inbox,spec)

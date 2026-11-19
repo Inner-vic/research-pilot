@@ -26,8 +26,16 @@ STRATEGY = (
 
 
 def prompt(role, version=1):
-    if role not in ('a', 'b') or type(version) is not int or version not in (1, 2, 3):
+    if role not in ('a', 'b') or type(version) is not int or version not in (1, 2, 3, 4):
         raise ValueError('supported_proposal_dialogue_version_and_role_required')
+    if version == 4:
+        # A new named prompt, keeping v1-v3 byte-identical for replay.
+        return (prompt(role, 3).replace('You are proposer A.', 'You are Generator (方案生成者).')
+                .replace('You are critic B.', 'You are Critic (独立质询者).')
+                .replace('each B suggestion', 'each Critic suggestion')
+                .replace('whether A acknowledged', 'whether Generator acknowledged')
+                .replace('ask A to promise', 'ask Generator to promise')
+                + ' This collaboration is 生成—质询审议 (Generator–Critic), not an experimental traffic comparison. ')
     from research_language import GUIDANCE
     legacy = GUIDANCE + (
         'Propose a falsifiable pre-submission research method using only the shared raw evidence. '

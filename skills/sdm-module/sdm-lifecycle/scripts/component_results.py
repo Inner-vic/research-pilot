@@ -48,7 +48,8 @@ def marker_lines(observation, namespace, pod, container='main'):
     return [line for _, line in sorted(rows)]
 
 
-def unpack(lines):
+def unpack(lines,required_files=None):
+    allowed_files=FILES if required_files is None else required_files
     manifests, chunks, events = {}, {}, {}
     for line in lines:
         if not isinstance(line, str) or not line.startswith('SDM_JSON '):
@@ -61,19 +62,19 @@ def unpack(lines):
             events[kind] = row
         elif kind == 'artifact':
             name = row.get('name')
-            _require(name in FILES and row.get('encoding') == 'base64+gzip', 'declared_result_artifact_required')
+            _require(name in allowed_files and row.get('encoding') == 'base64+gzip', 'declared_result_artifact_required')
             _require(type(row.get('bytes')) is int and 0 < row['bytes'] <= MAX_ARTIFACT
                      and type(row.get('chunks')) is int and 0 < row['chunks'] <= 40000, 'bounded_result_artifact_required')
             _require(name not in manifests or manifests[name] == row, 'conflicting_artifact_manifest')
             manifests[name] = row
         elif kind == 'artifact-chunk':
             name, index, value = row.get('name'), row.get('index'), row.get('value')
-            _require(name in FILES and type(index) is int and 0 <= index < 40000
+            _require(name in allowed_files and type(index) is int and 0 <= index < 40000
                      and isinstance(value, str) and len(value) <= 4096, 'bounded_artifact_chunk_required')
             key = (name, index)
             _require(key not in chunks or chunks[key] == value, 'conflicting_artifact_chunk')
             chunks[key] = value
-    _require(set(manifests) == FILES and set(events) == {'preflight', 'completed'}, 'complete_component_result_required')
+    _require(set(manifests) == allowed_files and set(events) == {'preflight', 'completed'}, 'complete_component_result_required')
     artifacts = {}
     for name, manifest in manifests.items():
         indices = {index for n, index in chunks if n == name}
@@ -87,15 +88,8 @@ def unpack(lines):
     return artifacts, events
 
 
-def verify(task, manager_receipt, lines, expected):
-    """Return verified bytes plus acceptance facts; saving is caller-owned."""
-    _require(manager_receipt.get('status') == 'verified', 'original_manager_verified_submission_required')
-    receipt = manager_receipt.get('resource', {})
-    for field in ('uid', 'namespace', 'owner', 'cluster'):
-        _require(task.get(field) == expected.get(field) == receipt.get(field), 'component_result_task_identity_mismatch')
-    _require(task.get('project_uid') == expected.get('component_uid'), 'component_result_parent_mismatch')
-    _require(task.get('status') == 'succeeded', 'successful_component_terminal_required')
-    identity=expected.get('submission_identity')
+def verify_submission_identity(task,receipt,identity):
+    """One original submission/readback check for all result adapters."""
     identity_proof=None
     if identity is None:
         _require(sha(task.get('data')) == receipt.get('data_digest'), 'submitted_task_payload_changed')
@@ -107,9 +101,16 @@ def verify(task, manager_receipt, lines, expected):
                  'original_result_manager_plan_changed')
         plan=_json(path.read_bytes());request=plan.get('request',{})
         _require(plan.get('schema')=='lpai-manager-plan/v1' and request.get('action')=='task.submit'
-                 and request.get('uid')==task.get('project_uid')
+                 and request.get('uid')==task.get('project_uid',task.get('resource_uid'))
                  and plan.get('namespace')==task.get('namespace') and plan.get('owner')==task.get('owner')
                  and request.get('cluster')==task.get('cluster'),'original_result_submission_scope_changed')
+        if plan.get('route')=='project-command':
+            _require(task.get('request_key')==request.get('request_key')
+                     and task.get('payload_digest')==sha(request['data'])
+                     and receipt.get('data_digest')==sha(request['data']),
+                     'submitted_project_task_payload_changed')
+            return {'policy':'original-manager-project-config/v1','manager_plan':bound,
+                    'terminal_payload_digest':task['payload_digest'],'native_configuration_matches':True}
         # Reuse the original Manager's exact native-data rules: commands,
         # image, roles, resources and mounted assets remain bound. Provider
         # metadata/default filling need not preserve the whole JSON byte hash.
@@ -123,6 +124,18 @@ def verify(task, manager_receipt, lines, expected):
             'terminal_data_digest':sha(task['data']),
             'raw_data_digest_equal':sha(task['data'])==receipt.get('data_digest'),
             'native_configuration_matches':True}
+    return identity_proof
+
+
+def verify(task, manager_receipt, lines, expected):
+    """Return verified bytes plus acceptance facts; saving is caller-owned."""
+    _require(manager_receipt.get('status') == 'verified', 'original_manager_verified_submission_required')
+    receipt = manager_receipt.get('resource', {})
+    for field in ('uid', 'namespace', 'owner', 'cluster'):
+        _require(task.get(field) == expected.get(field) == receipt.get(field), 'component_result_task_identity_mismatch')
+    _require(task.get('project_uid') == expected.get('component_uid'), 'component_result_parent_mismatch')
+    _require(task.get('status') == 'succeeded', 'successful_component_terminal_required')
+    identity_proof=verify_submission_identity(task,receipt,expected.get('submission_identity'))
     artifacts, events = unpack(lines)
     result, split, predictions = [_json(artifacts[name]) for name in ('result.json', 'split.json', 'predictions.json')]
     _require(result.get('schema') == 'sdm-component-result/v1', 'component_result_schema_required')
@@ -156,9 +169,29 @@ def verify(task, manager_receipt, lines, expected):
     reported = result['validation']
     _require(cm == reported['confusion_matrix'] and abs(f1-reported['macro_f1']) < 1e-10
              and abs(accuracy-reported['accuracy']) < 1e-10, 'validation_metric_recomputation_failed')
+    if 'engineering_preflight' in result or expected.get('engineering_preflight_policy'):
+        verify_engineering_preflight(result,expected.get('engineering_preflight_policy'))
     return {'valid_training_round': True, 'uid': task['uid'], 'protocol': result['protocol'],
             'split_sha256': result['split_sha256'], 'primary_metric': f1, 'accuracy': accuracy,
             'epochs': config['epochs'], 'selected_epoch': result['selected_epoch'],
             'checkpoint_validation': 'byte identity only; no local model execution',
             **({'submission_identity':identity_proof} if identity_proof is not None else {}),
             'artifact_sha256': {name: hashlib.sha256(raw).hexdigest() for name, raw in artifacts.items()}}, artifacts
+
+
+def verify_engineering_preflight(result, policy=None):
+    value=result.get('engineering_preflight')
+    _require(isinstance(value,dict) and value.get('schema')=='sdm-remote-engineering-preflight/v1',
+             'actual_remote_engineering_preflight_required')
+    actual=value.get('policy',{})
+    _require(value.get('checks')=={'tensor':True,'finite':True,'tiny_fit':True,'resume':True}
+             and value.get('initial_state_restored') is True, 'remote_engineering_preflight_did_not_pass')
+    _require(policy is None or actual==policy,'remote_engineering_preflight_policy_changed')
+    _require(type(value.get('tiny_steps')) is int and type(actual.get('max_steps')) is int
+             and type(value.get('total_update_steps')) is int
+             and value['total_update_steps']==value['tiny_steps']+2<=actual['max_steps'],
+             'bounded_remote_tiny_fit_and_resume_required')
+    a,b=value.get('initial_tiny_loss'),value.get('final_tiny_loss')
+    _require(type(a) in (int,float) and type(b) in (int,float) and math.isfinite(a) and math.isfinite(b)
+             and b<a,'actual_tiny_fit_loss_decrease_required')
+    return value

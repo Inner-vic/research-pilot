@@ -103,7 +103,7 @@ class ProposalRunnerTests(unittest.TestCase):
         self.assertEqual(self.gate()['receipt'],result['receipt']);self.assertEqual(len(self.calls),4)
 
     def test_unsupported_dialogue_version_rejected_before_model_calls(self):
-        for version in (0,4,True,'2'):
+        for version in (0,5,True,'2'):
             with self.subTest(version=version):
                 self.cfg['proposal_review']['dialogue_version']=version
                 with self.assertRaisesRegex(ValueError,'supported_proposal_dialogue'):self.gate()

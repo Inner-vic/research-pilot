@@ -24,6 +24,23 @@ def sha(raw):return hashlib.sha256(raw).hexdigest()
 def ref(path):return {'path':str(Path(path).resolve()),'sha256':sha(native_path(path).read_bytes())}
 
 
+def verify_model_api(source, workload):
+    """Static callable ABI check; never imports or executes the model."""
+    tree=ast.parse(source)
+    if workload.get('adapter')=='project/v1':return {'syntax_verified':True,'functional_verified':False,'api':'project-declared entrypoints'}
+    functions={node.name:node for node in tree.body if isinstance(node,ast.FunctionDef)}
+    required={'build_model':1,'build_optimizer':2}
+    if workload.get('training_loss_hook'):required['build_training_loss']=1
+    for name,count in required.items():
+        node=functions.get(name)
+        if node is None:raise ValueError('declared_model_factory_required:'+name)
+        args=node.args;positional=args.posonlyargs+args.args
+        if (len(positional)-len(args.defaults)>count or not args.vararg and len(positional)<count
+                or any(default is None for default in args.kw_defaults)):
+            raise ValueError('model_factory_call_signature_mismatch:'+name)
+    return {'factories':sorted(required),'syntax_verified':True,'functional_verified':False}
+
+
 def launch_command(packed,packed_sha):
     """The one qualified remote wrapper, shared by production and verification."""
     return "timeout --signal=TERM --kill-after=30s 1800s python3 -u - <<'SDM_PAYLOAD'\n"+(
@@ -38,7 +55,11 @@ def launch_command(packed,packed_sha):
 
 def verify_request_payload(request, manifest):
     """Independently decode the real submission bytes; never execute payload code."""
-    command=request['data']['lpai_task']['cmd']
+    from project_payload import command as project_command
+    command=project_command(request)
+    if command.endswith('\nSDM_PROJECT_PAYLOAD'):
+        from project_payload import decode
+        return decode(request,manifest)[1]
     if (not command.endswith('\nSDM_PAYLOAD') or
             any(role['cmd']!=command for role in request['data']['lpai_task']['roles'])):
         raise ValueError('same_exact_role_payload_required')
@@ -74,7 +95,11 @@ def verify_request_payload(request, manifest):
 
 def executed_request_files(request,code_sha256=None):
     """Expose executed code to scientific review, not an opaque base64 excerpt."""
-    command=request['data']['lpai_task']['cmd']
+    from project_payload import command as project_command
+    command=project_command(request)
+    if command.endswith('\nSDM_PROJECT_PAYLOAD'):
+        from project_payload import decode
+        return decode(request,code_sha256=code_sha256)
     if not command.endswith('\nSDM_PAYLOAD') or any(role['cmd']!=command for role in request['data']['lpai_task']['roles']):
         raise ValueError('same_exact_executed_role_payload_required')
     tree=ast.parse(command.split('\n',1)[1].rsplit('\nSDM_PAYLOAD',1)[0])
@@ -177,6 +202,22 @@ def harness(source,comparison=None,workload=None):
                 '            loss=training_criterion(model(x[batch]),y[batch])',site)
             if restored.encode()!=rendered:raise ValueError('training_hook_changed_protected_trainer')
             rendered=text.encode();compile(rendered,'trainer.py','exec')
+    if workload is not None and workload['version']==2:
+        from component_preflight import render
+        text=rendered.decode('utf-8')
+        setup='    history=[]; best_key=None; best_weights=None'
+        result="    result={'schema':'sdm-component-result/v1'"
+        publication="    torch.save({'state_dict':best_weights"
+        if any(text.count(site)!=1 for site in (setup,result,publication)):
+            raise ValueError('qualified_remote_preflight_sites_required')
+        criterion='training_criterion' if workload['training_loss_hook'] else 'criterion'
+        model_site='    model = build_model(CONFIG)'
+        if text.count(model_site)!=1:raise ValueError('qualified_model_seed_site_required')
+        text=text.replace(model_site,"    random.seed(CONFIG['seed'])\n"+model_site)
+        text=text.replace(setup,'    engineering_preflight=remote_preflight(model,optimizer,'+criterion+',x,y,'+
+            repr(workload['engineering_preflight'])+")\n    emit('engineering-preflight',engineering_preflight)\n"+setup)
+        text=text.replace(publication,"    result['engineering_preflight']=engineering_preflight\n"+publication)
+        rendered=(render()+'\n'+text).encode('utf-8');compile(rendered,'trainer.py','exec')
     # Check the host's actual local helper ABI, without executing/importing ML.
     # Syntax alone cannot catch a keyword/arity mismatch in an emitted call.
     final_tree=ast.parse(rendered)
@@ -189,10 +230,13 @@ def harness(source,comparison=None,workload=None):
 
 
 def contract(baseline_ref,root,comparison,manager_config,component_uid,training_limits=None,next_round=None,workload=None):
-    source=reference(baseline_ref).read_bytes();root=Path(root);root.mkdir(parents=True,exist_ok=True)
+    if workload and workload.get('adapter')=='project/v1':
+        from project_payload import contract as project_contract
+        return project_contract(baseline_ref,root,comparison,manager_config,component_uid,training_limits,next_round,workload)
+    source=native_path(reference(baseline_ref)).read_bytes();root=Path(root);native_path(root).mkdir(parents=True,exist_ok=True)
     trainer=root/'trainer.py';raw=harness(source,comparison,workload)
-    if trainer.exists() and trainer.read_bytes()!=raw:raise ValueError('frozen_component_harness_changed')
-    if not trainer.exists():trainer.write_bytes(raw)
+    if native_path(trainer).exists() and native_path(trainer).read_bytes()!=raw:raise ValueError('frozen_component_harness_changed')
+    if not native_path(trainer).exists():native_path(trainer).write_bytes(raw)
     value={'schema':'sdm-component-implementation-contract/v1','comparison_identity':comparison,
         'execution_scope':{'provider':'lpai','namespace':manager_config['namespace'],'owner':manager_config['owner'],
                            'component_uid':component_uid},
@@ -208,6 +252,8 @@ def contract(baseline_ref,root,comparison,manager_config,component_uid,training_
         value['workload']=capabilities(workload)
         value['seed_values']=workload['seed_values']
         value['training_parameters']=value['training_parameters'].replace('seed=42','seed in '+repr(workload['seed_values']))
+        if workload['version']==2:
+            value['model_api']+=' Remote engineering preflight runs a bounded training-only tiny-fit and exact checkpoint continuation before full fit, then restores initial state. A custom training loss must be an nn.Module with no separately learned parameters; mutable buffers must be registered in state_dict.'
         if workload['training_loss_hook']:
             value['model_api']+=' Also export build_training_loss(config)->callable(logits, labels) producing one finite scalar training loss. Validation remains the protected CrossEntropyLoss; no evaluation hooks, extra reference model, data/label leakage, trainer/global access or side effects.'
     if next_round is not None:
@@ -215,13 +261,17 @@ def contract(baseline_ref,root,comparison,manager_config,component_uid,training_
         value['next_round']=next_round
         value['training_parameters']+=' round is host attempt metadata and MUST equal '+str(next_round)+'; it is not a scientific treatment or a replay of an old task.'
     path=root/'execution-contract.json'
-    if path.exists() and read_json(path)!=value:raise ValueError('component_implementation_contract_changed')
-    if not path.exists():atomic_json(path,value)
+    if native_path(path).exists() and read_json(path)!=value:raise ValueError('component_implementation_contract_changed')
+    if not native_path(path).exists():atomic_json(path,value)
     return ref(path)
 
 
 def task_request(profile,execution_contract,parent_request,project_id,index):
-    frozen=Path(profile['root']);spec=read_json(reference(execution_contract));parameters=read_json(frozen/'parameters.json')
+    spec=read_json(reference(execution_contract))
+    if spec.get('integration')=='project/v1':
+        from project_payload import task_request as project_request
+        return project_request(profile,execution_contract,parent_request,project_id,index)
+    frozen=Path(profile['root']);parameters=read_json(frozen/'parameters.json')
     training=parameters.get('training',{})
     limits=spec.get('training_limits')
     if limits and (type(training.get('epochs')) is not int
@@ -237,8 +287,8 @@ def task_request(profile,execution_contract,parent_request,project_id,index):
         raise ValueError('reviewed_bounded_component_training_parameters_required')
     # Preserve reviewed bytes, including Windows CRLF. TextIO newline
     # translation would invalidate the profile or silently change its payload.
-    files={name:(frozen/name).read_bytes().decode('utf-8') for name in ('model.py','parameters.json')}
-    trainer=reference(spec['protected_inputs'][0]);files['trainer.py']=trainer.read_bytes().decode('utf-8')
+    files={name:native_path(frozen/name).read_bytes().decode('utf-8') for name in ('model.py','parameters.json')}
+    trainer=reference(spec['protected_inputs'][0]);files['trainer.py']=native_path(trainer).read_bytes().decode('utf-8')
     identities={name:sha(text.encode()) for name,text in files.items()}
     for name in ('model.py','parameters.json'):
         if profile['files'][name]!=identities[name]:raise ValueError('implemented_component_payload_changed')
@@ -257,4 +307,6 @@ def task_request(profile,execution_contract,parent_request,project_id,index):
     expected={'protocol':spec['comparison_identity']['protocol'],'code_sha256':payload_sha,
               'source_sha256':spec['comparison_identity']['source_sha256'],'config':training,
               'split_sha256':spec['comparison_identity']['split_sha256']}
+    if spec.get('workload',{}).get('engineering_preflight'):
+        expected['engineering_preflight_policy']=spec['workload']['engineering_preflight']
     return request,expected,{'identities':identities,'code_sha256':payload_sha,'packed_sha256':sha(raw)}

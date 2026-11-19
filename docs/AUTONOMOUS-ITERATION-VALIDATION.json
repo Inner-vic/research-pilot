@@ -1,0 +1,435 @@
+{
+  "schema": "researchpilot-autonomous-failure-repair-acceptance/v1",
+  "date": "2026-11-16",
+  "verdict": "partial",
+  "evidence_audit": "passed",
+  "full_acceptance": "not-passed-two-valid-rounds-unmet",
+  "study_id": "researchpilot-controlled-failure-d-20261116",
+  "observed_at": 1794824158.7785757,
+  "platform_tasks": 3,
+  "valid_training_rounds": 1,
+  "preparation_recovery_edges": 1,
+  "adaptive_successor_edges": 0,
+  "result_driven_successor_submitted": true,
+  "continuous_loop_demonstrated": false,
+  "repair_intervention": {
+    "action": "refine-current",
+    "change_level": "tuning",
+    "goal_status": "unmet",
+    "evidence_ids": [
+      "component-source-4",
+      "component-source-6",
+      "component-source-7",
+      "component-source-8",
+      "component-source-9",
+      "component-source-10"
+    ],
+    "assumption": "当前1e-12学习率不能在固定预检窗口内产生足够的有效优化；日志直接支持损失停滞，但尚未证明其为唯一原因。",
+    "intervention": "仅将parameters.json.training.lr从1e-12改为0.01，保留CNN、Adam、交叉熵及全部受保护条件，另行实现和独立审查后形成新冻结Attempt。",
+    "expected_decision_value": "用一次剩余CPU任务区分恢复有效更新、仅部分修复、持续停滞或不稳定；若成功，建立首个有效质量参考并检验自主恢复链路。若失败，保留反证，不重复同配方或放宽门槛。"
+  },
+  "successor_intervention": {
+    "action": "revise-plan",
+    "change_level": "model",
+    "goal_status": "unmet",
+    "evidence_ids": [
+      "component-source-3",
+      "component-source-8",
+      "component-source-11",
+      "component-source-12",
+      "component-source-16",
+      "component-source-18",
+      "component-source-19",
+      "component-source-20"
+    ],
+    "assumption": "恢复有效参数更新已解决初始预检故障，但没有保证验证稳定性和质量；跨样本归一化及运行统计路径可能参与剩余波动，尚不能归因于结构上限或过拟合。",
+    "intervention": "从incumbent配方重新初始化，仅将三处BatchNorm1d替换为4组GroupNorm，保留其余科学条件，利用最后一次提交作筛选。",
+    "expected_decision_value": "检验不同归一化统计路径在固定曝光下能否改善质量及波动，区分稳定性收益与最优检查点收益；所有结果均在原预算内收口。",
+    "candidate_decision": {
+      "choice": "continue",
+      "base_task_uid": "6fd02bd7-f925-42c0-b10a-75377e838aac",
+      "reason": "latest与incumbent相同且为唯一有效候选，直接以其受验证配方为基准开展归一化单因子干预；继续研究主线不等于重跑相同配方。",
+      "why_not_alternatives": "没有更优历史配方可rollback；只有一个有效结果，尚无证据支持整套表示redesign或模型容量上限。质量目标未达、预算仍余一次，现有曲线足以支持一次有判别价值的比较，故不立即stop。",
+      "falsifier": "在原预检及10epochs下，GroupNorm未减轻验证波动且所选macro_f1不高于0.8110319599537928，则不支持该干预在本配方下的收益；仅更稳定或仅更高分分别限制机制解释。",
+      "cost_justification": "只消耗账本剩余的一次1CPU/4GiB/0GPU任务，无额外评价模式或诊断任务；相比未经证据支持的容量扩张，更直接检验实际存在的归一化统计路径。"
+    }
+  },
+  "failed_successor_proof": {
+    "science_review": {
+      "receipt": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "8d4667effd0922b0ed2164fa0f3eaa68e85ec7c39735eb2ef5b71f1d574bfff2"
+      },
+      "models": [
+        "gpt-6.1-sol",
+        "gpt-6-sol"
+      ],
+      "verify_only": true
+    },
+    "code_review": {
+      "receipt": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "c20b882afb534a9bbec196a60393029b78ba7953e120e36aea1ed1218bc888bb"
+      },
+      "models": [
+        "gpt-6.1-sol",
+        "gpt-6-sol"
+      ],
+      "verify_only": true
+    },
+    "actual_recipe_changed": true,
+    "native_thread_id": "01a1e3b3-150e-7952-af57-cdd083641184",
+    "submitted_uid": "052a0331-3eb8-4481-a02f-4012f6ac8521"
+  },
+  "metrics": [
+    {
+      "uid": "6fd02bd7-f925-42c0-b10a-75377e838aac",
+      "macro_f1": 0.8110319599537928,
+      "accuracy": 0.8278145695364238,
+      "epochs": 10
+    }
+  ],
+  "contexts": {
+    "main": {
+      "thread_id": "01a1e3b3-150e-7952-af57-cdd083641184",
+      "turns": 10,
+      "pending": false
+    },
+    "review": {
+      "thread_id": "01a1e3b4-999e-7853-9a40-0ed7034efea8",
+      "turns": 8,
+      "pending": false
+    }
+  },
+  "model_calls": 18,
+  "manual_workflow_interventions": 0,
+  "manual_resubmissions": 0,
+  "receipt_or_gate_overrides": 0,
+  "frozen_inputs_unchanged": 353,
+  "old_frozen_files_unchanged": 197,
+  "canonical_project_and_git_indexes_unchanged": true,
+  "host_status": "completed",
+  "pipeline_status": "research-stopped",
+  "submission_budget": {
+    "known_task_uids": [],
+    "max_new_submissions": 3,
+    "new_task_uids": [
+      "052a0331-3eb8-4481-a02f-4012f6ac8521",
+      "6fd02bd7-f925-42c0-b10a-75377e838aac",
+      "d5aea2bc-593b-49ba-9e4d-1739918a5ae5"
+    ],
+    "remaining_submissions": 0,
+    "mode": "bounded-submissions",
+    "counts_failed_and_cancelled": true,
+    "renewed": false
+  },
+  "scientific_decision": {
+    "schema": "sdm-scientific-evaluation/v1",
+    "outcome": "inconclusive",
+    "rule_digest": "sha256:07a02c73e561cc2203a1e46496c30f421846285de4198aa0d455ff170bc362bf",
+    "planned_run_ids": [
+      "run-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007",
+      "run-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+      "run-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101"
+    ],
+    "accounted_attempt_ids": [
+      "attempt-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007",
+      "attempt-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+      "attempt-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101"
+    ],
+    "accounting": {
+      "planned_runs": [
+        {
+          "run_id": "run-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007",
+          "required_attempt_ids": [
+            "attempt-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007"
+          ]
+        },
+        {
+          "run_id": "run-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+          "required_attempt_ids": [
+            "attempt-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb"
+          ]
+        },
+        {
+          "run_id": "run-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101",
+          "required_attempt_ids": [
+            "attempt-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101"
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "attempt_id": "attempt-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007",
+          "run_id": "run-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007",
+          "terminal_status": "successful",
+          "accounted": true,
+          "validity": "valid",
+          "system_failure": false
+        },
+        {
+          "attempt_id": "attempt-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+          "run_id": "run-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+          "terminal_status": "failed",
+          "accounted": true,
+          "validity": "invalid",
+          "system_failure": false
+        },
+        {
+          "attempt_id": "attempt-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101",
+          "run_id": "run-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101",
+          "terminal_status": "failed",
+          "accounted": true,
+          "validity": "invalid",
+          "system_failure": false
+        }
+      ]
+    },
+    "attempts_by_terminal_status": {
+      "cancelled": [],
+      "failed": [
+        "attempt-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+        "attempt-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101"
+      ],
+      "invalid": [],
+      "successful": [
+        "attempt-08faa11b8b795224e14f7c555496013c5227eb9750c5418fbf2e37a39f69f007"
+      ]
+    },
+    "invalid_attempt_ids": [
+      "attempt-4984a8cd07049f25d8ab0f21a853e1a5839c674305993726c83cd51eba38f8fb",
+      "attempt-f2eb98eb28578fff8aa1a62cff3e1759c99f5eb1e29fd67cf81928746dfcd101"
+    ],
+    "system_failure_attempt_ids": [],
+    "underpowered": true,
+    "predicate_results": {
+      "confirmatory_support": false,
+      "confirmatory_rejection": false
+    }
+  },
+  "old_studies_or_timers_resumed": false,
+  "scope": "Uninterrupted remote CPU failed-preflight repair, one valid training result and a reviewed result-driven successor that failed preflight. Two successful result rounds and full continuous-chain acceptance remain unmet.",
+  "attempts": [
+    {
+      "uid": "d5aea2bc-593b-49ba-9e4d-1739918a5ae5",
+      "valid_training_round": false,
+      "platform_status": "failed"
+    },
+    {
+      "uid": "6fd02bd7-f925-42c0-b10a-75377e838aac",
+      "valid_training_round": true,
+      "platform_status": "succeeded"
+    },
+    {
+      "uid": "052a0331-3eb8-4481-a02f-4012f6ac8521",
+      "valid_training_round": false,
+      "platform_status": "failed"
+    }
+  ],
+  "actual_failure_diagnostics": [
+    {
+      "uid": "d5aea2bc-593b-49ba-9e4d-1739918a5ae5",
+      "full_fit_started": false,
+      "labels": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "policy": {
+        "examples_per_class": 2,
+        "max_steps": 16,
+        "version": 1
+      },
+      "quality_score": null,
+      "schema": "sdm-remote-preflight-failure/v1",
+      "training_only": true,
+      "updates": [
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 1
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 2
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 3
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 4
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 5
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 6
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 7
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 8
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 9
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 10
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 11
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 12
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 13
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7327231764793396,
+          "step": 14
+        }
+      ]
+    },
+    {
+      "uid": "052a0331-3eb8-4481-a02f-4012f6ac8521",
+      "full_fit_started": false,
+      "labels": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "policy": {
+        "examples_per_class": 2,
+        "max_steps": 16,
+        "version": 1
+      },
+      "quality_score": null,
+      "schema": "sdm-remote-preflight-failure/v1",
+      "training_only": true,
+      "updates": [
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7414258718490601,
+          "step": 1
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.8542224168777466,
+          "step": 2
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7278966307640076,
+          "step": 3
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6921254992485046,
+          "step": 4
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7000948190689087,
+          "step": 5
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7069460153579712,
+          "step": 6
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.7026289701461792,
+          "step": 7
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6958901882171631,
+          "step": 8
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6918581128120422,
+          "step": 9
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6914404034614563,
+          "step": 10
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6931158304214478,
+          "step": 11
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6944230794906616,
+          "step": 12
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.6943418979644775,
+          "step": 13
+        },
+        {
+          "all_training_examples_correct": false,
+          "loss": 0.693173885345459,
+          "step": 14
+        }
+      ]
+    }
+  ],
+  "offline_governance_controls_passed": 95,
+  "replan_implementation_controls_passed": 24,
+  "component_pipeline_controls_passed": 15,
+  "actual_installation": {
+    "status": "installed-and-read-back",
+    "skill_name": "ResearchPilot",
+    "invocation": "$researchpilot",
+    "bundle_sha256": "d6ece3111f73bedc60d55776be7cc7038de1c03964dd3817124027d672717675",
+    "files": 334,
+    "all_declared_files_verified": true,
+    "inspection_platform_writes": 0,
+    "legacy_discoverable_entry_present": false
+  },
+  "universal_execution_delivery": false,
+  "qualified_scope": {
+    "input": "fixed-length univariate binary classification",
+    "model_interface": "PyTorch",
+    "execution": "existing LPAI single-worker component",
+    "cpu": 1,
+    "memory_gib": 4,
+    "gpu": 0,
+    "epochs_per_successful_task": 10,
+    "configuration": "project and machine facts outside Skill; no personal credentials in the bundle"
+  }
+}

@@ -823,6 +823,9 @@ def _portable_asset_parts(relative: str) -> tuple[str, ...]:
 def _read_relative_regular(root: Path, relative: str) -> bytes:
     """Read a contained regular file without following any path component."""
     parts = _portable_asset_parts(relative)
+    if os.name == "nt":
+        from windows_assets import read_regular
+        return read_regular(root, parts, MAX_DOCUMENT_BYTES)
     directory_flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_DIRECTORY", 0)
     file_flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
     root_fd = os.open(root, directory_flags)
@@ -3808,15 +3811,9 @@ def validate_change_diff_evidence(
     return problems
 
 
-def _semantic_experiment_strict(
-    value: Any, contract: dict[str, Any], bundle: AssetBundle,
-) -> list[dict[str, Any]]:
-    findings = _semantic_experiment(value, contract, bundle)
-    content = _semantic_content(value)
-    if not isinstance(content, dict):
-        return findings
-    findings.extend(_semantic_author_principals(content, contract))
-    findings.extend(_semantic_source_refs(content, contract))
+def experiment_scientific_kernel_findings(content, contract):
+    """Original E01 scientific fields/change semantics shared by ordinary adapters."""
+    findings = []
     if (
         not isinstance(content.get("experiment_id"), str)
         or _ID.fullmatch(content["experiment_id"]) is None
@@ -3838,6 +3835,19 @@ def _semantic_experiment_strict(
         _semantic_problem(contract, code, message, pointer)
         for code, message, pointer in validate_change_policy(content)
     )
+    return findings
+
+
+def _semantic_experiment_strict(
+    value: Any, contract: dict[str, Any], bundle: AssetBundle,
+) -> list[dict[str, Any]]:
+    findings = _semantic_experiment(value, contract, bundle)
+    content = _semantic_content(value)
+    if not isinstance(content, dict):
+        return findings
+    findings.extend(_semantic_author_principals(content, contract))
+    findings.extend(_semantic_source_refs(content, contract))
+    findings.extend(experiment_scientific_kernel_findings(content, contract))
     anchors = {
         "contracts": ("source_digests",),
         "baseline": ("lock_ref", "lock_digest", "baseline_digest"),
@@ -6180,6 +6190,36 @@ def _semantic_label_ontology(
         return findings
     classes = content.get("classes")
     semantics = content.get("semantics")
+    # G07 owns label semantics for both discrete and continuous targets. The
+    # existing discrete branch below is unchanged; regression does not invent
+    # categories or omit G07 from the original G02 reference closure.
+    if "value_space" in content:
+        import math
+        space=content["value_space"]
+        valid=isinstance(space,dict) and set(space)=={"kind","targets","units","ranges"}
+        if valid:
+            targets=space["targets"];units=space["units"];ranges=space["ranges"]
+            valid=(space["kind"]=="continuous" and "classes" not in content
+                and _meaningful_text(content.get("ontology_identity")) and _meaningful_text(content.get("version"))
+                and _unique_texts(targets) and isinstance(units,dict) and set(units)==set(targets)
+                and all(_meaningful_text(v) for v in units.values())
+                and isinstance(ranges,dict) and set(ranges)==set(targets)
+                and isinstance(semantics,dict) and set(semantics)==set(targets)
+                and all(_semantic_value_present(v) for v in semantics.values()))
+            if valid:
+                for bounds in ranges.values():
+                    if not isinstance(bounds,dict) or set(bounds)!={"min","max"}:
+                        valid=False;break
+                    lo,hi=bounds["min"],bounds["max"]
+                    if (any(v is not None and (type(v) not in (int,float) or not math.isfinite(v)) for v in (lo,hi))
+                            or lo is not None and hi is not None and lo>hi):
+                        valid=False;break
+        if not valid:
+            findings.append(_semantic_problem(contract,"continuous_label_space_not_closed",
+                "G07 continuous targets require explicit names, units, valid ranges and matching semantics; discrete classes cannot be mixed in",
+                "/content/value_space"))
+        findings.extend(_semantic_source_refs(content,contract))
+        return findings
     if (
         not _meaningful_text(content.get("ontology_identity"))
         or not _meaningful_text(content.get("version"))
@@ -6689,6 +6729,14 @@ def _semantic_product_requirement(
     return findings
 
 
+def _research_statement_units(value: Any, words: int, ideographs: int) -> bool:
+    """Retain word checks while supporting Chinese text without inserted spaces."""
+    return isinstance(value, str) and (
+        len(value.split()) >= words
+        or len(re.findall(r"[\u3400-\u9fff]", value)) >= ideographs
+    )
+
+
 def _semantic_research_brief(
     value: Any, contract: dict[str, Any], bundle: AssetBundle,
 ) -> list[dict[str, Any]]:
@@ -6717,7 +6765,7 @@ def _semantic_research_brief(
     hypothesis = content.get("hypothesis")
     if (
         not _meaningful_text(hypothesis, minimum=16)
-        or len(hypothesis.split()) < 3
+        or not _research_statement_units(hypothesis, 3, 12)
     ):
         findings.append(_semantic_problem(
             contract, "research_hypothesis_not_falsifiable",
@@ -6726,7 +6774,7 @@ def _semantic_research_brief(
         ))
     if (
         not _meaningful_text(content.get("mechanism"), minimum=12)
-        or len(content["mechanism"].split()) < 2
+        or not _research_statement_units(content["mechanism"], 2, 8)
         if isinstance(content.get("mechanism"), str) else True
     ):
         findings.append(_semantic_problem(
@@ -7037,20 +7085,8 @@ _SCIENTIFIC_OUTCOMES = {
 _ATTEMPT_TERMINAL = {"successful", "failed", "cancelled", "invalid"}
 
 
-def evaluate_scientific_decision(
-    frozen_rules: dict[str, Any],
-    planned_runs: list[dict[str, Any]],
-    attempts: list[dict[str, Any]],
-    evidence: dict[str, Any],
-) -> dict[str, Any]:
-    """Evaluate the frozen D05 rule from fully accounted terminal facts.
-
-    This function deliberately consumes already-governed facts rather than
-    computing platform metrics.  The frozen rule names two boolean predicates
-    in ``evidence.predicates``; it never supplies their values.  Consequently
-    the coordinator can validate a scientific decision without fabricating or
-    recomputing a platform-owned observation.
-    """
+def validate_scientific_rule(frozen_rules):
+    """Validate the original closed scientific rule without making a decision."""
     if not isinstance(frozen_rules, dict):
         raise ContractError("scientific_rule_invalid", "frozen_rules must be an object")
     expected_rule = {
@@ -7077,6 +7113,24 @@ def evaluate_scientific_decision(
             "support_predicate and rejection_predicate must be distinct portable fact names",
             pointer="/frozen_rules",
         )
+    return support_name, rejection_name
+
+
+def evaluate_scientific_decision(
+    frozen_rules: dict[str, Any],
+    planned_runs: list[dict[str, Any]],
+    attempts: list[dict[str, Any]],
+    evidence: dict[str, Any],
+) -> dict[str, Any]:
+    """Evaluate the frozen D05 rule from fully accounted terminal facts.
+
+    This function deliberately consumes already-governed facts rather than
+    computing platform metrics.  The frozen rule names two boolean predicates
+    in ``evidence.predicates``; it never supplies their values.  Consequently
+    the coordinator can validate a scientific decision without fabricating or
+    recomputing a platform-owned observation.
+    """
+    support_name, rejection_name = validate_scientific_rule(frozen_rules)
     if not isinstance(planned_runs, list) or not planned_runs:
         raise ContractError("scientific_accounting_incomplete", "planned_runs must be a non-empty array")
     if not isinstance(attempts, list) or not attempts:

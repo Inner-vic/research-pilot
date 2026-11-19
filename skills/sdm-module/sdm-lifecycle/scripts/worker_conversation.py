@@ -1,4 +1,4 @@
-"""Bound latest semantic changes as immutable shared A/B evidence, opt-in only."""
+"""Bound latest semantic changes as immutable shared Generator-Critic evidence, opt-in only."""
 import json
 from pathlib import Path
 

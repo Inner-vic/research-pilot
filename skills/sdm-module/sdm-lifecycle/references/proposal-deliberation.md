@@ -1,6 +1,10 @@
-# 提交前审议与可靠迭代
+# 生成—质询审议与可靠迭代
 
-目的：先把下一次排队/长任务的科学问题、信息收益和执行准备说清楚。RoadModel是首要验收项目；合同不依赖模型名、指标名或平台。负结果可以有价值；CPU合同通过不能证明科学质量或真实平台稳定。
+名称统一为 **生成—质询审议（Generator–Critic）**：方案生成者提出与修订，独立质询者审查证据、反证与执行条件。旧协议 `a/b` 是兼容字段，不作为产品名称。
+
+目的：先把下一次排队/长任务的科学问题、信息收益和执行准备说清楚。合同不依赖模型名、指标名或平台。旧 RoadModel 配置示例仅用于说明兼容接口，不是当前研究授权或优先项目。负结果可以有价值；CPU合同通过不能证明科学质量或真实平台稳定。
+
+审议融入原 SDM 的研究问题、实验协议、代码和证据职责，流程主线见 [SDM 生命周期](sdm-core.md)。新初始化使用 dialogue v4 和研究指导 v7；下文 v1–v3 示例用于解释原合同兼容，不能据此降低新 profile 的意图校验。
 
 ## 配置与恢复
 
@@ -12,15 +16,15 @@
 
 其他项目通过同一字段启用。新v3按结论和实质进展循环，没有min_rounds/max_rounds，也不要求为了凑次数制造质疑。训练轮数与审议往返次数分别记录。旧v1/v2冻结合同按原规则回放，新任务不套用原2—6轮或12轮上限。
 
-| B的判断/实际进展 | 下一动作与退出条件 |
+| 独立质询者的判断/实际进展 | 下一动作与退出条件 |
 |---|---|
 | approve | 同一确切方案和证据、无未关闭重大问题、理由充分，结束审议；首次已就绪也可批准。原预检和执行授权仍独立 |
-| revise | A核验建议的适用性后作实质回应或修改，B重新审查；没有轮数上限 |
+| revise | 方案生成者核验建议的适用性后作实质回应或修改，独立质询者重新审查；没有轮数上限 |
 | needs-evidence | 暂停模型往返、等待缺项；通过原只读入口补充已登记证据后续接同一循环。新来源/变更背景须另建关联的不可变审议，不改旧记录 |
 | reject | 本提案立即结束并保留拒绝理由，不提交训练；可依据新证据形成新的关联方案 |
-| stalled／没有实质修订 | 分歧无法推进时暂停并说明问题；只改版本号或调用标签不会再调用B。不自动批准，也不重提训练 |
+| stalled／没有实质修订 | 分歧无法推进时暂停并说明问题；只改版本号或调用标签不会再调用独立质询者。不自动批准，也不重提训练 |
 
-模型声称“同意”不是充分证明，Agent仍核对关键异议、证据来源、可执行性、对照与成本。对语义重复无法完全机械判断，A/B应明确报告无进展。用户主动停止或已明确授权的时间/费用边界也会暂停；不补设默认轮数预算。
+模型声称“同意”不是充分证明，Agent仍核对关键异议、证据来源、可执行性、对照与成本。对语义重复无法完全机械判断，生成—质询应明确报告无进展。用户主动停止或已明确授权的时间/费用边界也会暂停；不补设默认轮数预算。
 
 v2/v3的`backend:model`通过现有文件交接接收两个实际模型的输出，模型提供方和型号不限；不因保存了`external_review`或`proposal_review.pro`就选择Pro。内部`review_mode:local-agent`表示由Agent交接文件，不证明只调用了一个模型，也不能充当双模型已运行的证据。当前协调器不自行调用模型，Agent使用实际可用的模型工具并保留原始调用记录；第二模型不可用时明确等待，不能通过两个角色标签伪装独立调用。
 
@@ -34,10 +38,10 @@ python "$LIFECYCLE/scripts/run_project_pipeline.py" --project /absolute/project.
 
 此模式只生成/校验文件，不调用模型、平台或分配资源。完整开发空间/组件执行入口会在新提交前调用同一检查。Study在每个具体子轮/重试自己的目录审议，依据返回状态中的子轮project、proposal_path、subject_digest操作；不要拿顶层Study配置的摘要替代子轮。
 
-1. `awaiting-proposal`返回`subject_digest`及`proposal_path`。A在该路径写`sdm-proposal/v1`对象：精确`subject_digest`，正整数`revision`，`proposer:{role:proposer,identity,source_ref}`，以及非空文本`objective`、`hypothesis`、`evidence_summary`、`counterevidence`、`alternatives`、`comparison`、`expected_observations`、`outcome_actions`、`cost_and_queue`、`preflight_and_stop`。引用本地证据用`evidence:[{path:绝对文件路径,sha256:文件SHA256}]`；接受及恢复时重新核对。单份方案/回复上限128 KiB，证据最多32项。
-2. v2/v3的`proposer`与`reviewer`还需要`model:{provider,id}`、`call_ref`，引用实际模型和调用原件。A/B模型必须不同，每轮B复审使用新的调用，A修订使用新的调用。程序能拒绝同模型换标签或重复调用引用，但这些字段仍是声明，必须与真实工具/会话记录核对；字段通过不能独立证明提供方调用已发生。
-3. 再次调用得到不可变`request_path`。B读取完整请求和证据，核对假设、反证、对照、替代行动、信息收益、成本及执行准备。`backend:model`在`response_path`写`sdm-proposal-review/v1`：精确`request_digest`；`reviewer:{role:critic,identity,source_ref,model,call_ref}`；v3的`verdict:approve|revise|reject|needs-evidence|stalled`；有依据的`rationale`；`challenges:[{id,severity:blocker|major|minor,question}]`；`resolutions:[{challenge_id,status:open|resolved,reason}]`。v3没有异议时可基于充分理由批准，不虚构问题；要求修订时必须指出可行动的质疑。挑战ID不可重定义以降低严重程度，v1/v2原校验不变。
-4. `revise`后A增加revision并作实质回应，`addresses:[{challenge_id,reason}]`逐条回答重大异议，保留旧快照。最终approve逐一复核并关闭所有历史blocker/major，不能同一回复新提重大异议又批准。每次重新审查使用新的真实调用；v3不设置至少/至多次数，旧v1/v2按原合同回放。机械校验不能代替评审质量判断。
+1. `awaiting-proposal`返回`subject_digest`及`proposal_path`。方案生成者在该路径写`sdm-proposal/v1`对象：精确`subject_digest`，正整数`revision`，`proposer:{role:proposer,identity,source_ref}`，以及非空文本`objective`、`hypothesis`、`evidence_summary`、`counterevidence`、`alternatives`、`comparison`、`expected_observations`、`outcome_actions`、`cost_and_queue`、`preflight_and_stop`。引用本地证据用`evidence:[{path:绝对文件路径,sha256:文件SHA256}]`；接受及恢复时重新核对。单份方案/回复上限128 KiB，证据最多32项。
+2. v2/v3的`proposer`与`reviewer`还需要`model:{provider,id}`、`call_ref`，引用实际模型和调用原件。生成—质询模型必须不同，每轮独立质询者复审使用新的调用，方案生成者修订使用新的调用。程序能拒绝同模型换标签或重复调用引用，但这些字段仍是声明，必须与真实工具/会话记录核对；字段通过不能独立证明提供方调用已发生。
+3. 再次调用得到不可变`request_path`。独立质询者读取完整请求和证据，核对假设、反证、对照、替代行动、信息收益、成本及执行准备。`backend:model`在`response_path`写`sdm-proposal-review/v1`：精确`request_digest`；`reviewer:{role:critic,identity,source_ref,model,call_ref}`；v3的`verdict:approve|revise|reject|needs-evidence|stalled`；有依据的`rationale`；`challenges:[{id,severity:blocker|major|minor,question}]`；`resolutions:[{challenge_id,status:open|resolved,reason}]`。v3没有异议时可基于充分理由批准，不虚构问题；要求修订时必须指出可行动的质疑。挑战ID不可重定义以降低严重程度，v1/v2原校验不变。
+4. `revise`后方案生成者增加revision并作实质回应，`addresses:[{challenge_id,reason}]`逐条回答重大异议，保留旧快照。最终approve逐一复核并关闭所有历史blocker/major，不能同一回复新提重大异议又批准。每次重新审查使用新的真实调用；v3不设置至少/至多次数，旧v1/v2按原合同回放。机械校验不能代替评审质量判断。
 5. `proposal-approved`只表示方案合同通过。全配置摘要绑定参数、输入、授权、驱动等；证据或最终方案被改动即失效。后续仍需原资源确认、实际预检、写入intent、精确UID读回、停止/释放核验。不要把审议当作用户算力授权。
 
 ## 共同证据、只读补证与建议核验
@@ -45,18 +49,18 @@ python "$LIFECYCLE/scripts/run_project_pipeline.py" --project /absolute/project.
 ### 新的启发式研究对话
 
 新ModelRunner提案可显式设置`proposal_review.dialogue_version:2`（仍使用policy version4），
-将简短的方向审查直接放入A/B实际prompt，复用原有字段、挑战ID和按结论退出机制。
+将简短的方向审查直接放入生成—质询实际prompt，复用原有字段、挑战ID和按结论退出机制。
 未设置时保留v1提示文本；旧冻结尝试不改版本、不热换运行源码，新选择另建关联尝试。
 
 使用独立结果工作器时，同时显式设置`research_worker.dialogue_version:2`，让同一研究方向
-原则进入结果A/B请求。该选择也进入请求、来源和重放绑定；不能只更新磁盘提示词却继续
-使用旧冻结运行态。实现需要改变或决定性测量尚不存在时，B应直接`needs-evidence`，
-不能要求A仅在下一段文字中承诺修复，再审议同一份未改代码。新代码经检查后建立关联
+原则进入结果生成—质询请求。该选择也进入请求、来源和重放绑定；不能只更新磁盘提示词却继续
+使用旧冻结运行态。实现需要改变或决定性测量尚不存在时，独立质询者应直接`needs-evidence`，
+不能要求方案生成者仅在下一段文字中承诺修复，再审议同一份未改代码。新代码经检查后建立关联
 的新绑定；不把原始异常、失败尝试或尚未完成的训练改写成成功。
 
-A先还原目标口径、剩余差距和错误结构，再在`hypothesis/alternatives`解释干预机制、
-最强竞争解释及为何当前行动更值得做。B先审选题价值，再审比较与执行条件；内部比较
-严谨不能替代方向有价值。A修订须核验B建议的适用性，不能靠增加实验和字段数量获得批准。
+方案生成者先还原目标口径、剩余差距和错误结构，再在`hypothesis/alternatives`解释干预机制、
+最强竞争解释及为何当前行动更值得做。独立质询者先审选题价值，再审比较与执行条件；内部比较
+严谨不能替代方向有价值。方案生成者修订须核验独立质询者建议的适用性，不能靠增加实验和字段数量获得批准。
 没有实质推进时保留分歧、补决定性证据或暂停；就绪可首轮批准，不规定往返次数。
 
 这不是“效果差就必须换模型”的规则。小规模实验可以验证大幅设计变化；数值稳定不等于
@@ -70,21 +74,21 @@ A先还原目标口径、剩余差距和错误结构，再在`hypothesis/alterna
 例如GPU数与per-GPU batch是不同单位。发现事实错误时保留原回复，提交有来源的纠正；
 如共同背景变化，创建关联的新不可变审议，不修改已冻结的上下文或伪造原轮补证。
 
-新生成配置的`context_required:true`在生成B请求之前要求`attempt/review-context.json`。旧策略没有该字段时保持原合同，不热改已绑定任务。共同背景不能只复制A的结论：先从项目登记、配置、运行、结果和历史记录生成事实快照，再单列A的解释。缺失事实明确写未知及其影响；程序能校验绑定和文件完整性，不能证明材料完整、作者中立或模型确实阅读。
+新生成配置的`context_required:true`在生成独立质询者请求之前要求`attempt/review-context.json`。旧策略没有该字段时保持原合同，不热改已绑定任务。共同背景不能只复制方案生成者的结论：先从项目登记、配置、运行、结果和历史记录生成事实快照，再单列方案生成者的解释。缺失事实明确写未知及其影响；程序能校验绑定和文件完整性，不能证明材料完整、作者中立或模型确实阅读。
 
-背景格式为`schema:sdm-review-context/v1`、精确`subject_digest`，非空的`goal,constraints,data,code_revision,configuration,history,unknowns`，以及`sources:[{id,kind,path,sha256}]`。kind为code/config/log/metric/artifact/history，path为绝对本地文件路径，最多64项。应登记去敏的不可变快照；活跃大日志提取有界片段并保留来源、时间区间和缺口，checkpoint登记元数据，不把二进制直接作为文本。敏感原件不能因为B提出需求而自动外发。背景和来源会写入不可变请求，接受及恢复时重新核对，变更须开启关联的新审议而非重写旧证据。
+背景格式为`schema:sdm-review-context/v1`、精确`subject_digest`，非空的`goal,constraints,data,code_revision,configuration,history,unknowns`，以及`sources:[{id,kind,path,sha256}]`。kind为code/config/log/metric/artifact/history，path为绝对本地文件路径，最多64项。应登记去敏的不可变快照；活跃大日志提取有界片段并保留来源、时间区间和缺口，checkpoint登记元数据，不把二进制直接作为文本。敏感原件不能因为独立质询者提出需求而自动外发。背景和来源会写入不可变请求，接受及恢复时重新核对，变更须开启关联的新审议而非重写旧证据。
 
-B可以索取已登记来源的片段，不接收任意路径、命令或网络URL。创建query.json：
+独立质询者可以索取已登记来源的片段，不接收任意路径、命令或网络URL。创建query.json：
 
 ```json
 {"request_digest":"sha256:当前request摘要","queries":[{"source_id":"train-log","start_line":1,"line_count":80,"question":"哪些更新支持学习率过大？"}]}
 ```
 
-通过同一公开入口加`--proposal-review --review-evidence-query /absolute/query.json`生成不可变supplement文件，再交给实际B会话。最多16条查询，每条200行，源文本最多8MiB；超过范围先制作有界快照并进入新绑定。补证本身不调用模型、不读取平台、不执行文本、不改变审议轮次，也不自动证明已发送给B。补证不可得时保留未知，不能捏造证据或无限索取。
+通过同一公开入口加`--proposal-review --review-evidence-query /absolute/query.json`生成不可变supplement文件，再交给实际独立质询者会话。最多16条查询，每条200行，源文本最多8MiB；超过范围先制作有界快照并进入新绑定。补证本身不调用模型、不读取平台、不执行文本、不改变审议轮次，也不自动证明已发送给独立质询者。补证不可得时保留未知，不能捏造证据或无限索取。
 
-B回复增加`evidence_assessment:{source_ids:[实际引用ID],judgment:supported|hypothesis|insufficient,limitations:[]}`，每条challenge增加`basis`与`resolution_criterion`。信息不足不能批准，未知效果应形成可检验假设，不能一律当成阻断。一次性粘贴到Pro只能算有限上下文的第二意见；要参与持续审议，Agent必须实际交付所需补证并保留调用记录。没有工具访问不能描述为已看过全项目。
+独立质询者回复增加`evidence_assessment:{source_ids:[实际引用ID],judgment:supported|hypothesis|insufficient,limitations:[]}`，每条challenge增加`basis`与`resolution_criterion`。信息不足不能批准，未知效果应形成可检验假设，不能一律当成阻断。一次性粘贴到Pro只能算有限上下文的第二意见；要参与持续审议，Agent必须实际交付所需补证并保留调用记录。没有工具访问不能描述为已看过全项目。
 
-A修订时为上一轮每条质疑记录`advice_dispositions:[{challenge_id,decision:accept|modify|reject,applicability,reason}]`，核对真实代码、参数、checkpoint与比较口径。不能因为B是Pro就直接应用建议。重大问题关闭与执行授权检查仍适用；此合同不赋予B任意文件访问、平台操作或训练权限，也不保证通过后一定改善。新v3按条件循环；旧v1/v2仅在冻结任务中保留原轮次合同。
+方案生成者修订时为上一轮每条质疑记录`advice_dispositions:[{challenge_id,decision:accept|modify|reject,applicability,reason}]`，核对真实代码、参数、checkpoint与比较口径。不能因为独立质询者是Pro就直接应用建议。重大问题关闭与执行授权检查仍适用；此合同不赋予独立质询者任意文件访问、平台操作或训练权限，也不保证通过后一定改善。新v3按条件循环；旧v1/v2仅在冻结任务中保留原轮次合同。
 
 ## 选择Pro时的每一轮
 

@@ -68,7 +68,7 @@ old installations when changing framework code.
 
 ## Choose work by the requested outcome
 
-Use [task-modes.md](task-modes.md) for five-phase progress, purpose-specific minimal
+Use [task-modes.md](task-modes.md) for current lifecycle progress, purpose-specific minimal
 delivery and conditional robustness/baseline work. Task mode and experiment scale
 are separate; project resources decide the compatible profile, not global Skill
 defaults. Preparation-only work never invokes a training objective for reporting.

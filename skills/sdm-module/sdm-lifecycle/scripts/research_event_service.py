@@ -48,6 +48,9 @@ def configuration(cfg,control_only=False):
         if (not path.is_absolute() or path.resolve().is_relative_to(Path(cfg['cwd']).resolve())
                 or hashlib.sha256(path.read_bytes()).hexdigest()!=row['sha256']):
             raise ValueError('event_service_frozen_guidance_changed')
+    if 'normative_manifest' in cfg:
+        from lifecycle_rules import verify_assets
+        verify_assets(cfg)
     if not control_only and not Path(cfg['cwd']).is_dir(): raise ValueError('existing_execution_workspace_required')
     if not 30 <= cfg['timeout_seconds'] <= 3600: raise ValueError('bounded_execution_required')
     if cfg.get('sandbox') not in ('read-only', 'workspace-write'):
@@ -62,7 +65,7 @@ def configuration(cfg,control_only=False):
                 or not v.get('instructions') or not v.get('evidence_kind') for k,v in templates.items())):
             raise ValueError('typed_frozen_task_templates_required')
     if cfg.get('component_pipeline') and not control_only:
-        from component_pipeline import validate
+        from research_pipeline import validate
         validate(cfg)
         if cfg.get('component_source') or cfg.get('source_argv'):
             raise ValueError('component_pipeline_has_one_source_owner')
@@ -374,6 +377,9 @@ def _sdk_execute(inbox, row, folder, context=None):
         return native(*args, **kwargs)
     policy = Sandbox.workspace_write if cfg['sandbox']=='workspace-write' else Sandbox.read_only
     instructions = native_instructions(task)
+    if cfg.get('working_sessions'):
+        from working_sessions import instructions as working_instructions
+        instructions=working_instructions('main')
     launch = (cfg['cli_path'], '--config', 'project_doc_max_bytes=0', '--config',
         'model_reasoning_effort="medium"', '--config', 'sandbox_workspace_write.network_access=false',
         '--config', 'sandbox_workspace_write.writable_roots=[]',
@@ -417,9 +423,12 @@ def _sdk_execute(inbox, row, folder, context=None):
                 else context.open(codex,arguments) if context else codex.thread_start(ephemeral=False,**arguments))
             atomic_json(folder/'thread.json', {'thread_id':thread.id, 'job_id':row['id']})
             if context: context.intent(row['id'])
-            handle = thread.turn(ExternalMessage(tool_name=task.get('tool_name','sdm_experiment_completed'), content=json.dumps(
+            from working_sessions import execution_packet
+            packet=execution_packet(task,
                 {'event':json.loads(row['event']), 'evidence':refs, 'scope':task['evidence_kind'],
-                 'original_coordinator':coordinator},
+                 'original_coordinator':coordinator},cfg)
+            handle = thread.turn(ExternalMessage(tool_name=task.get('tool_name','sdm_experiment_completed'), content=json.dumps(
+                packet,
                 ensure_ascii=False)), sandbox=policy, approval_mode=ApprovalMode.deny_all)
             if context: context.started(row['id'], handle.id)
             inbox.transition(row['id'], 'running', thread_id=thread.id, turn_id=handle.id,
@@ -600,7 +609,7 @@ def main():
         atomic_json(inbox.root/'ready.json', ready)
         threading.Thread(target=inbox.work, daemon=True).start()
         if inbox.cfg.get('component_pipeline'):
-            from component_pipeline import ComponentPipeline
+            from research_pipeline import ResearchPipeline as ComponentPipeline
             from research_continuation import enabled,start_owner
             if enabled(inbox.cfg):start_owner(inbox,server)
             else:threading.Thread(target=ComponentPipeline(inbox).run, daemon=True).start()

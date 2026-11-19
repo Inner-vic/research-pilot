@@ -25,6 +25,8 @@ def _sha(path):
 
 def inspect(config):
     policy = config.get('platform_requirements')
+    if isinstance(policy,dict) and policy.get('version')==2:
+        return project_requirements(policy)
     if policy is None:
         return {'status': 'legacy-policy-not-declared', 'skills': [], 'platform_calls': 0,
                 'new_execution_qualified': False}
@@ -63,6 +65,34 @@ def inspect(config):
         'identity_digest': 'sha256:' + hashlib.sha256(json.dumps(policy, sort_keys=True, separators=(',', ':')).encode()).hexdigest(),
         'platform_calls': 0, 'execution_authority': False,
         'model_activation_verified': False, 'qualification': 'installed-identity-not-platform-or-signature-proof'}
+
+
+def project_requirements(policy):
+    """Configured providers declare their own installed capabilities, never LPAI aliases."""
+    if (set(policy)!={'version','platform','required_skills'} or not isinstance(policy['platform'],str)
+            or not policy['platform'].strip() or policy['platform'].casefold()=='lpai'
+            or not isinstance(policy['required_skills'],list)):
+        raise ValueError('explicit_project_platform_requirement_required')
+    names=set();rows=[]
+    for row in policy['required_skills']:
+        if (not isinstance(row,dict) or set(row)!={'name','skill','manifest'}
+                or not isinstance(row['name'],str) or not row['name'] or row['name'] in names):
+            raise ValueError('unique_project_required_skill_required')
+        names.add(row['name'])
+        for key in ('skill','manifest'):
+            ref=row[key]
+            if not isinstance(ref,dict) or set(ref)!={'path','sha256'} or _sha(_file(ref['path']))!=ref['sha256']:
+                raise ValueError('project_required_skill_bytes_changed')
+        skill=Path(row['skill']['path']);manifest=Path(row['manifest']['path'])
+        metadata=json.loads(manifest.read_bytes());front=skill.read_text(encoding='utf-8-sig').split('---',2)
+        if (skill.name!='SKILL.md' or manifest.name!='manifest.json' or skill.parent!=manifest.parent
+                or len(front)!=3 or ('name: '+row['name']) not in front[1].replace('\r\n','\n').splitlines()
+                or metadata.get('name')!=row['name']):raise ValueError('project_skill_identity_required')
+        rows.append(row)
+    return {'status':'required-skills-available','platform':policy['platform'],'skills':rows,
+        'identity_digest':'sha256:'+hashlib.sha256(json.dumps(policy,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
+        'platform_calls':0,'execution_authority':False,'model_activation_verified':False,
+        'qualification':'configured-installed-identities-only; provider probe and scoped authorization remain required'}
 
 
 def inherit(parent, child):

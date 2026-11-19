@@ -1,0 +1,29 @@
+{
+  "schema": "researchpilot-skill-name-validation/v1",
+  "date": "2026-11-16",
+  "display_name": "ResearchPilot",
+  "skill_id": "researchpilot",
+  "invocation": "$researchpilot",
+  "source": "skills/researchpilot",
+  "installed_directory": "researchpilot",
+  "installation_regressions_passed": 9,
+  "skill_frontmatter_validation": "passed",
+  "legacy_entry": "Verified owned installation archived outside Skill discovery; historical research protocols stay unchanged.",
+  "actual_installation": "verified",
+  "model_calls": 0,
+  "platform_writes": 0,
+  "research_acceptance": "Name/installation qualification only; autonomous multi-round validation remains not passed.",
+  "installed_files_matching_source": 334,
+  "codex_discovery": {
+    "status": "passed",
+    "method": "skills/list forceReload",
+    "current_workspace_entries": 1,
+    "old_call_name_discovered": false,
+    "display_name": "ResearchPilot",
+    "invocation": "$researchpilot"
+  },
+  "legacy_skill_archived": true,
+  "workbenches_refreshed": 3,
+  "old_frozen_files_unchanged": 197,
+  "feishu_name_update": "verified; original document, 3 paragraphs, resource identities retained"
+}

@@ -1,0 +1,2569 @@
+{
+  "at": "2026-11-14T10:32:51.056845+08:00",
+  "source_version": "0.3.0-rc6.37",
+  "source_git_head": "a17ce4fb5b895663407294cb23e80150c3c04c16",
+  "source_is_dirty": true,
+  "baseline_commit": "ec870b0e12b0932741a193520a004cba5ae9f3c3",
+  "formal_lifecycle": {
+    "old_count": 21,
+    "current_count": 21,
+    "changes": [
+      {
+        "step": 5,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "git.snapshot",
+          "jenkins.baseline-reproduction",
+          "ml.locked-evaluation"
+        ],
+        "current_operations": [
+          "git.snapshot",
+          "ml.baseline-reproduction",
+          "ml.baseline-locked-evaluation"
+        ]
+      },
+      {
+        "step": 7,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "data.quality-check",
+          "jenkins.contract-preflight"
+        ],
+        "current_operations": [
+          "data.quality-check",
+          "ml.contract-preflight"
+        ]
+      },
+      {
+        "step": 8,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "git.tag-frozen-spec",
+          "jenkins.freeze-receipt",
+          "git.anchor-ledger-head"
+        ],
+        "current_operations": [
+          "git.tag-frozen-spec",
+          "ml.freeze-receipt",
+          "git.anchor-ledger-head"
+        ]
+      },
+      {
+        "step": 11,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "git.change-review-status",
+          "jenkins.implementation-checks"
+        ],
+        "current_operations": [
+          "git.change-review-status",
+          "ml.implementation-checks"
+        ]
+      },
+      {
+        "step": 12,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "git.merge-status",
+          "jenkins.deterministic-acceptance"
+        ],
+        "current_operations": [
+          "git.merge-status",
+          "ml.deterministic-acceptance"
+        ]
+      },
+      {
+        "step": 13,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "jenkins.post-implementation-preflight"
+        ],
+        "current_operations": [
+          "ml.post-implementation-preflight"
+        ]
+      },
+      {
+        "step": 15,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "ml.hpo-search",
+          "jenkins.execution-orchestration",
+          "ml.training"
+        ],
+        "current_operations": [
+          "ml.hpo-search",
+          "ml.execution-orchestration",
+          "ml.training"
+        ]
+      },
+      {
+        "step": 16,
+        "keys": [
+          "gate",
+          "platform_operations"
+        ],
+        "old_operations": [
+          "jenkins.evaluation-orchestration",
+          "ml.locked-evaluation"
+        ],
+        "current_operations": [
+          "ml.evaluation-orchestration",
+          "ml.locked-evaluation"
+        ]
+      }
+    ]
+  },
+  "business_packages": {
+    "task-contract": [
+      "1.1",
+      "任务约定",
+      "background",
+      [
+        "1",
+        "2",
+        "22"
+      ]
+    ],
+    "data-readiness": [
+      "1.2",
+      "数据与材料确认",
+      "background",
+      [
+        "3"
+      ]
+    ],
+    "model-reference": [
+      "2.1",
+      "模型与对照选择",
+      "research",
+      [
+        "4"
+      ]
+    ],
+    "experiment-plan": [
+      "2.2",
+      "实验方案与审查",
+      "research",
+      [
+        "6",
+        "24",
+        "25",
+        "34"
+      ]
+    ],
+    "implementation": [
+      "3.1",
+      "实现与工程验证",
+      "execution",
+      [
+        "9",
+        "10",
+        "11",
+        "12"
+      ]
+    ],
+    "execution-readiness": [
+      "3.2",
+      "执行准备与预检",
+      "execution",
+      [
+        "7",
+        "13"
+      ]
+    ],
+    "experiment-run": [
+      "3.3",
+      "运行实验",
+      "execution",
+      [
+        "5",
+        "15"
+      ]
+    ],
+    "evaluation": [
+      "4.1",
+      "评估与比较",
+      "review",
+      [
+        "16",
+        "17",
+        "18"
+      ]
+    ],
+    "result-review": [
+      "4.2",
+      "结果审查",
+      "review",
+      [
+        "19",
+        "32"
+      ]
+    ],
+    "action-choice": [
+      "5.1",
+      "结论与行动选择",
+      "decision",
+      [
+        "20",
+        "33"
+      ]
+    ],
+    "archive-continuation": [
+      "5.2",
+      "归档与迭代接续",
+      "decision",
+      [
+        "21"
+      ]
+    ]
+  },
+  "internal_check_count": 34,
+  "graph_scenarios": {
+    "train-reuse": {
+      "task": {
+        "objective": "execute-and-learn",
+        "code_change": false
+      },
+      "node_count": 34,
+      "nodes": {
+        "1": {
+          "name": "task",
+          "depends": [],
+          "policy": "required"
+        },
+        "2": {
+          "name": "question",
+          "depends": [
+            "1"
+          ],
+          "policy": "required"
+        },
+        "3": {
+          "name": "data",
+          "depends": [
+            "22"
+          ],
+          "policy": "required"
+        },
+        "22": {
+          "name": "background-alignment",
+          "depends": [
+            "1",
+            "2"
+          ],
+          "policy": "required",
+          "builtin": "background"
+        },
+        "4": {
+          "name": "starting-model",
+          "depends": [
+            "22",
+            "3"
+          ],
+          "policy": "required"
+        },
+        "6": {
+          "name": "plan",
+          "depends": [
+            "2",
+            "3",
+            "4",
+            "22"
+          ],
+          "policy": "required"
+        },
+        "24": {
+          "name": "research-protocol",
+          "depends": [
+            "6",
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "research"
+        },
+        "25": {
+          "name": "methodology-checks",
+          "depends": [
+            "24"
+          ],
+          "policy": "required",
+          "builtin": "method_review"
+        },
+        "26": {
+          "name": "account-resource-inventory",
+          "depends": [
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "inventory"
+        },
+        "27": {
+          "name": "resource-budget-proposal",
+          "depends": [
+            "26",
+            "25"
+          ],
+          "policy": "required",
+          "builtin": "proposal"
+        },
+        "34": {
+          "name": "plan-review",
+          "depends": [
+            "27"
+          ],
+          "policy": "required",
+          "builtin": "plan_review"
+        },
+        "9": {
+          "name": "implementation-context",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "not-applicable"
+        },
+        "23": {
+          "name": "source-isolation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "10": {
+          "name": "implementation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "11": {
+          "name": "code-review",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "12": {
+          "name": "engineering-check",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "8": {
+          "name": "config-snapshot",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "required"
+        },
+        "28": {
+          "name": "human-resource-confirmation",
+          "depends": [
+            "27",
+            "34"
+          ],
+          "policy": "required",
+          "builtin": "confirmation"
+        },
+        "14": {
+          "name": "execution-request",
+          "depends": [
+            "28",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "7": {
+          "name": "runtime-check",
+          "depends": [
+            "3",
+            "4",
+            "6",
+            "14",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "13": {
+          "name": "preflight",
+          "depends": [
+            "7",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "5": {
+          "name": "baseline-reproduction",
+          "depends": [
+            "13",
+            "28"
+          ],
+          "policy": "record"
+        },
+        "15": {
+          "name": "training",
+          "depends": [
+            "14",
+            "13"
+          ],
+          "policy": "required"
+        },
+        "16": {
+          "name": "evaluation",
+          "depends": [
+            "15"
+          ],
+          "policy": "required"
+        },
+        "17": {
+          "name": "robustness",
+          "depends": [
+            "16"
+          ],
+          "policy": "record"
+        },
+        "18": {
+          "name": "result-summary",
+          "depends": [
+            "15",
+            "16"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        },
+        "30": {
+          "name": "allocation-release",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "release",
+          "accept_failed_dependencies": true
+        },
+        "29": {
+          "name": "review-context",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "review_context",
+          "accept_failed_dependencies": true
+        },
+        "31": {
+          "name": "review-dialogue",
+          "depends": [
+            "29"
+          ],
+          "policy": "required",
+          "builtin": "review_response",
+          "accept_failed_dependencies": true
+        },
+        "19": {
+          "name": "evidence-review",
+          "depends": [
+            "18",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "evidence_consistency",
+          "accept_failed_dependencies": true
+        },
+        "32": {
+          "name": "decision-quality",
+          "depends": [
+            "19",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "conclusion_quality",
+          "accept_failed_dependencies": true
+        },
+        "20": {
+          "name": "next-action",
+          "depends": [
+            "18",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "next_action",
+          "accept_failed_dependencies": true
+        },
+        "33": {
+          "name": "stage-transition",
+          "depends": [
+            "20",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "transition",
+          "accept_failed_dependencies": true
+        },
+        "21": {
+          "name": "finish-or-successor",
+          "depends": [
+            "20",
+            "33",
+            "30"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        }
+      },
+      "required": [
+        "1",
+        "2",
+        "3",
+        "22",
+        "4",
+        "6",
+        "24",
+        "25",
+        "26",
+        "27",
+        "34",
+        "8",
+        "28",
+        "14",
+        "7",
+        "13",
+        "15",
+        "16",
+        "18",
+        "30",
+        "29",
+        "31",
+        "19",
+        "32",
+        "20",
+        "33",
+        "21"
+      ],
+      "not_applicable": [
+        "9",
+        "23",
+        "10",
+        "11",
+        "12"
+      ]
+    },
+    "train-code-required-review": {
+      "task": {
+        "objective": "execute-and-learn",
+        "code_change": true,
+        "code_review_required": true
+      },
+      "node_count": 34,
+      "nodes": {
+        "1": {
+          "name": "task",
+          "depends": [],
+          "policy": "required"
+        },
+        "2": {
+          "name": "question",
+          "depends": [
+            "1"
+          ],
+          "policy": "required"
+        },
+        "3": {
+          "name": "data",
+          "depends": [
+            "22"
+          ],
+          "policy": "required"
+        },
+        "22": {
+          "name": "background-alignment",
+          "depends": [
+            "1",
+            "2"
+          ],
+          "policy": "required",
+          "builtin": "background"
+        },
+        "4": {
+          "name": "starting-model",
+          "depends": [
+            "22",
+            "3"
+          ],
+          "policy": "required"
+        },
+        "6": {
+          "name": "plan",
+          "depends": [
+            "2",
+            "3",
+            "4",
+            "22"
+          ],
+          "policy": "required"
+        },
+        "24": {
+          "name": "research-protocol",
+          "depends": [
+            "6",
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "research"
+        },
+        "25": {
+          "name": "methodology-checks",
+          "depends": [
+            "24"
+          ],
+          "policy": "required",
+          "builtin": "method_review"
+        },
+        "26": {
+          "name": "account-resource-inventory",
+          "depends": [
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "inventory"
+        },
+        "27": {
+          "name": "resource-budget-proposal",
+          "depends": [
+            "26",
+            "25"
+          ],
+          "policy": "required",
+          "builtin": "proposal"
+        },
+        "34": {
+          "name": "plan-review",
+          "depends": [
+            "27"
+          ],
+          "policy": "required",
+          "builtin": "plan_review"
+        },
+        "9": {
+          "name": "implementation-context",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "required"
+        },
+        "23": {
+          "name": "source-isolation",
+          "depends": [
+            "9"
+          ],
+          "policy": "required"
+        },
+        "10": {
+          "name": "implementation",
+          "depends": [
+            "9",
+            "23"
+          ],
+          "policy": "required"
+        },
+        "11": {
+          "name": "code-review",
+          "depends": [
+            "10"
+          ],
+          "policy": "required"
+        },
+        "12": {
+          "name": "engineering-check",
+          "depends": [
+            "10"
+          ],
+          "policy": "required"
+        },
+        "8": {
+          "name": "config-snapshot",
+          "depends": [
+            "6",
+            "24",
+            "34",
+            "12",
+            "11"
+          ],
+          "policy": "required"
+        },
+        "28": {
+          "name": "human-resource-confirmation",
+          "depends": [
+            "27",
+            "34"
+          ],
+          "policy": "required",
+          "builtin": "confirmation"
+        },
+        "14": {
+          "name": "execution-request",
+          "depends": [
+            "28",
+            "8",
+            "10",
+            "12",
+            "11",
+            "23"
+          ],
+          "policy": "required"
+        },
+        "7": {
+          "name": "runtime-check",
+          "depends": [
+            "3",
+            "4",
+            "6",
+            "14",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "13": {
+          "name": "preflight",
+          "depends": [
+            "7",
+            "8",
+            "10",
+            "12"
+          ],
+          "policy": "required"
+        },
+        "5": {
+          "name": "baseline-reproduction",
+          "depends": [
+            "13",
+            "28"
+          ],
+          "policy": "record"
+        },
+        "15": {
+          "name": "training",
+          "depends": [
+            "14",
+            "13"
+          ],
+          "policy": "required"
+        },
+        "16": {
+          "name": "evaluation",
+          "depends": [
+            "15"
+          ],
+          "policy": "required"
+        },
+        "17": {
+          "name": "robustness",
+          "depends": [
+            "16"
+          ],
+          "policy": "record"
+        },
+        "18": {
+          "name": "result-summary",
+          "depends": [
+            "15",
+            "16"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        },
+        "30": {
+          "name": "allocation-release",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "release",
+          "accept_failed_dependencies": true
+        },
+        "29": {
+          "name": "review-context",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "review_context",
+          "accept_failed_dependencies": true
+        },
+        "31": {
+          "name": "review-dialogue",
+          "depends": [
+            "29"
+          ],
+          "policy": "required",
+          "builtin": "review_response",
+          "accept_failed_dependencies": true
+        },
+        "19": {
+          "name": "evidence-review",
+          "depends": [
+            "18",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "evidence_consistency",
+          "accept_failed_dependencies": true
+        },
+        "32": {
+          "name": "decision-quality",
+          "depends": [
+            "19",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "conclusion_quality",
+          "accept_failed_dependencies": true
+        },
+        "20": {
+          "name": "next-action",
+          "depends": [
+            "18",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "next_action",
+          "accept_failed_dependencies": true
+        },
+        "33": {
+          "name": "stage-transition",
+          "depends": [
+            "20",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "transition",
+          "accept_failed_dependencies": true
+        },
+        "21": {
+          "name": "finish-or-successor",
+          "depends": [
+            "20",
+            "33",
+            "30"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        }
+      },
+      "required": [
+        "1",
+        "2",
+        "3",
+        "22",
+        "4",
+        "6",
+        "24",
+        "25",
+        "26",
+        "27",
+        "34",
+        "9",
+        "23",
+        "10",
+        "11",
+        "12",
+        "8",
+        "28",
+        "14",
+        "7",
+        "13",
+        "15",
+        "16",
+        "18",
+        "30",
+        "29",
+        "31",
+        "19",
+        "32",
+        "20",
+        "33",
+        "21"
+      ],
+      "not_applicable": []
+    },
+    "evaluation-only": {
+      "task": {
+        "objective": "evaluate-only",
+        "code_change": false
+      },
+      "node_count": 34,
+      "nodes": {
+        "1": {
+          "name": "task",
+          "depends": [],
+          "policy": "required"
+        },
+        "2": {
+          "name": "question",
+          "depends": [
+            "1"
+          ],
+          "policy": "required"
+        },
+        "3": {
+          "name": "data",
+          "depends": [
+            "22"
+          ],
+          "policy": "required"
+        },
+        "22": {
+          "name": "background-alignment",
+          "depends": [
+            "1",
+            "2"
+          ],
+          "policy": "required",
+          "builtin": "background"
+        },
+        "4": {
+          "name": "starting-model",
+          "depends": [
+            "22",
+            "3"
+          ],
+          "policy": "required"
+        },
+        "6": {
+          "name": "plan",
+          "depends": [
+            "2",
+            "3",
+            "4",
+            "22"
+          ],
+          "policy": "required"
+        },
+        "24": {
+          "name": "research-protocol",
+          "depends": [
+            "6",
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "research"
+        },
+        "25": {
+          "name": "methodology-checks",
+          "depends": [
+            "24"
+          ],
+          "policy": "required",
+          "builtin": "method_review"
+        },
+        "26": {
+          "name": "account-resource-inventory",
+          "depends": [
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "inventory"
+        },
+        "27": {
+          "name": "resource-budget-proposal",
+          "depends": [
+            "26",
+            "25"
+          ],
+          "policy": "required",
+          "builtin": "proposal"
+        },
+        "34": {
+          "name": "plan-review",
+          "depends": [
+            "27"
+          ],
+          "policy": "required",
+          "builtin": "plan_review"
+        },
+        "9": {
+          "name": "implementation-context",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "not-applicable"
+        },
+        "23": {
+          "name": "source-isolation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "10": {
+          "name": "implementation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "11": {
+          "name": "code-review",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "12": {
+          "name": "engineering-check",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "8": {
+          "name": "config-snapshot",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "required"
+        },
+        "28": {
+          "name": "human-resource-confirmation",
+          "depends": [
+            "27",
+            "34"
+          ],
+          "policy": "required",
+          "builtin": "confirmation"
+        },
+        "14": {
+          "name": "execution-request",
+          "depends": [
+            "28",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "7": {
+          "name": "runtime-check",
+          "depends": [
+            "3",
+            "4",
+            "6",
+            "14",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "13": {
+          "name": "preflight",
+          "depends": [
+            "7",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "5": {
+          "name": "baseline-reproduction",
+          "depends": [
+            "13",
+            "28"
+          ],
+          "policy": "record"
+        },
+        "15": {
+          "name": "training",
+          "depends": [
+            "14",
+            "13"
+          ],
+          "policy": "not-applicable"
+        },
+        "16": {
+          "name": "evaluation",
+          "depends": [
+            "14",
+            "13",
+            "4"
+          ],
+          "policy": "required"
+        },
+        "17": {
+          "name": "robustness",
+          "depends": [
+            "16"
+          ],
+          "policy": "record"
+        },
+        "18": {
+          "name": "result-summary",
+          "depends": [
+            "15",
+            "16"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        },
+        "30": {
+          "name": "allocation-release",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "release",
+          "accept_failed_dependencies": true
+        },
+        "29": {
+          "name": "review-context",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "review_context",
+          "accept_failed_dependencies": true
+        },
+        "31": {
+          "name": "review-dialogue",
+          "depends": [
+            "29"
+          ],
+          "policy": "required",
+          "builtin": "review_response",
+          "accept_failed_dependencies": true
+        },
+        "19": {
+          "name": "evidence-review",
+          "depends": [
+            "18",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "evidence_consistency",
+          "accept_failed_dependencies": true
+        },
+        "32": {
+          "name": "decision-quality",
+          "depends": [
+            "19",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "conclusion_quality",
+          "accept_failed_dependencies": true
+        },
+        "20": {
+          "name": "next-action",
+          "depends": [
+            "18",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "next_action",
+          "accept_failed_dependencies": true
+        },
+        "33": {
+          "name": "stage-transition",
+          "depends": [
+            "20",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "transition",
+          "accept_failed_dependencies": true
+        },
+        "21": {
+          "name": "finish-or-successor",
+          "depends": [
+            "20",
+            "33",
+            "30"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        }
+      },
+      "required": [
+        "1",
+        "2",
+        "3",
+        "22",
+        "4",
+        "6",
+        "24",
+        "25",
+        "26",
+        "27",
+        "34",
+        "8",
+        "28",
+        "14",
+        "7",
+        "13",
+        "16",
+        "18",
+        "30",
+        "29",
+        "31",
+        "19",
+        "32",
+        "20",
+        "33",
+        "21"
+      ],
+      "not_applicable": [
+        "9",
+        "23",
+        "10",
+        "11",
+        "12",
+        "15"
+      ]
+    },
+    "baseline-reproduction": {
+      "task": {
+        "objective": "baseline-reproduction",
+        "code_change": false
+      },
+      "node_count": 34,
+      "nodes": {
+        "1": {
+          "name": "task",
+          "depends": [],
+          "policy": "required"
+        },
+        "2": {
+          "name": "question",
+          "depends": [
+            "1"
+          ],
+          "policy": "required"
+        },
+        "3": {
+          "name": "data",
+          "depends": [
+            "22"
+          ],
+          "policy": "required"
+        },
+        "22": {
+          "name": "background-alignment",
+          "depends": [
+            "1",
+            "2"
+          ],
+          "policy": "required",
+          "builtin": "background"
+        },
+        "4": {
+          "name": "starting-model",
+          "depends": [
+            "22",
+            "3"
+          ],
+          "policy": "required"
+        },
+        "6": {
+          "name": "plan",
+          "depends": [
+            "2",
+            "3",
+            "4",
+            "22"
+          ],
+          "policy": "required"
+        },
+        "24": {
+          "name": "research-protocol",
+          "depends": [
+            "6",
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "research"
+        },
+        "25": {
+          "name": "methodology-checks",
+          "depends": [
+            "24"
+          ],
+          "policy": "required",
+          "builtin": "method_review"
+        },
+        "26": {
+          "name": "account-resource-inventory",
+          "depends": [
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "inventory"
+        },
+        "27": {
+          "name": "resource-budget-proposal",
+          "depends": [
+            "26",
+            "25"
+          ],
+          "policy": "required",
+          "builtin": "proposal"
+        },
+        "34": {
+          "name": "plan-review",
+          "depends": [
+            "27"
+          ],
+          "policy": "required",
+          "builtin": "plan_review"
+        },
+        "9": {
+          "name": "implementation-context",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "not-applicable"
+        },
+        "23": {
+          "name": "source-isolation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "10": {
+          "name": "implementation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "11": {
+          "name": "code-review",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "12": {
+          "name": "engineering-check",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "8": {
+          "name": "config-snapshot",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "required"
+        },
+        "28": {
+          "name": "human-resource-confirmation",
+          "depends": [
+            "27",
+            "34"
+          ],
+          "policy": "required",
+          "builtin": "confirmation"
+        },
+        "14": {
+          "name": "execution-request",
+          "depends": [
+            "28",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "7": {
+          "name": "runtime-check",
+          "depends": [
+            "3",
+            "4",
+            "6",
+            "14",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "13": {
+          "name": "preflight",
+          "depends": [
+            "7",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "5": {
+          "name": "baseline-reproduction",
+          "depends": [
+            "13",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "15": {
+          "name": "training",
+          "depends": [
+            "14",
+            "13"
+          ],
+          "policy": "not-applicable"
+        },
+        "16": {
+          "name": "evaluation",
+          "depends": [
+            "15"
+          ],
+          "policy": "not-applicable"
+        },
+        "17": {
+          "name": "robustness",
+          "depends": [
+            "16"
+          ],
+          "policy": "not-applicable"
+        },
+        "18": {
+          "name": "result-summary",
+          "depends": [
+            "5"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        },
+        "30": {
+          "name": "allocation-release",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "release",
+          "accept_failed_dependencies": true
+        },
+        "29": {
+          "name": "review-context",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "review_context",
+          "accept_failed_dependencies": true
+        },
+        "31": {
+          "name": "review-dialogue",
+          "depends": [
+            "29"
+          ],
+          "policy": "required",
+          "builtin": "review_response",
+          "accept_failed_dependencies": true
+        },
+        "19": {
+          "name": "evidence-review",
+          "depends": [
+            "18",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "evidence_consistency",
+          "accept_failed_dependencies": true
+        },
+        "32": {
+          "name": "decision-quality",
+          "depends": [
+            "19",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "conclusion_quality",
+          "accept_failed_dependencies": true
+        },
+        "20": {
+          "name": "next-action",
+          "depends": [
+            "18",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "next_action",
+          "accept_failed_dependencies": true
+        },
+        "33": {
+          "name": "stage-transition",
+          "depends": [
+            "20",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "transition",
+          "accept_failed_dependencies": true
+        },
+        "21": {
+          "name": "finish-or-successor",
+          "depends": [
+            "20",
+            "33",
+            "30"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        }
+      },
+      "required": [
+        "1",
+        "2",
+        "3",
+        "22",
+        "4",
+        "6",
+        "24",
+        "25",
+        "26",
+        "27",
+        "34",
+        "8",
+        "28",
+        "14",
+        "7",
+        "13",
+        "5",
+        "18",
+        "30",
+        "29",
+        "31",
+        "19",
+        "32",
+        "20",
+        "33",
+        "21"
+      ],
+      "not_applicable": [
+        "9",
+        "23",
+        "10",
+        "11",
+        "12",
+        "15",
+        "16",
+        "17"
+      ]
+    },
+    "train-required-baseline-robustness": {
+      "task": {
+        "objective": "execute-and-learn",
+        "baseline_required": true,
+        "robustness_required": true
+      },
+      "node_count": 34,
+      "nodes": {
+        "1": {
+          "name": "task",
+          "depends": [],
+          "policy": "required"
+        },
+        "2": {
+          "name": "question",
+          "depends": [
+            "1"
+          ],
+          "policy": "required"
+        },
+        "3": {
+          "name": "data",
+          "depends": [
+            "22"
+          ],
+          "policy": "required"
+        },
+        "22": {
+          "name": "background-alignment",
+          "depends": [
+            "1",
+            "2"
+          ],
+          "policy": "required",
+          "builtin": "background"
+        },
+        "4": {
+          "name": "starting-model",
+          "depends": [
+            "22",
+            "3"
+          ],
+          "policy": "required"
+        },
+        "6": {
+          "name": "plan",
+          "depends": [
+            "2",
+            "3",
+            "4",
+            "22"
+          ],
+          "policy": "required"
+        },
+        "24": {
+          "name": "research-protocol",
+          "depends": [
+            "6",
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "research"
+        },
+        "25": {
+          "name": "methodology-checks",
+          "depends": [
+            "24"
+          ],
+          "policy": "required",
+          "builtin": "method_review"
+        },
+        "26": {
+          "name": "account-resource-inventory",
+          "depends": [
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "inventory"
+        },
+        "27": {
+          "name": "resource-budget-proposal",
+          "depends": [
+            "26",
+            "25"
+          ],
+          "policy": "required",
+          "builtin": "proposal"
+        },
+        "34": {
+          "name": "plan-review",
+          "depends": [
+            "27"
+          ],
+          "policy": "required",
+          "builtin": "plan_review"
+        },
+        "9": {
+          "name": "implementation-context",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "not-applicable"
+        },
+        "23": {
+          "name": "source-isolation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "10": {
+          "name": "implementation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "11": {
+          "name": "code-review",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "12": {
+          "name": "engineering-check",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "8": {
+          "name": "config-snapshot",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "required"
+        },
+        "28": {
+          "name": "human-resource-confirmation",
+          "depends": [
+            "27",
+            "34"
+          ],
+          "policy": "required",
+          "builtin": "confirmation"
+        },
+        "14": {
+          "name": "execution-request",
+          "depends": [
+            "28",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "7": {
+          "name": "runtime-check",
+          "depends": [
+            "3",
+            "4",
+            "6",
+            "14",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "13": {
+          "name": "preflight",
+          "depends": [
+            "7",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "5": {
+          "name": "baseline-reproduction",
+          "depends": [
+            "13",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "15": {
+          "name": "training",
+          "depends": [
+            "14",
+            "13",
+            "5"
+          ],
+          "policy": "required"
+        },
+        "16": {
+          "name": "evaluation",
+          "depends": [
+            "15"
+          ],
+          "policy": "required"
+        },
+        "17": {
+          "name": "robustness",
+          "depends": [
+            "16"
+          ],
+          "policy": "required"
+        },
+        "18": {
+          "name": "result-summary",
+          "depends": [
+            "15",
+            "16",
+            "17"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        },
+        "30": {
+          "name": "allocation-release",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "release",
+          "accept_failed_dependencies": true
+        },
+        "29": {
+          "name": "review-context",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "review_context",
+          "accept_failed_dependencies": true
+        },
+        "31": {
+          "name": "review-dialogue",
+          "depends": [
+            "29"
+          ],
+          "policy": "required",
+          "builtin": "review_response",
+          "accept_failed_dependencies": true
+        },
+        "19": {
+          "name": "evidence-review",
+          "depends": [
+            "18",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "evidence_consistency",
+          "accept_failed_dependencies": true
+        },
+        "32": {
+          "name": "decision-quality",
+          "depends": [
+            "19",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "conclusion_quality",
+          "accept_failed_dependencies": true
+        },
+        "20": {
+          "name": "next-action",
+          "depends": [
+            "18",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "next_action",
+          "accept_failed_dependencies": true
+        },
+        "33": {
+          "name": "stage-transition",
+          "depends": [
+            "20",
+            "32"
+          ],
+          "policy": "required",
+          "builtin": "transition",
+          "accept_failed_dependencies": true
+        },
+        "21": {
+          "name": "finish-or-successor",
+          "depends": [
+            "20",
+            "33",
+            "30"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        }
+      },
+      "required": [
+        "1",
+        "2",
+        "3",
+        "22",
+        "4",
+        "6",
+        "24",
+        "25",
+        "26",
+        "27",
+        "34",
+        "8",
+        "28",
+        "14",
+        "7",
+        "13",
+        "5",
+        "15",
+        "16",
+        "17",
+        "18",
+        "30",
+        "29",
+        "31",
+        "19",
+        "32",
+        "20",
+        "33",
+        "21"
+      ],
+      "not_applicable": [
+        "9",
+        "23",
+        "10",
+        "11",
+        "12"
+      ]
+    },
+    "exploration-train": {
+      "task": {
+        "objective": "execute-and-learn",
+        "workflow_profile": "exploration",
+        "code_change": false
+      },
+      "node_count": 30,
+      "nodes": {
+        "1": {
+          "name": "task",
+          "depends": [],
+          "policy": "required"
+        },
+        "2": {
+          "name": "question",
+          "depends": [
+            "1"
+          ],
+          "policy": "required"
+        },
+        "3": {
+          "name": "data",
+          "depends": [
+            "22"
+          ],
+          "policy": "required"
+        },
+        "22": {
+          "name": "background-alignment",
+          "depends": [
+            "1",
+            "2"
+          ],
+          "policy": "required",
+          "builtin": "background"
+        },
+        "4": {
+          "name": "starting-model",
+          "depends": [
+            "22",
+            "3"
+          ],
+          "policy": "required"
+        },
+        "6": {
+          "name": "plan",
+          "depends": [
+            "2",
+            "3",
+            "4",
+            "22"
+          ],
+          "policy": "required"
+        },
+        "24": {
+          "name": "research-protocol",
+          "depends": [
+            "6",
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "record-group",
+          "record_group": [
+            "research",
+            "method_review"
+          ]
+        },
+        "26": {
+          "name": "account-resource-inventory",
+          "depends": [
+            "22"
+          ],
+          "policy": "required",
+          "builtin": "inventory"
+        },
+        "27": {
+          "name": "resource-budget-proposal",
+          "depends": [
+            "26",
+            "24"
+          ],
+          "policy": "required",
+          "builtin": "proposal"
+        },
+        "34": {
+          "name": "plan-review",
+          "depends": [
+            "27"
+          ],
+          "policy": "required",
+          "builtin": "plan_review"
+        },
+        "9": {
+          "name": "implementation-context",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "not-applicable"
+        },
+        "23": {
+          "name": "source-isolation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "10": {
+          "name": "implementation",
+          "depends": [
+            "9"
+          ],
+          "policy": "not-applicable"
+        },
+        "11": {
+          "name": "code-review",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "12": {
+          "name": "engineering-check",
+          "depends": [
+            "10"
+          ],
+          "policy": "not-applicable"
+        },
+        "8": {
+          "name": "config-snapshot",
+          "depends": [
+            "6",
+            "24",
+            "34"
+          ],
+          "policy": "required"
+        },
+        "28": {
+          "name": "human-resource-confirmation",
+          "depends": [
+            "27",
+            "34"
+          ],
+          "policy": "required",
+          "builtin": "confirmation"
+        },
+        "14": {
+          "name": "execution-request",
+          "depends": [
+            "28",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "7": {
+          "name": "runtime-check",
+          "depends": [
+            "3",
+            "4",
+            "6",
+            "14",
+            "28"
+          ],
+          "policy": "required"
+        },
+        "13": {
+          "name": "preflight",
+          "depends": [
+            "7",
+            "8"
+          ],
+          "policy": "required"
+        },
+        "5": {
+          "name": "baseline-reproduction",
+          "depends": [
+            "13",
+            "28"
+          ],
+          "policy": "record"
+        },
+        "15": {
+          "name": "training",
+          "depends": [
+            "14",
+            "13"
+          ],
+          "policy": "required"
+        },
+        "16": {
+          "name": "evaluation",
+          "depends": [
+            "15"
+          ],
+          "policy": "required"
+        },
+        "17": {
+          "name": "robustness",
+          "depends": [
+            "16"
+          ],
+          "policy": "record"
+        },
+        "18": {
+          "name": "result-summary",
+          "depends": [
+            "15",
+            "16"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        },
+        "30": {
+          "name": "allocation-release",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "release",
+          "accept_failed_dependencies": true
+        },
+        "31": {
+          "name": "review-dialogue",
+          "depends": [
+            "18"
+          ],
+          "policy": "required",
+          "builtin": "record-group",
+          "accept_failed_dependencies": true,
+          "record_group": [
+            "review_context",
+            "review_response"
+          ]
+        },
+        "19": {
+          "name": "evidence-review",
+          "depends": [
+            "18",
+            "31"
+          ],
+          "policy": "required",
+          "builtin": "record-group",
+          "accept_failed_dependencies": true,
+          "record_group": [
+            "evidence_consistency",
+            "conclusion_quality"
+          ]
+        },
+        "20": {
+          "name": "next-action",
+          "depends": [
+            "18",
+            "19"
+          ],
+          "policy": "required",
+          "builtin": "record-group",
+          "accept_failed_dependencies": true,
+          "record_group": [
+            "next_action",
+            "transition"
+          ]
+        },
+        "21": {
+          "name": "finish-or-successor",
+          "depends": [
+            "20",
+            "30"
+          ],
+          "policy": "required",
+          "accept_failed_dependencies": true
+        }
+      },
+      "required": [
+        "1",
+        "2",
+        "3",
+        "22",
+        "4",
+        "6",
+        "24",
+        "26",
+        "27",
+        "34",
+        "8",
+        "28",
+        "14",
+        "7",
+        "13",
+        "15",
+        "16",
+        "18",
+        "30",
+        "31",
+        "19",
+        "20",
+        "21"
+      ],
+      "not_applicable": [
+        "9",
+        "23",
+        "10",
+        "11",
+        "12"
+      ]
+    }
+  },
+  "component_dispatch_states": [
+    "initial-submitting",
+    "reviewing-initial",
+    "watching",
+    "result-ready",
+    "reviewing-plan",
+    "preparing-implementation",
+    "implementing",
+    "freezing",
+    "preflighting-code",
+    "reviewing-code",
+    "submitting",
+    "needs-attention"
+  ],
+  "installed": {
+    "version": "0.3.0-rc6.37",
+    "files": 294,
+    "hashes_valid": true,
+    "formal_asset_files": 0,
+    "skill_entries": [
+      "SKILL.md",
+      "references/sdm-module/sdm-lifecycle/SKILL.md",
+      "references/sdm-module/sdm-agent-research-planner/SKILL.md",
+      "references/sdm-module/sdm-agent-evidence-review/SKILL.md"
+    ]
+  },
+  "public_case_verification": {
+    "校验": "通过",
+    "有效实验": 14,
+    "初始macro-F1": 0.8449981336319522,
+    "最优macro-F1": 0.9154535274356104,
+    "实际主线": [
+      1,
+      6,
+      7,
+      14
+    ],
+    "训练或平台调用": 0
+  },
+  "scope": "Read-only source analysis and public static-case arithmetic. No training, model calls, platform reads/writes or research controls.",
+  "schema": "researchpilot-workflow-audit/v1",
+  "audited_file_count": 61,
+  "source_snapshot_precedes_final_index_publication": true,
+  "source_files": {
+    "VERSION": {
+      "sha256": "f99d39202eac4ddfdd46b3fc44da624c136936a8dce3f371b0065b7d6b619bc7",
+      "bytes": 14,
+      "baseline_status": "absent"
+    },
+    "scripts/build-native-skill.py": {
+      "sha256": "41e06864b6391708b671813a8e2b857ada63f57fec73ab160fba337efa1b50b7",
+      "bytes": 3740,
+      "baseline_status": "absent"
+    },
+    "skills/bmad-ml/scripts/bmad_ml.py": {
+      "sha256": "226880f9a8c4d8bea16260eaca9da493bee93c3f568566efb51f4c527eb76820",
+      "bytes": 6181,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/assets/lifecycle-steps.json": {
+      "sha256": "687174dc3feb746eb32f6fc7de5856c9db621ce5173aff9f4a6f3ff174695bba",
+      "bytes": 21113,
+      "baseline_status": "modified",
+      "baseline_sha256": "0dddffb98484306805de7ce19b75d70b4de35f29cdbb4fa6939a8d3e05e6909d"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_submission.py": {
+      "sha256": "3c1d9911e91ab7406885db4c6482fcb795e1ff16f09891632485b9b61b3e1b41",
+      "bytes": 13012,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/canonical.py": {
+      "sha256": "d16c97f78ee7ff507f41a40db2af4cfcd05af5d32a1d5c22d10d9d2a4d50d032",
+      "bytes": 24845,
+      "baseline_status": "identical",
+      "baseline_sha256": "d16c97f78ee7ff507f41a40db2af4cfcd05af5d32a1d5c22d10d9d2a4d50d032"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/contracts.py": {
+      "sha256": "2d8432a1a3ee7137fddf77db6f623d0d658b621b6d4dd82a835b87cbe6c7370d",
+      "bytes": 350605,
+      "baseline_status": "modified",
+      "baseline_sha256": "f9a19cf46fe6ad35d4bd761b8d91ade8065244f3ec7ef435b1d2d6400d45de6a"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/specctl.py": {
+      "sha256": "2dc412e24cff5738a0854c2649b3c3a5c0128e589b02eeaf041146c854359c83",
+      "bytes": 520694,
+      "baseline_status": "modified",
+      "baseline_sha256": "97bb33bf2d7a0b480ecea0b7fc11043d2cc80a533ed4780b761e7121032214ff"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/workspace.py": {
+      "sha256": "d81ade3396537b2edbb58b681f6bdf49c0bf13be9777772054facec3cfe3b582",
+      "bytes": 192682,
+      "baseline_status": "identical",
+      "baseline_sha256": "d81ade3396537b2edbb58b681f6bdf49c0bf13be9777772054facec3cfe3b582"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/ledger.py": {
+      "sha256": "0aa78f8e4dcd147e3098a9f1feca556660078cb14249a9e74693523b28ca37c2",
+      "bytes": 40919,
+      "baseline_status": "identical",
+      "baseline_sha256": "0aa78f8e4dcd147e3098a9f1feca556660078cb14249a9e74693523b28ca37c2"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/projection.py": {
+      "sha256": "255d5cd1e286dbe0bac6bf5713fbfe83c5ec5a07bc8b77ed15a53243941f41e0",
+      "bytes": 73216,
+      "baseline_status": "modified",
+      "baseline_sha256": "1689707b393e6bdd684b3bac621a7e90057358df8b621998bf45f0806f1d2e2c"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/authority.py": {
+      "sha256": "4ef9459ab43ecb8a3d84b73222b2f6f21e8e4433a6ddd2ad939af06b6d4a300f",
+      "bytes": 44050,
+      "baseline_status": "modified",
+      "baseline_sha256": "7d95795a0dbcb0c2018add4c53c3a4222eafee50cc3eb14692bb43e9bec91c4c"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/handoffs.py": {
+      "sha256": "e00a0f2e83aaf0328a75fd401037f5831b01218fdc88292b38f10b6c460d5661",
+      "bytes": 56161,
+      "baseline_status": "modified",
+      "baseline_sha256": "5e1bd463f8c60e0ac1e307a99a3cc6df482cd6a414c710389feafef85ac4a6a5"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/work_packages.py": {
+      "sha256": "3d06e504033487ba2df7fc66ab6dc25a5ac955326ccf8afe3585a594e30036ac",
+      "bytes": 6773,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/workflow_definition.py": {
+      "sha256": "021f5cab3d57564ae277cdd31536659e1f20091da6832d79730f0e1536534a9b",
+      "bytes": 5443,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/exploration_workflow.py": {
+      "sha256": "a57ec4815511d49cb8feb2b3874610f3f5827a3d181c72737e710b605f5c9c93",
+      "bytes": 7636,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/orchestration.py": {
+      "sha256": "fc62eb8cea7c4b6f98fcc7fcf6a7011362d0cb00f0b91326c044dc95534c3688",
+      "bytes": 29750,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/task_pipeline.py": {
+      "sha256": "0f3442a0b8bc4852c4b470ab6450c87492170d587f428293c6f88d71f1a29b94",
+      "bytes": 43719,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/run_project_pipeline.py": {
+      "sha256": "ba83dc11eb108691790ae8e4346a11180a9b6e73874df88a67d6aa04325caafe",
+      "bytes": 30625,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/project_driver.py": {
+      "sha256": "4aa2e9d88cdd624a38aa9da16a16960d98f6ed46bf8b2a9fdb33de8de8945ea1",
+      "bytes": 6499,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/proposal_review.py": {
+      "sha256": "83ae719a6ca13d777642886c156b106e0bbe74d8f6f198d9877c4fbe7feb4b29",
+      "bytes": 26398,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/proposal_model_runner.py": {
+      "sha256": "037f721e723f6a871e7af4fa6a0c98cd31c305974c75417bad8d7c194bb939d0",
+      "bytes": 25701,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_initialize.py": {
+      "sha256": "f6338814c49525ed7940e796d11316aac9d09947c9b4e3c145f518318da74f64",
+      "bytes": 12918,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_runtime.py": {
+      "sha256": "05c1671a6e18b9ebb696be1273af436bf487ab04a79a47eced47ddef7f57ad66",
+      "bytes": 14573,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_event_service.py": {
+      "sha256": "62af47d8fc153b737582a3a9325358ebc4ad87f06c5e32cfc80e9722915bf0b8",
+      "bytes": 39883,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/event_coordinator.py": {
+      "sha256": "f478b9c1712f7355d4ade2439d0bfb1abf3dc69f53a2c5495171194377279a3b",
+      "bytes": 3728,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_supervisor.py": {
+      "sha256": "a80c9e9006c1b427101d4c9acddef0b78ef9970d9524f22335eab2d80e079777",
+      "bytes": 5189,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_worker.py": {
+      "sha256": "fbdcbfae02f365cbbbf2eb1dbd19cf333aa32c11c254bd1783f9efd78dec143e",
+      "bytes": 37830,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_replan.py": {
+      "sha256": "25c3872ca42c989b116ddc090e49ef2b9e3883905935ae3285b9338e407b806b",
+      "bytes": 16449,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_implementation.py": {
+      "sha256": "6fae0521417db05f0ce3cd2e67b82a19d2df33bfa5e448e9788fcea234c9529b",
+      "bytes": 13429,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/implementation_validation.py": {
+      "sha256": "ffc617608de815c34a1d9d89cee3867cfa105fa2dfa2d2a7b03a066b4257ca3d",
+      "bytes": 12212,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_pipeline.py": {
+      "sha256": "eecadd27864ad6b1c5aee3f45f585987e9e5bd6b1957805d519c69773a8806d5",
+      "bytes": 69411,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_payload.py": {
+      "sha256": "ed68ce64e6994d0e25401640783a5e83c777bb97ed027fc6dd5edd1785365014",
+      "bytes": 19288,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_event_source.py": {
+      "sha256": "0c68869c91e61409e66250905041af69447809afad4de1bf8301db446c6831e8",
+      "bytes": 15947,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_results.py": {
+      "sha256": "7dc4fa5481884f184116f4955b95177dbd315de4246df3b7fc922e5f5648cddf",
+      "bytes": 10585,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_research.py": {
+      "sha256": "dcb949f31417a63dc39299249097d0f453ac5237052b6144e2298dd029976b1d",
+      "bytes": 27247,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_candidates.py": {
+      "sha256": "ca514343d3c5aa121f7e26b5fd551361624c3dc9cd266ced015083430cc66f73",
+      "bytes": 13782,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/component_execution_evidence.py": {
+      "sha256": "424c433ed34e647fb8032c43e7c2c71ea42732d87a9bd686653e96229c49784c",
+      "bytes": 12590,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/submission_guard.py": {
+      "sha256": "12f1af027618ff42af9830790f6fa4295e1d852df52dd0d66a6cc845b8884b28",
+      "bytes": 9728,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/lpai_manager.py": {
+      "sha256": "bca70a6fdac93bae5df753271b049887e7b90f53c7d093f9c0503fb721e9d2fb",
+      "bytes": 32973,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_context.py": {
+      "sha256": "5ee2e0c7cd5b91d0ecf67cec289f95f51ce3c7d7b536dd83e324995d669c5b24",
+      "bytes": 7090,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_pause.py": {
+      "sha256": "16ae28b4e5ed5d7b9b84c5787bbd41a013b159b822e7f8b27405e7e999c25ae7",
+      "bytes": 5250,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_restore.py": {
+      "sha256": "3721a9ad3b218d6d0bb2401a54e5eb632dd464eca05ccb3ffd9d24037ccbaf50",
+      "bytes": 22106,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_drain.py": {
+      "sha256": "e3c5cd1e5f173c242616d211eb2ddef3830cbca3c8293f3d023e7f95fdb0e596",
+      "bytes": 4637,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_recovery.py": {
+      "sha256": "13a76cc7bf974fd839d3969689c412618c3ababf5ebd6de1e14856a5f5069b46",
+      "bytes": 4524,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_continuation.py": {
+      "sha256": "e479167ff6d02d8d3c6b29feacd3c62e9fab6f2026c90d6d9c703dd8112755f1",
+      "bytes": 17096,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_dashboard.py": {
+      "sha256": "d1b513a692b61d609d8f4bedb0f0286697743d78edb82a58229fefc3e3be2614",
+      "bytes": 7989,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_dashboard_data.py": {
+      "sha256": "28aeb799eedcfae74c6e0dc0fc792b32f0fe33c0f5d9d868b037d4fd8c56addf",
+      "bytes": 19284,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/dashboard_control.py": {
+      "sha256": "76b756451dab3a62a389e80ba8fcfe58f3b556cc7d865ab02379276c43628062",
+      "bytes": 14418,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_registration.py": {
+      "sha256": "b67acc4b2d54b11128697f859cf712cdeb0939a524360324f666557625d6882e",
+      "bytes": 2807,
+      "baseline_status": "absent"
+    },
+    "skills/sdm-module/sdm-lifecycle/scripts/research_observation.py": {
+      "sha256": "a227a580576928b748feb591c55bf257bd1841a0bb7c86b064bc5e25dbd6e74c",
+      "bytes": 16738,
+      "baseline_status": "absent"
+    }
+  },
+  "source_formal_assets": {
+    "load_completed": false,
+    "observed_error": "ContractError wrapping Windows PermissionError on secure directory read",
+    "interpretation": "Source assets exist. This host check does not establish full formal qualification; the shared submission gate uses the existing pure evaluator without loading AssetBundle."
+  },
+  "submission_gate": {
+    "implementation": "component_submission.py",
+    "original_evaluator": "contracts.evaluate_gate",
+    "original_review_verifier": "proposal_model_runner.drive(verify_only=True)",
+    "shared_original_authority": "lpai_manager.authorized_plan",
+    "new_initialization_policy": {
+      "submission_gate": {
+        "version": 1
+      },
+      "initial_submission_version": 2
+    },
+    "legacy_guard": "Any original intent, pending or completed Guard reconciles; no new model intent or re-post.",
+    "validation": "SUBMISSION-GATE-VALIDATION.json",
+    "full_formal_acceptance": false
+  },
+  "verification_scope": {
+    "performed": [
+      "source and baseline comparison",
+      "six read-only workflow graphs",
+      "294-file installed bundle digest check",
+      "public case digest/confusion arithmetic",
+      "140 distinct offline software control cases"
+    ],
+    "not_performed": [
+      "real model calls",
+      "new ML training",
+      "platform reads/writes",
+      "research controls",
+      "full formal qualification"
+    ],
+    "documentation_only": false,
+    "implementation_scope": "New-study first/successor submission gate and compatible control/projection integration"
+  }
+}

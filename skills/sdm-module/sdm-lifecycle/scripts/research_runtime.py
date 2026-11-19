@@ -22,6 +22,8 @@ def freeze(destination):
     lifecycle = module / 'sdm-lifecycle'
     from research_model_runner import guidance_sources
     guidance = {}; guidance_sources(guidance)
+    from lifecycle_rules import asset_inputs
+    bundle, normative = asset_inputs()
     sources = list((lifecycle / 'scripts').glob('*.py'))
     for source in sources:
         ast.parse(source.read_bytes(), filename=str(source))
@@ -29,10 +31,11 @@ def freeze(destination):
     # A fresh agent follows the links from SKILL.md, without access to a source
     # checkout. Ship the references (load them progressively at use time).
     sources += [lifecycle / 'SKILL.md', *sorted((lifecycle/'references').rglob('*'))]
+    sources += list(normative)
     sources = list(dict.fromkeys(p for p in sources if p.is_file()))
     # Read every dependency before creating a destination. Never silently omit
     # a missing resource and discover it after the first real task completes.
-    contents = {source.relative_to(module): source.read_bytes() for source in sources}
+    contents = {source.relative_to(module): normative[source] if source in normative else source.read_bytes() for source in sources}
     if any(hashlib.sha256(contents[Path(path).relative_to(module)]).hexdigest()
            != expected.removeprefix('sha256:') for path, expected in guidance.items()):
         raise ValueError('review_guidance_changed_during_freeze')
@@ -46,6 +49,9 @@ def freeze(destination):
         'runtime_root': str(destination / 'sdm-lifecycle/scripts'),
         'runtime_manifest': {p.name: hashlib.sha256(contents[p.relative_to(module)]).hexdigest()
                              for p in sources if p.parent == lifecycle / 'scripts'},
+        'engine_contract_digest': bundle.engine_contract_digest,
+        'normative_manifest': {source.relative_to(module).as_posix(): hashlib.sha256(raw).hexdigest()
+                               for source, raw in normative.items()},
         'guidance_manifest': [{'path': str(destination / Path(path).relative_to(module)),
             'sha256': expected.removeprefix('sha256:')} for path, expected in guidance.items()]}
     for relative, raw in contents.items():
@@ -138,9 +144,14 @@ def cold_wait(configuration, state, destination, new_root):
 
 def readiness(cfg):
     from component_research import reference
-    from lpai_manager import Manager
+    from research_execution import Manager
     spec=cfg['component_pipeline'];manager=Manager(json.loads(reference(spec['initial_source']['manager_config']).read_bytes()))
     uid=json.loads(reference(spec['initial_request']).read_bytes())['uid']
+    if manager.config.get('schema')=='sdm-project-manager/v1':
+        request=json.loads(reference(spec['initial_request']).read_bytes());probe=manager.backend.call('probe',{'request':request})
+        if probe.get('resource_uid')!=uid or probe.get('namespace')!=manager.config['namespace'] or probe.get('owner')!=manager.config['owner']:
+            raise ValueError('project_execution_readiness_scope_changed')
+        return {'status':'ready','resource_uid':uid,'namespace':probe['namespace'],'owner':probe['owner'],'model_calls':0,'platform_writes':0}
     obj=manager.checked('component',uid)
     return {'status':'ready','component_uid':obj['uid'],'namespace':obj['namespace'],
         'owner':obj['owner'],'model_calls':0,'platform_writes':0}
@@ -163,6 +174,12 @@ def owner_alive(cfg):
         if ctypes.get_last_error()==87:return False
         raise ValueError('previous_owner_status_unavailable')
     try:
+        exit_code=wintypes.DWORD()
+        kernel.GetExitCodeProcess.argtypes=[wintypes.HANDLE,ctypes.POINTER(wintypes.DWORD)]
+        kernel.GetExitCodeProcess.restype=wintypes.BOOL
+        if not kernel.GetExitCodeProcess(handle,ctypes.byref(exit_code)):
+            raise ValueError('previous_owner_exit_status_unavailable')
+        if exit_code.value!=259:return False  # An exited process object can retain a queryable handle.
         class FT(ctypes.Structure):_fields_=[('low',wintypes.DWORD),('high',wintypes.DWORD)]
         times=[FT() for _ in range(4)]
         kernel.GetProcessTimes.argtypes=[wintypes.HANDLE,*[ctypes.POINTER(FT)]*4]

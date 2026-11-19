@@ -1,4 +1,4 @@
-"""Goal-level plan revision through the existing proposal A/B; never executes ML."""
+"""Goal-level plan revision through the existing proposal Generator-Critic; never executes ML."""
 import copy
 import math
 from pathlib import Path
@@ -7,8 +7,23 @@ from project_driver import file_digest
 from review_storage import atomic_json, read_json, native_path
 from task_pipeline import digest
 
-ACTIONS = ('continue-plan', 'refine-current', 'revise-plan', 'diagnose', 'goal-met', 'stop-research')
+IMPLEMENTATION_ACTIONS = ('continue-plan', 'refine-current', 'revise-plan', 'diagnose')
+ACTIONS = (*IMPLEMENTATION_ACTIONS, 'goal-met', 'stop-research')
 LEVELS = ('tuning', 'model', 'representation', 'training-method', 'data-measurement', 'none')
+DIRECTION_STATUSES = {'revise-plan':'research-plan-approved-awaiting-implementation',
+    'diagnose':'research-plan-approved-awaiting-diagnosis','refine-current':'research-refinement-approved',
+    'continue-plan':'research-refinement-approved','goal-met':'research-goal-met','stop-research':'research-stopped'}
+
+
+def validate_accepted_direction(plan, accepted):
+    if (plan.get('schema')!='sdm-research-plan/v1' or plan.get('proposal')!=accepted.get('proposal')
+            or plan.get('research_revision')!=accepted.get('proposal',{}).get('research_revision')):
+        raise ValueError('original_accepted_scientific_direction_changed')
+    revision=validate_direction(plan['research_revision'],plan.get('evidence_ids',[]),strategy=True)
+    if plan.get('status')!=DIRECTION_STATUSES[revision['action']]:
+        raise ValueError('original_scientific_direction_status_changed')
+    return revision
+
 
 
 def policy(config):
@@ -151,7 +166,7 @@ def parent_evidence(project, output):
 
 
 def advance(config, root, evidence_query=None):
-    """Prepare a shared context and use the original condition-driven A/B gate."""
+    """Prepare a shared context and use the original condition-driven Generator-Critic gate."""
     if config.get('research_replan',{}).get('version') in (2,3):
         from component_research import advance as component_advance
         return component_advance(config,root,evidence_query)
@@ -201,9 +216,7 @@ def advance(config, root, evidence_query=None):
     proposal = accepted['proposal']
     revision = validate_direction(proposal['research_revision'], [row['id'] for row in sources], strategy=True)
     goal_assessment=validate_goal_claim(spec,revision,read_json(state['history'][-1]['result_path']))
-    status = {'revise-plan': 'research-plan-approved-awaiting-implementation', 'diagnose': 'research-plan-approved-awaiting-diagnosis',
-        'refine-current': 'research-refinement-approved', 'continue-plan':'research-refinement-approved', 'goal-met': 'research-goal-met',
-        'stop-research': 'research-stopped'}[revision['action']]
+    status = DIRECTION_STATUSES[revision['action']]
     plan = {'schema': 'sdm-research-plan/v1', 'status': status, 'parent_project': spec['parent_project'],
         'parent_output': spec['parent_output'], 'objective': spec['objective'], 'research_revision': revision,
         'proposal': proposal, 'accepted_review': str(sorted(folder.glob('round-*/accepted.json'))[-1]),
@@ -226,6 +239,7 @@ def advance(config, root, evidence_query=None):
     return {'status': status, 'plan_path': str(root / 'research-plan.json'), 'research_revision': revision,
         'research_complete':revision['action']=='goal-met','goal_assessment':goal_assessment,
         'execution_authority': False, 'platform_actions': 0,
+        'automatic_iteration_active':False,'continuation_dispatch_owner':'caller-or-original-ResearchPipeline',
         'agent_continuation_required': revision['action'] in ('revise-plan','diagnose','refine-current','continue-plan'),
         'next_agent_action': 'Continue implementation/diagnosis, create a reviewed frozen execution profile and dispatch through the original coordinator; do not end the research merely because this proposal was produced'}
 

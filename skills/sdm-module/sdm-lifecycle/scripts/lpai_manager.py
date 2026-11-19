@@ -31,12 +31,23 @@ def digest_file(path):
 def runtime_digest():
     root = Path(__file__).resolve().parent
     return sha({name: digest_file(root / name) for name in ('lpai_manager.py', 'lpai_manager_backend.py',
-               'lpai_sdk_worker.py', 'submission_guard.py', 'external_operations.py', 'review_storage.py')})
+               'lpai_sdk_worker.py', 'research_execution.py', 'submission_guard.py', 'external_operations.py', 'review_storage.py')})
 
 
 def require(value, reason):
     if not value:
         raise ValueError(reason)
+
+
+def authorized_plan(plan_path, authorization_path, config):
+    """Shared original Manager authorization checks; no platform or Guard effect."""
+    plan = read_json(plan_path)
+    require(plan.get('schema') == 'lpai-manager-plan/v1' and plan.get('manager_digest') == sha(config), 'plan_or_manager_configuration_changed')
+    require(plan.get('runtime_digest') == runtime_digest(), 'manager_runtime_changed_since_plan')
+    auth = read_json(authorization_path)
+    require(auth.get('schema') == 'lpai-manager-authorization/v1' and auth.get('plan_sha256') == digest_file(plan_path)
+            and auth.get('direct_user_confirmation') is True and bool(auth.get('source_ref')), 'bound_user_authorization_required')
+    return plan, auth
 
 
 def check_readonly_runtime(plan_path, runtime_repair=None):
@@ -190,7 +201,7 @@ def summary(obj, kind):
             'role_count': len(roles) if isinstance(raw_data, dict) else None}
 
 
-class Manager:
+class ManagerCore:
     def __init__(self, config, backend=None):
         for field in ('namespace', 'owner', 'state_root', 'submission_registry'):
             require(isinstance(config.get(field), str) and config[field].strip(), 'manager_scope_required:' + field)
@@ -341,12 +352,7 @@ class Manager:
         return Guard(spec, Path(self.config['state_root']).resolve() / (sha(plan).split(':')[1] + '.json'))
 
     def apply(self, plan_path, authorization_path):
-        plan = read_json(plan_path)
-        require(plan.get('schema') == 'lpai-manager-plan/v1' and plan.get('manager_digest') == sha(self.config), 'plan_or_manager_configuration_changed')
-        require(plan.get('runtime_digest') == runtime_digest(), 'manager_runtime_changed_since_plan')
-        auth = read_json(authorization_path)
-        require(auth.get('schema') == 'lpai-manager-authorization/v1' and auth.get('plan_sha256') == digest_file(plan_path)
-                and auth.get('direct_user_confirmation') is True and bool(auth.get('source_ref')), 'bound_user_authorization_required')
+        plan, auth = authorized_plan(plan_path, authorization_path, self.config)
         request = plan['request']
         require(request.get('action') in ACTIONS, 'unsupported_operation_or_unverified_official_interface')
         self.legacy_pending(request)
@@ -463,6 +469,11 @@ class Manager:
             if guard.state['phase'] == 'pending-approval':
                 return {'status': 'pending-approval-unresolved', 'approval': guard.state['approval'], 'new_platform_writes': 0}
             return self.finish(plan, guard)
+
+
+# Stable original transaction implementation; legacy Manager imports and test
+# provider injection retain their public identity.
+Manager = ManagerCore
 
 
 def main():

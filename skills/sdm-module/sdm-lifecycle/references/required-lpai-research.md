@@ -1,8 +1,8 @@
 # Required official LPAI and SDM continuous research
 
 The current task uses improved SDM as its research entry and the OFFICIAL `lpai`
-Skill as a required platform capability. IterLab conversation/frontend work is
-deferred. A custom adapter or SDK manager does not become the official Skill.
+Skill as a required platform capability. ResearchPilot workbench and conversation binding consume the same research records;
+do not recreate the separate IterLab project. A custom adapter or SDK manager does not become the official Skill.
 
 Official distribution entry supplied by the user:
 https://lpai.lixiang.com/lpaiweb/xspacex_vc-chassis/subApp/agent/overview
@@ -38,7 +38,7 @@ do not hot-edit them or relabel them as newly qualified current-task profiles.
 ## Continuous research ownership
 
 Use the existing research_worker and original coordinator: actual terminal
-observation → original artifacts → A/B result assessment → durable consumption
+observation → original artifacts → Generator–Critic result assessment → durable consumption
 and archive → next experiment or goal-level replan. A finished Study is not a
 finished research goal. The actual target and stop reason determine completion.
 
@@ -51,8 +51,9 @@ needed for the required platform Skill or its identity check.
 An approved replan requesting implementation remains unfinished research work:
 Codex implements it, freezes a new valid profile and returns through the original
 review/preflight/Guard. It is not permission to auto-submit an unfinished payload.
-The current independent-native implementation/dispatch gap remains a real gap;
-do not claim unattended completion from an implementation-request.json alone.
+The original native implementation, completion receipt, freeze and dispatch paths
+remain connected. Actual end-to-end acceptance still requires their real receipts;
+do not claim completion from an implementation-request.json alone.
 
 Keep completed/paused studies stopped, do not reset budgets or old task IDs,
 and do not use chat timers or frontend messages as continuation gates. Cases

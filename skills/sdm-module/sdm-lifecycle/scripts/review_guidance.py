@@ -1,6 +1,6 @@
 """Research reasoning guidance shared by fresh offline and fixed-chat reviews."""
 
-PROMPT_VERSION = 'sdm-research-review/v6'
+PROMPT_VERSION = 'sdm-research-review/v7'
 
 
 def research_guidance_v2():
@@ -140,7 +140,7 @@ def research_guidance_v5():
         'Configuring Pro is optional; local-agent mode is allowed only when Pro is not configured, with the same evidence and counterargument checks, ')
 
 
-def iteration_guidance(purpose='result'):
+def iteration_guidance_v6(purpose='result'):
     return iteration_guidance_v4(purpose) + (
         'Reassess task-model fit before treating the selected baseline as the only research space. '
         'Identify the task-relevant structure, required information, invariances, resolution and constraints; '
@@ -169,6 +169,19 @@ def iteration_guidance(purpose='result'):
         'Review does not grant execution authority or delay owned-resource cleanup.\n')
 
 
+def iteration_guidance(purpose='result'):
+    return (iteration_guidance_v6(purpose)
+        .replace('model A/B calls', 'Generator–Critic model calls')
+        .replace('provenance. A explains', 'provenance. Generator explains')
+        .replace('B challenges both', 'Critic challenges both'))
+
+
+def research_guidance_v6():
+    return research_guidance_v4().replace(iteration_guidance_v4(),iteration_guidance_v6()).replace(
+        'Pro is optional; in local-agent mode the active Agent performs the same evidence and counterargument checks, ',
+        'Pro is optional; in model-handoff mode preserve actual distinct-model calls and evidence checks, ')
+
+
 def research_guidance():
     return research_guidance_v4().replace(iteration_guidance_v4(),iteration_guidance()).replace(
         'Pro is optional; in local-agent mode the active Agent performs the same evidence and counterargument checks, ',
@@ -183,6 +196,7 @@ def bind_iteration_guidance(request, previous=None, purpose='result'):
             raise ValueError('immutable_planning_request_changed')
         if metadata.intersection(previous):
             guidance={'sdm-research-review/v4':iteration_guidance_v4,'sdm-research-review/v5':iteration_guidance_v5,
+                      'sdm-research-review/v6':iteration_guidance_v6,
                       PROMPT_VERSION:iteration_guidance}.get(previous.get('planning_prompt_version'))
             if guidance is None:
                 raise ValueError('unsupported_planning_prompt_version')

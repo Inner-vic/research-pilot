@@ -1,0 +1,318 @@
+{
+  "schema": "researchpilot-generic-delivery-validation/v1",
+  "date": "2026-11-16",
+  "status": "verified-with-explicit-qualification",
+  "architecture": {
+    "lifecycle_steps": 13,
+    "same_controller": true,
+    "same_manager_apply": true,
+    "same_source_cycle": true,
+    "same_submission_identity_verifier": true,
+    "same_dispatch_and_scientific_decision": true,
+    "project_specific_facts_separate": true,
+    "execution_providers": [
+      "official LPAI component",
+      "pinned project command driver"
+    ],
+    "evaluation_metrics": [
+      "classification accuracy",
+      "classification macro F1",
+      "classification mean IoU",
+      "scalar regression MAE",
+      "scalar regression MSE"
+    ],
+    "new_science_loop": false
+  },
+  "normative_evolution": {
+    "G07": "Original label ontology extended with explicit continuous targets, units, ranges and semantics; discrete checks retained.",
+    "G02_closure_changed": false,
+    "owner_schema_and_catalog_binding_updated": true,
+    "old_frozen_normative_assets_unchanged": true,
+    "unchanged_upstream_claim": false
+  },
+  "engineering_command_control": {
+    "passed": true,
+    "actual_provider_jobs": 1,
+    "actual_submit_operations": 1,
+    "lost_response_after_effect": true,
+    "second_apply_refused": true,
+    "lookup_reconciled_original_uid": true,
+    "completed_replay_new_writes": 0,
+    "checksum_independently_recounted": true,
+    "ml_executed": false,
+    "same_original_apply_and_guard": true,
+    "remote_platform_verified": false,
+    "uid": "246da392-825b-4aa3-b009-91d613ad7e82",
+    "scope": "One local CPU integer-checksum engineering job, not an ML experiment or remote-provider qualification."
+  },
+  "first_remote_preparation": {
+    "status": "blocked-before-first-task",
+    "reason": "Review supplements exceeded unchanged 262144-byte model input limit",
+    "remote_tasks": 0,
+    "immutable_inputs_unchanged": 371,
+    "foreground_science_or_code_takeovers": 0,
+    "host_stopped_through_original_drain": true,
+    "qualification": "Failed pre-submission attempt, not an acceptance pass."
+  },
+  "remote_cpu_acceptance": {
+    "remote_cpu_tasks_total": 3,
+    "cpu_each": 1,
+    "memory_gib": 4,
+    "gpu_each": 0,
+    "epochs_each": 10,
+    "attempts": [
+      {
+        "uid": "7ed7ecae-83a4-44a3-9594-afe9f0602da5",
+        "kind": "earlier valid task; continuation blocked before final study",
+        "primary_metric": 0.19773207273207272,
+        "epochs": 10,
+        "valid_training_round": true,
+        "counts_in_final_chain": false
+      },
+      {
+        "uid": "26b2747e-1566-439a-b950-191e1360cee4",
+        "primary_metric": 0.19773207273207272,
+        "metric_name": "validation.mean_iou",
+        "epochs": 10,
+        "validation": {
+          "accuracy": 0.3388888888888889,
+          "confusion_matrix": [
+            [
+              29,
+              10,
+              21
+            ],
+            [
+              21,
+              9,
+              30
+            ],
+            [
+              23,
+              14,
+              23
+            ]
+          ],
+          "macro_f1": 0.32430739825007876,
+          "mean_iou": 0.19773207273207272
+        },
+        "valid_training_round": true,
+        "counts_in_final_chain": true
+      },
+      {
+        "uid": "feb2f3c3-47e5-463e-bb30-e2c87745afcb",
+        "primary_metric": 1.0,
+        "metric_name": "validation.mean_iou",
+        "epochs": 10,
+        "validation": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              60,
+              0,
+              0
+            ],
+            [
+              0,
+              60,
+              0
+            ],
+            [
+              0,
+              0,
+              60
+            ]
+          ],
+          "macro_f1": 1.0,
+          "mean_iou": 1.0
+        },
+        "valid_training_round": true,
+        "counts_in_final_chain": true
+      }
+    ],
+    "final_study_valid_results": 2,
+    "metric_name": "validation.mean_iou",
+    "baseline_metric": 0.19773207273207272,
+    "final_metric": 1.0,
+    "target": {
+      "metric": "validation.mean_iou",
+      "operator": ">=",
+      "value": 0.95
+    },
+    "target_met": true,
+    "actual_native_turns": 31,
+    "foreground_engineering_handoffs": 2,
+    "uninterrupted_autonomy_from_first_launch": false,
+    "budget_renewed": false,
+    "old_studies_or_timers_resumed": false,
+    "data_assets_created": 0,
+    "status": "original-core-goal-met-and-closed",
+    "preflight_updates_max": 16,
+    "evidence_audit": "passed",
+    "original_chain_continuous_loop_demonstrated": true,
+    "private_original_audit_sha256": "5b0d2b9e52e03dd4ab6a338daf3f62f39f23c45bc7bae3e5dab4cf2d547bd865",
+    "after_last_handoff": "Original backend alone handled analysis, implementation, independent reviews, submission, result and closure. No foreground science/code/receipt edits or manual submission.",
+    "scientific_qualification": "Exploratory fixed validation; inconclusive, not confirmatory support or signed D05 qualification."
+  },
+  "limits": [
+    "Other remote platforms have not been deployed or trained against.",
+    "Classification mean IoU is not RoadModel segmentation/Pillar acceptance.",
+    "Scalar regression independently recounted offline; no new real remote regression study.",
+    "No independent TEST or confirmatory protocol; engineering goals do not imply scientific support.",
+    "No OS-reboot/long-term unattended or full signed formal artifact qualification claim."
+  ],
+  "protection": {
+    "old_protected_files_unchanged": 550,
+    "source_git_and_project_index_unchanged": true,
+    "old_frozen_inputs_unchanged": true,
+    "old_studies_or_timers_resumed": false
+  },
+  "verification": {
+    "offline_controls": {
+      "passed": 124,
+      "report_sha256": "3f7986d54856ad0f99a0a6a8154367dd0756b4ba9a7170961addc5b6122c880c",
+      "qualification": "Final isolated 124-case snapshot; later compatible deep-receipt persistence fix additionally verified by four targeted recovery controls."
+    },
+    "connected_and_display_controls_passed": 50,
+    "frontend_groups_passed": 4,
+    "installation_controls_passed": 9,
+    "additional_current_project_only_discovery_control_passed": 1,
+    "latest_targeted_recovery_controls_passed": 4,
+    "non_component_actual_local_non_ml_cpu_job_passed": true,
+    "remote_other_platform_training_verified": false,
+    "remote_regression_verified": false
+  },
+  "actual_installation": {
+    "status": "installed-and-read-back",
+    "skill_name": "ResearchPilot",
+    "invocation": "$researchpilot",
+    "bundle_sha256": "094571f63eb0226232a7057b18be08fe88401abefde64861e5632453806a7c8b",
+    "files": 347,
+    "all_declared_files_verified": true,
+    "inspection_platform_writes": 0,
+    "legacy_discoverable_entry_present": false
+  },
+  "latest_verification_date": "2026-11-17",
+  "continued_cpu_acceptance_20261117": {
+    "date": "2026-11-17",
+    "workflow_passed": true,
+    "from_first_launch_science_execution_autonomous": true,
+    "foreground_science_code_submit_or_research_host_takeovers": 0,
+    "research_host_restarts_by_foreground": 0,
+    "foreground_display_registration_corrections": 1,
+    "qualification": "Research analysis, implementation, independent review, submission and closure had no foreground takeover. Display-only routing was corrected after launch; do not claim no foreground change anywhere.",
+    "remote_cpu_tasks_total": 2,
+    "cpu_each": 1,
+    "memory_gib": 4,
+    "gpu_each": 0,
+    "epochs_each": 10,
+    "preflight_updates_max": 16,
+    "attempts": [
+      {
+        "uid": "162b9665-730c-46a7-8c1c-e213cfba7449",
+        "metric_name": "validation.mean_iou",
+        "primary_metric": 0.19773207273207272,
+        "epochs": 10,
+        "validation": {
+          "accuracy": 0.3388888888888889,
+          "confusion_matrix": [
+            [
+              29,
+              10,
+              21
+            ],
+            [
+              21,
+              9,
+              30
+            ],
+            [
+              23,
+              14,
+              23
+            ]
+          ],
+          "macro_f1": 0.32430739825007876,
+          "mean_iou": 0.19773207273207272
+        },
+        "valid_training_round": true
+      },
+      {
+        "uid": "7f8ae8f1-1a96-43dc-b5e6-4082031be4a5",
+        "metric_name": "validation.mean_iou",
+        "primary_metric": 1.0,
+        "epochs": 10,
+        "validation": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              60,
+              0,
+              0
+            ],
+            [
+              0,
+              60,
+              0
+            ],
+            [
+              0,
+              0,
+              60
+            ]
+          ],
+          "macro_f1": 1.0,
+          "mean_iou": 1.0
+        },
+        "valid_training_round": true
+      }
+    ],
+    "baseline_metric": 0.19773207273207272,
+    "final_metric": 1.0,
+    "target": {
+      "metric": "validation.mean_iou",
+      "operator": ">=",
+      "value": 0.95
+    },
+    "target_met": true,
+    "actual_native_turns": 13,
+    "frozen_inputs_unchanged": 361,
+    "all_previous_protected_files_unchanged": 1623,
+    "original_protected_files_unchanged": 550,
+    "installed_skill_files_verified": 347,
+    "old_studies_resumed": false,
+    "prior_budgets_renewed": false,
+    "data_assets_created": 0,
+    "limits": [
+      "One simple synthetic three-class fixed-validation CPU case, not RoadModel/Pillar or generalization evidence.",
+      "Remote execution used the existing official LPAI component; this adds no other remote-platform qualification.",
+      "Exploratory adaptive validation and original inconclusive science decision are distinct from engineering workflow acceptance.",
+      "No OS-reboot, long-term unattended or signed formal artifact qualification claim."
+    ],
+    "original_core_chain_audit_passed": true,
+    "original_scientific_outcome": "inconclusive",
+    "persistent_chats": 2,
+    "private_original_result_sha256": "42a3ace37b0480e866fbeef1a3d03e9461223b33301326e2571318db1f512d36",
+    "prior_20261116_acceptance_retained": true
+  },
+  "handover_recheck_20261117": {
+    "status": "passed",
+    "fresh_gitlab_main": "d229e484afe364b0ac24c0eb635695e76e9e4bcc",
+    "fresh_project_owned_venvs_and_sdk": true,
+    "author_sdk_or_platform_configuration_copied": false,
+    "same_user_skill_reused_for_second_project": true,
+    "current_project_discovery_and_missing_facts_guidance_verified": true,
+    "cross_project_capability_leak": false,
+    "new_studies": 0,
+    "model_calls": 0,
+    "platform_writes": 0,
+    "authentication_changed": false,
+    "protected_files_unchanged": 1985,
+    "limits": [
+      "Isolated Windows projects on the maintainer computer; not the colleague account or computer.",
+      "Does not qualify the colleague GitLab/LPAI permissions, Codex login or remote training readiness."
+    ],
+    "isolated_projects": 2,
+    "actual_fresh_sdk_skill_discovery": "passed; two projects, no model calls or auth file"
+  }
+}

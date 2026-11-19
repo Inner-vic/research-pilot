@@ -9,6 +9,9 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+# Isolated Python excludes the script directory; trust only this frozen directory.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
 from review_storage import atomic_json,locked,read_json
 from task_pipeline import digest
 from research_recovery import inspect

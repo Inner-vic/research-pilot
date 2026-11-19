@@ -1,4 +1,6 @@
-# Explicit governed qualification
+# SDM 完整治理账本与资格协议
+
+本页规定同一 SDM 生命周期的完整账本、权限、签名与锚定要求，保留其执行合同。日常执行的职责主线见 [sdm-core.md](sdm-core.md)；原 SDM 步骤 1/2 的记录接线不等于本页资格完成，Windows 只读资产支持也不意味着全事务可用。
 
 
 - **Create** — call `specctl.py lifecycle create --project-root <project> [--workspace <workspace>] --payload <intent> --expected-revision 0`. When `--workspace` is omitted, the command uses `<resolved-sdm_output_root>/workspaces/<workspace_id>` and reports `<resolved-sdm_output_root>/reports`; an explicit override is resolved only against the supplied project boundary, never the current directory. The command reads the installed `[modules.sdm]` configuration itself, pins the four configured Skill identities and exact installed trees. Intent payloads cannot override runtime bindings. It initializes a workspace with the supplied protocol (default `exploratory`) and identifies the earliest admissible step. Resolve non-empty personal `sdm_active_workspace` through the same project-bounded rule and refuse a missing, ambiguous, linked, special, or escaping identity before activating the sprint-planning hook.
@@ -49,4 +51,3 @@ Return the exact JSON object emitted by `specctl.py`. Success is `status=pass`; 
 
 For failed segmented cleanup reconciliation and opt-in long-history context compression,
 read [session-history-recovery.md](session-history-recovery.md).
-

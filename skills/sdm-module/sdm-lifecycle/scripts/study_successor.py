@@ -71,7 +71,7 @@ def prepare(config, output):
         'original_main_failures': {key: value for key, value in main['nodes'].items() if value.get('status') == 'failed'},
         'original_main_quality_passed': main['coverage']['required_completed_count'] == main['coverage']['required_node_count'],
         'sources': [{'path': str(path), 'sha256': file_digest(path)} for path in refs],
-        'requirements': ['Fresh configuration and explicit current context', 'Original proposal A/B gate',
+        'requirements': ['Fresh configuration and explicit current context', 'Original proposal Generator-Critic gate',
                          'Same inherited human scope and resource Guard; resolve original blockers independently'],
         'execution_authority': False, 'source_modified': False, 'computation_imported': False}
     return {**value, 'handoff_digest': digest(value)}

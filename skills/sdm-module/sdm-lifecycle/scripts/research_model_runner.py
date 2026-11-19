@@ -184,7 +184,7 @@ def shared_evidence(project, state, packet, sources, job, source_visibility=0, s
                 'In next_step.research_direction choose continue-plan for a prespecified eligible arm of the current plan, justified refinement, a substantive plan revision, a discriminating diagnosis, goal-met or research stop. '
                 'Diminishing comparable results should prompt reassessment of assumptions and intervention scale; no fixed trial count or universal metric threshold. '
                 'Do not automatically replace the model, but defend another tuning step against changes in model/representation/training method/data/measurement. '
-                'For revise-plan/diagnose stop the current iteration scope; the original worker automatically opens existing A/B planning. Scope exhaustion is not goal-met or new execution authority.')
+                'For revise-plan/diagnose stop the current iteration scope; the original worker automatically opens existing Generator–Critic planning. Scope exhaustion is not goal-met or new execution authority.')
     if len(json.dumps(shared,ensure_ascii=False).encode('utf-8'))>128*1024:
         raise ValueError('shared_research_base_exceeds_bound')
     # Preserve small complete observations and failure-path excerpts before
@@ -234,6 +234,8 @@ def runner_settings(cfg):
     if value.get('cli_path')!=cfg['cli_path'] or value.get('codex_home')!=cfg['codex_home']:
         raise ValueError('worker_model_runner_identity_mismatch')
     value=configuration(value)
+    from planner_session import selection
+    selection(cfg,value)
     if value['version']==4 and value['backend']=='sdk':
         from model_context import sdk_options
         sdk_options(value)  # reject unavailable launch policy during the existing pre-action settings check
@@ -253,6 +255,8 @@ def call(cfg, shared, role, prompt, folder, candidate=None, caller=None):
         'model':cfg['models'][role],'evidence':evidence,'prompt':GUIDANCE+'\n'+prompt,'output_schema':schema,
         'input_kind':'tool-output','parent_call_id':parent['call_id']}
     if runner_config['version']==4:value['input_kind']=runner_config['context_policy']['input_kind']
+    from planner_session import attach
+    attach(value,cfg,runner_config)
     request(value)  # validate bounds before claiming a transport
     target=Path(cfg['output'])/'model-calls'/parent['call_id'].split(':')[-1][:24]
     link_path=folder/'runner-link.json'

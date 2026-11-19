@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from loop_analysis import validate
 from task_pipeline import digest
-from review_guidance import PROMPT_VERSION, research_guidance, research_guidance_v2, research_guidance_v3, research_guidance_v4, research_guidance_v5
+from review_guidance import PROMPT_VERSION, research_guidance, research_guidance_v2, research_guidance_v3, research_guidance_v4, research_guidance_v5, research_guidance_v6
 
 
 def read(path):
@@ -40,7 +40,7 @@ def emit(root, name, obj):
 
 
 def render_prompt(packet, version):
-    if version not in ('legacy', 'sdm-research-review/v2', 'sdm-research-review/v3', 'sdm-research-review/v4', 'sdm-research-review/v5', PROMPT_VERSION):
+    if version not in ('legacy', 'sdm-research-review/v2', 'sdm-research-review/v3', 'sdm-research-review/v4', 'sdm-research-review/v5', 'sdm-research-review/v6', PROMPT_VERSION):
         raise ValueError('unsupported_prompt_version')
     # Existing bundles retain their exact legacy bytes, including their limitations.
     if version == 'legacy':
@@ -53,9 +53,10 @@ def render_prompt(packet, version):
                 + ({'sdm-research-review/v2': research_guidance_v2,
                     'sdm-research-review/v3': research_guidance_v3,
                     'sdm-research-review/v4': research_guidance_v4,
-                    'sdm-research-review/v5': research_guidance_v5}.get(version, research_guidance)())
+                    'sdm-research-review/v5': research_guidance_v5,
+                    'sdm-research-review/v6': research_guidance_v6}.get(version, research_guidance)())
                 + '\nFinal decision schema, only after the discussion is ready: ')
-        if version in ('sdm-research-review/v3', 'sdm-research-review/v4', 'sdm-research-review/v5', PROMPT_VERSION) and packet.get('alignment_context') is not None:
+        if version in ('sdm-research-review/v3', 'sdm-research-review/v4', 'sdm-research-review/v5', 'sdm-research-review/v6', PROMPT_VERSION) and packet.get('alignment_context') is not None:
             from orchestration import alignment_prompt
             lead += alignment_prompt(packet['alignment_context'])
     return (lead +

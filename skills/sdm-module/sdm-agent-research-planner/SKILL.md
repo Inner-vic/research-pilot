@@ -31,13 +31,13 @@ scoped question, outcome-dependent return/switch/stop choice and bounded cost,
 recorded in the existing proposal. Critic/Pro dialogue should narrow uncertainty
 around the selected plan, not expand a checklist of trials.
 Before a queued or expensive submission, also read lifecycle
-`references/proposal-deliberation.md`. Act as proposer A: cite actual evidence,
+`references/proposal-deliberation.md`. Act as Generator (方案生成者): cite actual evidence,
 state counterevidence and alternatives, a falsifiable matched comparison,
 outcome-dependent choices, queue/compute cost and stop/preflight conditions.
-Have critic B challenge the proposal, revise with stable challenge IDs, and
+Have Critic (独立质询者) challenge the proposal, revise with stable challenge IDs, and
 request reassessment of the exact final version. Preserve disagreements rather
 than agreeing to consume a queue slot. Role labels alone do not prove independent
-model calls. Use a distinct model B to critique model A's plan, retain actual
+model calls. Use a distinct Critic model to scrutinize the Generator's plan, retain actual
 model/call sources, and revise before reassessment. Pro is an optional choice,
 not required merely because a binding exists. Follow the selected backend for
 this attempt; missing access is explicit, never a fabricated second model.
@@ -47,7 +47,7 @@ small experiment may test a substantial model change. Do not treat stability,
 partial gains or limited epochs as a default reason to keep tuning the same
 model. Defend the selected scope against the strongest relevant alternative;
 known data/metric defects can still justify a direct repair. Use the lifecycle's
-versioned proposal dialogue for actual A/B calls; more discussion or a model
+versioned proposal dialogue for actual Generator–Critic calls; more discussion or a model
 replacement is not a required outcome.
 
 The ordinary outcome is a justified next action, not necessarily another trial:

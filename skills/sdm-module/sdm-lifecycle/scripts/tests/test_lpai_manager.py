@@ -40,6 +40,18 @@ class FakeBackend:
         if obj is None: raise ValueError('read_unavailable')
         return copy.deepcopy(obj)
 
+    def validate_task_data(self, value):
+        # Explicit transport substitute; retain the original native-data checks.
+        # This is not an assertion of official SDK/network qualification.
+        native_data(value)
+        return {'status':'valid','qualification':'synthetic transport fixture','platform_writes':0}
+
+    def mutation_receipt(self, request, plan_path):
+        return None  # No SDK child exists in this explicit transport fixture.
+
+    def task_candidates(self, name, component_uid):
+        return [copy.deepcopy(self.task)] if self.task and self.task['name']==name and self.task['project_uid']==component_uid else []
+
     def create_candidates(self, name):
         return [copy.deepcopy(self.component)] if self.component.get('name') == name else []
 
@@ -110,7 +122,9 @@ class ManagerTests(unittest.TestCase):
         import subprocess
         backend = OfficialBackend(self.config)
         with patch('lpai_manager_backend.subprocess.run', side_effect=subprocess.TimeoutExpired('sdk', 60)) as run:
-            with self.assertRaises(subprocess.TimeoutExpired): backend.read('component', uid='component-1')
+            from lpai_manager_backend import OfficialReadFailure
+            with self.assertRaises(OfficialReadFailure) as raised: backend.read('component', uid='component-1')
+            self.assertTrue(raised.exception.read_only and raised.exception.retryable)
         self.assertEqual(run.call_count, 1)
         self.assertEqual(run.call_args.kwargs['timeout'], 60)
 
@@ -247,7 +261,9 @@ class ManagerTests(unittest.TestCase):
             def read(self, **kwargs): return value
         raw = io.BytesIO()
         writer = io.TextIOWrapper(raw, encoding='cp936', write_through=True)
-        with patch('sys.argv', ['worker', '--input', 'fixture']), patch.object(lpai_sdk_worker, 'OfficialBackend', Backend), patch.object(lpai_sdk_worker, 'read_json', return_value={'config':{}, 'operation':'read', 'arguments':{}}):
+        source = self.root / 'worker-input.json'
+        atomic_json(source, {'config':{}, 'operation':'read', 'arguments':{}})
+        with patch('sys.argv', ['worker', '--input', str(source)]), patch.object(lpai_sdk_worker, 'OfficialBackend', Backend):
             with contextlib.redirect_stdout(writer): self.assertEqual(lpai_sdk_worker.main(), 0)
         self.assertEqual(json.loads(raw.getvalue())['data'], value)
 

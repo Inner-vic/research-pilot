@@ -206,7 +206,7 @@ parent repository or silently omit an unregistered role. The same path,
 discovery and byte budgets apply. Validate this with the actual material
 preparation entry, not just the JSON configuration shape.
 
-An A/B judgment consumes a snapshot taken before its own calls finish. Its
+An 生成—质询 judgment consumes a snapshot taken before its own calls finish. Its
 approval covers the judgment; the coordinator separately reconciles actual call
 receipts, archive results and lifecycle readback. Do not ask a reviewer to prove
 its own future completion, or rewrite its historical snapshot after completion.
@@ -227,7 +227,7 @@ With this producer, declare one JSON result role (`root: "$artifacts"`,
 `json_globs: [result_artifact]`). The next round's result review also registers
 that role for prior actual results. The coordinator consumes the previous
 approved review from its persisted acceptance before generating a successor;
-the new proposal still passes the original A/B gate and resource Guard.
+the new proposal still passes the original 生成—质询 gate and resource Guard.
 This producer adds evidence, never an approval or a platform capability.
 
 An existing-ready space can be in use by another chat even when a GPU has free
@@ -291,7 +291,7 @@ failed main checks are reported, never converted to passes. A linked fresh profi
 may pin that JSON as `devspace_study.predecessor:{path,sha256}`; it must use the
 derived stable Study ID, the proposed initial parameters, unchanged training
 inputs/resource/experiment contract and no more than the remaining human scope.
-It passes the original proposal A/B and execution gates again with current facts.
+It passes the original proposal 生成—质询 and execution gates again with current facts.
 Do not rewrite the old decision/runtime, import its computation as a new run,
 repeat training to repair a record defect, or claim one seamless old-Study run.
 

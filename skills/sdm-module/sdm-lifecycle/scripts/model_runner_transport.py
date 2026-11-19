@@ -136,8 +136,12 @@ def _sdk_run(config, value, folder, expected, owned=None):
                 options['developer_instructions']=(RULES+'Perform the caller-registered '+value['purpose']
                     +' task. Use its task prompt and original evidence as research input, with no platform authority. '
                     'Produce only the output-schema response. Missing evidence must remain explicit.')
-            thread = codex.thread_start(model=value['model'], ephemeral=not bool(config.get('sdk_recovery')), cwd=config['cwd'],
-                sandbox=Sandbox.read_only, approval_mode=ApprovalMode.deny_all,**options)
+            if 'working_session' in value:
+                from working_sessions import instructions
+                options['developer_instructions']=instructions(value['working_session']['role'])
+            from working_sessions import open_thread
+            thread = open_thread(codex,config,value,folder,expected,options,
+                                 CodexClient.thread_resume)
             backend_ready(config,folder,expected)
             if cancelled(folder, expected):
                 save(folder, expected, 'interrupted', None, {'backend':'sdk','before_turn':True})
@@ -150,6 +154,8 @@ def _sdk_run(config, value, folder, expected, owned=None):
             handle = thread.turn(input_value, output_schema=value['output_schema'],
                 sandbox=Sandbox.read_only, approval_mode=ApprovalMode.deny_all)
             atomic_json(folder/'sdk-active.json', {'binding':expected,'thread_id':thread.id,'turn_id':handle.id})
+            from working_sessions import started as record_started
+            record_started(config,value,expected,handle.id)
             done = threading.Event()
             interrupted = []
             def monitor():

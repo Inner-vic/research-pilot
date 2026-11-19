@@ -1,88 +1,86 @@
-# User-facing onboarding
+# ResearchPilot：首次对话与信息对齐
 
-Use at ResearchPilot activation, on a greeting/help request, or when no concrete
-research request exists. Proactively orient the user in their language. Read
-the current project, saved configuration and active-study index first; briefly
-say what is already known and ask only for the missing business intent. A usage
-question or startup alone is not permission to run examples or training.
+## 先确定任务范围
 
-The primary entry is the Codex client's `/` Skill picker: select ResearchPilot and
-send the selected Skill with the default guide prompt or an ordinary task.
-Selection alone does not send a turn. Natural-language invocation remains an
-optional convenience; no CMD, separate CLI client or bootstrap is required.
-Do not make users choose original versus improved SDM, supply Skill paths, or
-repeat known platform/project settings. Resolve the approved version and route
-internally. A concrete task should start read-only investigation and planning;
-do not put a generic help/menu interview in front of an already stated goal.
+先区分“单次评测”和“持续研究”。只需测出当前模型指标并解释结果时，评测分析完成即可结束；
+要求围绕目标改进模型时，才进入原持续研究流程。评测动作本身也可以属于持续研究的一轮。
+用户已经说清范围时直接沿用；有歧义时只确认是否需要分析后继续优化，不要求填写内部状态。
 
-The everyday user entry is ONE native `bmad-ml` Skill; SDM is its bundled research
-implementation. Activate it in the current Codex conversation. Do not open a
-separate CLI, invoke a CMD or require per-project registration. Infer the current
-project and execution environment; ask for a different location only if needed.
-Infer the baseline, data and commands from available project/configuration first.
-Ask only material missing questions; do not make users author internal JSON,
-signatures, lifecycle records or select every specialist Skill.
+用统一入口的 task declare 记录范围，record 绑定已存在的结果与分析报告。持续目标、执行范围、
+项目接入或宿主尚未就绪时，记录具体 pending-reason。记录不授予执行权限，也不启动研究。
+单次评测应在工作台显示正常完成和“不自动迭代”的范围原因；持续研究须另外核验原控制器和
+结果后继任务。历史范围缺失时显示待核实，不根据任务数量、指标或报告推断持续授权。
 
-If the name is not discoverable, diagnose the installation/routing gap. An
-absolute SKILL.md path is a temporary source-mode fallback, not the final
-onboarding experience. Do not claim registration because source
-files exist, or route to an old installed copy without comparing its provenance.
-Install the complete native Skill folder, preserving existing configuration and
-runs. The old full-module sdm-setup installer is for explicit legacy maintenance,
-not a prerequisite for research onboarding.
 
-Use these as agent intent routes; show copyable fallback examples only when useful:
+在当前Codex会话中使用ResearchPilot。先读取项目材料、当前项目能力与原研究索引，
+再补充缺项；不要要求用户选择内部Skill、节点、版本或填写JSON。
+选择Skill并发送消息才开始处理，单独安装或选择不会授权训练。
 
-1. New study: "这个分类模型效果不好，帮我分析和改进，目标 macro-F1 0.95。"
-2. Continue: "继续当前研究，沿用原目标和授权。"
-3. Status: "看当前研究进度，告诉我最优、最新结果和下一步。"
+## 先打开工作台，再引导
 
-After a new initial plan, show a brief project/target/baseline/execution summary
-and the actual first action. Reuse authorization already supplied; request only
-what is truly missing. When the user authorizes continuous research, prepare the
-runtime and actually start the applicable pipeline, rather than just giving
-internal script instructions back to the user. Do not impose a trial cap.
+执行入口的inspect后，立即执行同目录researchpilot.py的workbench子命令，传入当前项目。
+使用返回的open_target在当前聊天的Codex右侧浏览器打开，并核对项目与现有研究。
+没有研究时显示引导页；初始化完成后用同一命令加--study实际编号，定位到这项研究。
+准备服务、返回链接和窗口已经打开是三件不同的事，不得只打印URL就称已打开。
+宿主没有内嵌浏览器时，使用其支持的浏览器；确实无法打开时说明具体限制。
+后台每轮更新沿原记录和SSE推送至已打开的页面，不必逐轮弹出或由用户刷新。
+只读展示不会启动、恢复研究或创建后台聊天。旧研究仍使用原配置、任务与恢复入口。
+完整启动和升级核验见[工作台说明](research-dashboard.md)。
 
-At startup/handoff report the active runtime/configuration and the derived
-component-pipeline/PROGRESS.md or progress.json location, the actual current task
-identity when known, and whether continuation is autonomous or waiting for a
-specific input. Status reports must read the active index/projection, not old
-hand-written summaries. Explain polling freshness and distinguish a persisted
-snapshot from a live host check.
+## 第一轮：读材料，说明已知，再问下一步需要什么
 
-Teach plain-language pause/resume/stop. Pausing the coordinator preserves already
-submitted remote tasks and pauses coordinator observation; do not promise drain
-or collection while paused. Stopping a platform task is a distinct explicit
-request. Keep the host/network available for background work; do not promise an
-OS-login service or desktop-chat milestone push that is not installed.
+有明确任务就直接调查；“继续”或“看进度”沿原研究处理，不重新进行首次访谈。
+没有明确任务时，先说“我已找到……；还需要明确……；下一步会……”。
+不要一次抛出完整配置清单。通常每次询问一至两个相关问题：
 
-Keep technical schemas, historic node counts and maintenance details behind
-task-specific references. Existing authorized work should continue normally;
-do not force an onboarding interview every time the user says "继续".
+1. **任务与成功标准。** 从代码和报告说明当前模型解决什么问题，已有指标是什么。
+   未知时问“你希望模型改善什么？例如降低漏检，或提高某些类别的IoU。”
+   指标已知而目标未知时，仅询问目标或允许先了解现状；不要替用户编造业务阈值。
+   必要时询问不能退化的类别/场景，不把所有辅助指标自动变成停止门禁。
+2. **数据与现有起点。** 先找数据配置、划分、训练和评价入口、权重与已有结果。
+   问法示例：“已有训练代码和数据位置我已找到；是否有希望接着改进的权重或结果报告？
+   没有也可以先探索。”每个缺项说明用途：例如固定验证集用于公平比较两次改动。
+   接受普通描述、路径或报告，不要求用户先理解‘基线契约’。
+3. **执行与停止范围。** 读取当前项目的账号环境、平台能力及已有有效授权。
+   只补充不可推断的资源、预算、时限、可改文件或停止条件。
+   示例：“接下来会提交真实任务；请确认本轮可使用的资源和上限。已有授权内不逐轮重复确认。”
+   不把他人项目、CPU演示或作者机器配置当成用户的默认配置。
 
-## Guided first conversation
+未知不等于必须立即回答。对“还没确定”，说明可先执行的只读调查/方案准备，
+提出具体建议及依据，并标明哪个事实会在真实提交前阻断。需要用户决定的目标、权限与
+资源范围不能自行补齐；源码、命令、配置和已提供报告应由Codex调查。
+不要重复询问已回答的问题；收到新信息后更新已有结论，并只询问剩余必要缺项。
 
-After inspection, use the user's language and one concrete next question, not a
-catalog of scripts or an empty "what do you want?". For example:
-"我已找到当前项目。我们先明确研究任务：你希望改进什么效果？可以直接给我代码目录、已有结果或一段问题描述；数据和基线我会先帮你查。"
-If a study exists, state its goal, best/latest result and actual phase first.
-Ask whether to inspect it or define a different task only when intent is absent;
-never resume a paused study on startup alone.
+## 交接给后台前，用短摘要完成对齐
 
-Collect missing information progressively, usually one or two related questions:
-- Task/data/current baseline: infer from code and files; if missing, accept a path,
-  result report or ordinary description. Do not make users fill all three first.
-- Success: propose an appropriate primary metric and ask for the business target
-  if unknown. Ask which classes/scenarios must not regress when relevant. Do not
-  invent a threshold for them or turn every secondary metric into a stop gate.
-- Evaluation and execution: summarize known data/split/checkpoint definitions,
-  supported producer/metrics, platform and resource scope. Explain an unsupported
-  evaluator before dispatch. Reuse existing authorization; obtain only missing
-  initial plan/execution agreement.
+说明：研究要解决的问题与主要指标；数据/评价约定；现有代码和结果（可暂缺）；
+允许修改的内容；真实执行资源与停止条件；当前缺口及准备采取的首个动作。
+把“已从材料核实”“用户已确认”“仍待确定”分清楚。
+初始方案与执行范围已获授权时，实际初始化并使用原受控启动入口，不能把命令交给用户代做。
+核对后台接管与工作台实际定位后报告当前阶段；首轮未提交时不能报任务已提交。
+返回前台控制权，不为长队列持续占住聊天。
 
-Then show a short "已知 / 待确认 / 下一步" summary and perform the next authorized
-action. Users do not need to know SDM internals, node counts, runtime schemas or
-how to launch a dashboard. After study registration, offer/open the local view
-using the existing dashboard guide; activation alone creates no background chat,
-training or duplicate Web project. Foreground discussion stays in this Codex chat;
-the study index and durable task/result records bind the Web to the research.
+## 比较起点与阶段基线
+
+首轮有效结果只是探索起点，不自动成为稳定/正式基线。后继方案须明确实际比较对象，
+可以是首轮、较早的候选或已有可信模型；不能用时间相邻关系代替比较记录。
+当前最优候选仅说明已观察指标的相对表现，不自动证明稳定性或科学结论。
+探索后可提出阶段基线：说明模型、代码、参数、数据划分、评价、权重及适用范围，
+复核可复现性、代价与限制，再沿原SDM基线定义、复现、锁定/替换规则处理。
+简单或较弱模型也能作为有意义的对照；不要求先找出高分模型才允许探索。
+B01的定义、B02锁定与B03复现是不同事实；不能把一份首轮结果或UI标签当作全部已通过。
+不擅自删除适用基线检查，也不把历史B01/B02/B03记录改成新身份。
+
+## 用同一语言报告进度与控制
+
+报告目标、已验证结果、真实阶段、是否有活的后台接管，以及具体等待/停止原因。
+读当前索引和接受记录，区分保存的快照与实时核验；不保证未安装的通知或开机常驻服务。
+暂停阻止新的推进，已提交云任务可能继续运行；停止云任务是另一项操作。
+启动、查看工作台和首次引导不授权恢复暂停研究。前台聊天全文不自动同步到工作台；
+工作台通过当前项目与研究编号关联同一记录，持续主会话及独立评审仍各有原身份。
+
+
+第3步现名为“明确比较起点与基线依据”。可以先提出起始配方与评价约定，再通过真实执行补齐结果。
+后继选择必须来自原审议接受的候选，实施前核对原决定及原配方；不默认使用首轮或最新轮。
+步骤13可决定继续沿某个已核验候选开展研究，再回到第3步处理阶段基线依据。
+基线稳定性、复现、锁定及替换仍使用原SDM要求，不把“选作比较对象”说成“正式基线已完成”。

@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-16",
+  "scope": "New qualified component studies; existing SDM gates and Context owner",
+  "architecture": "One research entry; persistent main design/implementation context and persistent read-only review context",
+  "regressions": {
+    "model_context_and_review": 92,
+    "original_governance_submission_recovery": 71,
+    "original_native_context": 9,
+    "dashboard_projection_and_http": 8,
+    "frontend_binding": "legacy, two-context display and HTML escaping passed"
+  },
+  "real_sdk": {
+    "scope": "Real SDK and original native implementation owner; synthetic input and disposable JSON only",
+    "model_calls": 5,
+    "threads": 2,
+    "main_plan_implementation_successor_same_context": true,
+    "review_plan_and_code_same_context": true,
+    "reviewer_private_memory_not_in_main": true,
+    "native_file_matches_prior_plan_memory": true,
+    "original_replay_new_calls": 0,
+    "phase_permissions": [
+      "read-only",
+      "read-only",
+      "workspace-write",
+      "read-only",
+      "read-only"
+    ],
+    "scientific_quality_improvement_measured": false,
+    "training_tasks": 0,
+    "platform_actions": 0
+  },
+  "diagnostic_model_calls_total": 8,
+  "initial_delivery_defect": "Three known diagnostic completions exposed missing current implementation task; original evidence retained",
+  "fix": "Stable role instructions plus explicit per-turn registered task; exact phase permission readback",
+  "scientific_quality_improvement_measured": false,
+  "pro_integration": false,
+  "reasoning_effort_changed": false,
+  "old_studies_or_timers_resumed": false,
+  "old_freezes_migrated": false,
+  "remaining_limits": [
+    "Current evidence remains mandatory despite native context compaction",
+    "Other workload/model combinations and long-running scientific quality not qualified by this diagnostic",
+    "Foreground chat transcript is not automatically copied into backend context",
+    "Historical approvals never authorize changed plans/code or platform actions"
+  ],
+  "delivery": {
+    "source_files_updated": 21,
+    "installed_files_matching_source": 334,
+    "actual_installed_entry": "passed",
+    "installer_regressions_passed": 5,
+    "source_targeted_regressions_passed": 16,
+    "workbench_current_runtime_verified": true,
+    "protected_frozen_files_unchanged": 197,
+    "project_index_unchanged": true,
+    "source_git_index_unchanged": true
+  },
+  "publication": {
+    "repository": "[private local reference retained by maintainer]",
+    "branch": "main",
+    "verification": "Consult this commit and its GitLab pipeline for publication and CI status; original local qualification scope remains unchanged."
+  }
+}

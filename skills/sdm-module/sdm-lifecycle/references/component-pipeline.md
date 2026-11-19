@@ -1,5 +1,12 @@
 # Component research pipeline: waiting and native continuation
 
+For the candidate shared original S01/S02 rules, required fresh intent, full
+asset/schema closure and legacy boundary, read [SDM governance](sdm-governance.md).
+The current 13-step lifecycle integrates applicable original contracts, baseline,
+experiment kernel, evidence review and scientific decision functions with the
+same submission gate. Read the shared governance for actual qualified scope;
+execution success does not imply full formal SDM artifact qualification.
+
 ## Public preparation, readiness and closure
 
 For a fresh study use `research_initialize.py --spec STUDY --destination NEW_MODULE
@@ -15,10 +22,20 @@ asset, journals its writes, and verifies uploaded bytes before using its mount.
 It does not submit training; the resident owns the first submission and all
 successors. Never rename an unknown request to test a corrected input.
 
-A failed task before any valid baseline is a preparation diagnosis, not a zero
-score/candidate or a completed research round. Publish `initial-failure.json`
-and `needs-attention` before opening a science/model intent. Preserve the failed
-UID and repair the actual data/environment prerequisite. Public-source fetches
+A failed task before any valid baseline is preparation evidence, not a zero
+score/candidate or a completed research round. Preserve `initial-failure.json`,
+the failed UID and its exact original plan. Without an authorized continuous
+host, report the actual attention boundary. An opted-in authorized continuous
+host can diagnose that evidence or implement a concrete reviewed bounded repair
+through the original implementation/code-review path and shared submission gate.
+All original implementation actions remain available; `diagnose` is not the
+only permissible name for a parameter repair. Read-only diagnosis never submits.
+The shared readiness check verifies the exact terminal failed parent, original
+accounted Attempt and registered Run, original acceptance and accepted repair.
+It permits continued baseline establishment, never claims a valid baseline or
+a quality score. Failed tasks still consume the same non-renewed budget.
+Unknown effects, missing authority and unsupported protected capabilities block;
+do not change identities or manually override receipts. Public-source fetches
 are bounded/checksummed and retain identity-bound partial bytes; local access
 does not prove compute-node access. Prefer verified official mounted input when
 external downloads are unavailable remotely.
@@ -108,18 +125,24 @@ before packaging or any platform submission.
 
 For a new study use `research_initialize.py --spec STUDY --destination NEW_MODULE
 --store NEW_STORE --workspace NEW_WORKSPACE --output NEW_CONFIG`. A
-`sdm-research-initialization/v1` spec supplies project_id, source_ref, objective,
+`sdm-research-initialization/v3` spec supplies project_id, source_ref, objective,
 immutable template/manager_config/request_template/baseline_source/baseline_model
-references, comparison_identity, training, target and workload. The initializer
+references, comparison_identity, training, target, workload v2 and the shared
+`sdm_governance` inputs in [shared acceptance](sdm-governance.md). The initializer
 does read-only official preflight, never submits or calls a model. It creates
 independent control/workspaces/Context, a frozen payload, exact original Manager
 plan and bound standing delegation. Repeating identical inputs reuses the
 prepared configuration; changed inputs cannot overwrite that identity.
 
-`initial_submission:{version:1,authorization:REF,confirmed_plan:REF}` is an opt-in
-fresh-study entry. The original resident applies its first Manager plan only
-while its original Guard is new; every other phase reconciles the same intent.
-An initial-dispatch marker binds host/config/plan before calling the Manager.
+The initializer emits `initial_submission:{version:2,authorization:REF,confirmed_plan:REF}`
+and `submission_gate:{version:2}` with pinned original SDM intent checks. The resident obtains original science and code
+reviews of the exact first intent before a new Guard write. First and successor
+submissions share [the SDM submission gate](submission-gate.md), including original
+verify-only Generator–Critic replay, payload/scope and Manager authorization checks. Existing
+Guard intent always reconciles without new reviews or submission. Legacy v1
+cannot initiate a fresh write in this runtime; existing frozen runs retain their
+original policy. The initial dispatch marker binds the same host/config/plan and
+records the observed dispatch; the durable Guard owns the effect boundary.
 Initial observation and every adaptive successor use the same provider path;
 an external bootstrap submission is not required. Empty known_task_uids means
 an empty new-study ledger for continuous policy v2, never zero remaining budget.
@@ -139,7 +162,7 @@ limits and progress are explicit; only complete checksum-verified content is
 published. A slow data fetch is not model fitting. Keep TEST outside an adaptive
 validation study unless its use is independently specified.
 
-Freeze the complete source bundle, then run `research_supervisor.py --config
+Freeze the complete source bundle, then use `research_launch.py --project-root CURRENT_PROJECT --config
 CONFIG` from that frozen runtime. One OS lock owns the supervisor; the child
 joins its Windows Job before loading the event service. Process exit drives
 recovery of the same frozen config, database and Context. Durable completed
@@ -523,7 +546,7 @@ all recorded failed/stalled reviews and original frozen runs.
 The existing public `--research-replan` also accepts research_replan version2,
 parent_route=lpai-component, result_contract=sdm-binary-classification/v1. This
 explicit adapter validates retained component artifacts/predictions, shares raw
-evidence with the original condition-driven A/B gate, and publishes the original
+evidence with the original condition-driven Generator–Critic gate, and publishes the original
 research-plan/implementation-request contracts. Failed attempts may enter the
 diagnosis route with zero valid rounds and unknown scores; they cannot become a
 goal-met claim. The current metric adapter is binary classification, not implicit
@@ -897,3 +920,37 @@ when they could change the decision. Exact field projection is not a claim that
 omitted fields were read, a narrative summary or permission to approve a gap.
 ModelRunner's 256 KiB request and explicit SDK history budgets remain unchanged.
 A truly insufficient packet blocks rather than truncating decisive evidence.
+
+
+## Two persistent working conversations
+
+新初始化的组件研究使用两条持续工作会话：主会话承接方案生成、代码说明与实施，评审会话承接方案和代码的独立质询。首轮和后继共用各自绑定。当前证据仍完整传入，未知调用只恢复原身份。旧配置不自动添加此选项。设计、门禁、验证和限制见[方案上下文说明](planner-context.zh-CN.md)。
+
+
+## Verified failure repair and delivery boundary (2026-11-16)
+
+A fresh uninterrupted frozen CPU study demonstrated a deliberately failing
+training-only tiny fit, reviewed learning-rate repair, a successful training
+result, and a result-driven successor attempt that also failed tiny fit.
+Only one valid result was obtained; full two-valid-result continuous-chain
+acceptance remains unmet; the original chain audit reports false.
+Two persistent native chats
+handled design/implementation and independent review. Three tasks included the
+failed task; the original budget stopped the host without foreground takeover.
+This is remote preflight failure recovery, not general infrastructure-fault,
+unknown-write or long-term availability qualification. Earlier failed studies
+remain unchanged and are not counted as completed autonomous acceptance.
+
+Inventory comparison retains genuinely non-SDM foreign task formats as explicit
+non-comparable entries with command/native hashes and reports coverage. A task
+claiming an SDM payload with missing, mixed or damaged role payloads still fails.
+Actual parent/candidate decoding remains strict. State configuration identity
+uses the original producer's digest; normative object hashing is unchanged.
+
+The portable Skill and lifecycle do not require a particular 2.5D/RoadModel
+project. Qualified continuous execution is still the current fixed-length
+univariate binary PyTorch interface and LPAI single-worker component transport.
+Other model, metric and execution adapters require their own evidence and
+acceptance. Project data, training entry, evaluation target, environment and
+authority are external facts, not personal configuration shipped in the Skill.
+This release adds no generic execution backend.

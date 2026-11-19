@@ -1,0 +1,165 @@
+{
+  "schema": "sdm-governance-batch-validation/v1",
+  "date": "2026-11-15",
+  "candidate_version": "0.3.0-rc6.38",
+  "normative_scope": {
+    "original_record_steps": [
+      1,
+      2
+    ],
+    "original_semantic_function_shared_with_specctl": true,
+    "record_schema_semantic_and_original_row_gates": true,
+    "formal_transition_accepted": false,
+    "remaining_integration_steps": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "full_d05_acceptance": false,
+    "windows_scope": "Read-only original assets/rules on local fixed drives; not journal/workspace transactions.",
+    "linux_full_formal_execution": "not_run; POSIX read branch verified structurally unchanged"
+  },
+  "terminology": {
+    "collaboration": "生成—质询审议（Generator–Critic）",
+    "roles": [
+      "方案生成者",
+      "独立质询者"
+    ],
+    "machine_keys": "a/b retained for protocol compatibility",
+    "new_dialogue_version": 4,
+    "new_review_guidance_version": "sdm-research-review/v7",
+    "retained_prompt_hashes_verified": 9
+  },
+  "tests": {
+    "pytest_cases": 106,
+    "pytest_passed": 105,
+    "pytest_skipped": 1,
+    "legacy_unit_passed": 86,
+    "total_distinct_cases": 192,
+    "total_passed": 191,
+    "failures": 0,
+    "skip": "Windows host lacks file-symlink creation privilege; no rejection claim for that case.",
+    "actual_windows_cases": [
+      "junction rejected",
+      "hardlink rejected",
+      "held file denies concurrent write",
+      "sharing retry preserves access flags",
+      "writable ancestor does not block asset read"
+    ],
+    "transports": "Explicit synthetic model/platform substitutes; final pytest defaults deny live backends.",
+    "xml_sha256": "792da1ca8656146e35c59b233035d328de91133c7e938d92c132258734afb94d"
+  },
+  "structural": {
+    "original_step_semantics_ast_identical": true,
+    "step_semantics_ast_sha256": "99dd303841ada89e8e82a4cf330e12f62c8ff58ad0b15784ce579c220ffa5274",
+    "formal_cli_imports_shared_function": true,
+    "posix_asset_read_body_unchanged": true,
+    "critical_effect_recovery_files_unchanged": [
+      "lpai_manager.py",
+      "submission_guard.py",
+      "lpai_manager_backend.py",
+      "research_pause.py",
+      "research_restore.py",
+      "research_context.py",
+      "research_supervisor.py",
+      "component_event_source.py",
+      "component_results.py",
+      "journal.py",
+      "ledger.py",
+      "workspace.py",
+      "authority.py"
+    ],
+    "runtime_freeze_only_function_changed": true,
+    "checks_are_not_formal_transitions": true
+  },
+  "package": {
+    "files_verified": 324,
+    "bundle_sha256": "5891bffdd3e671c085d2f33fb6f1f066a56f0c8d3e06d1b078d335a416f5f2d1",
+    "archive_sha256": "31d5b89127aafec3ba224aecf6340b3897d387953e578fa0d2884987cc1df85b",
+    "isolated_rule_load": {
+      "documents": 26,
+      "digest": "sha256:cfdbe0ef07f3f1626c621857ae1df657bc65d25761e405a97a21e921ab1d6fe3",
+      "checks": {
+        "hypothesis.falsifiable": true,
+        "target_not_must": true,
+        "mechanism.explicit": true,
+        "uncertainty.explicit": true
+      }
+    },
+    "installed": false
+  },
+  "source_files": {
+    "scripts/build-native-skill.py": "931af5da82830b8be4f3081ac6d8444500b0b34657618d24473f55ff728ef3d3",
+    "scripts/prepare-handover.py": "faf585bfc19a873b0522133a0be4b9dc95e4364be4c2887791d6032186a4281a",
+    "skills/sdm-module/conftest.py": "c9f0e12d2382ecd98691df606d47e3f0c48dd8e1570b3603d467d0cd10acd4d2",
+    "skills/sdm-module/sdm-lifecycle/scripts/component_pipeline.py": "c896b0749bf489a667daefc236cab21ab1da530f47a8e6f3500708c80da83b5b",
+    "skills/sdm-module/sdm-lifecycle/scripts/component_research.py": "5102cdcdcfb540a5c04203f3f9f7daa22773da82bd2194c9394f05169362da1f",
+    "skills/sdm-module/sdm-lifecycle/scripts/component_submission.py": "e7ff15574dd8a0469fb33a0365fc480a543dbee87d1479587afa32bf842b62da",
+    "skills/sdm-module/sdm-lifecycle/scripts/contracts.py": "62370d9fc655712e2e57ab06111839ef17c3e13fa297ce1b4c841e110971c8b0",
+    "skills/sdm-module/sdm-lifecycle/scripts/lifecycle_rules.py": "e66f3e3f2436af7b5aeb820ab72a16d96102e7a15452396cf8db0a9b11209b95",
+    "skills/sdm-module/sdm-lifecycle/scripts/model_review_bridge.py": "1ad2155bf14e2dbb6d047167b3d33730361319f6fbcfbd2408d1c8de8c89ca22",
+    "skills/sdm-module/sdm-lifecycle/scripts/proposal_dialogue.py": "2570c10fb089f8458181ca86ba35e96c4191a67cb77f44bba992c2df0b1b8e0d",
+    "skills/sdm-module/sdm-lifecycle/scripts/proposal_model_runner.py": "79823a3728431d435c64c97cb6960d62fff2eaf6f1517183d082a752ec54ff1e",
+    "skills/sdm-module/sdm-lifecycle/scripts/proposal_review.py": "b9174e9c6711ddf19d6fcf324c3598a2a608872a6e6a11b9f2169c9092fb8b39",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_dashboard_data.py": "97dcd22346560e8a264c84b6d12fc62612da603c20b38f4c5cd929fea6ffb5fd",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_event_service.py": "826242228b97d8cd47aa53c2b168065ccd61aa66cb3bff4116e191740a1e0d2e",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_initialize.py": "4c385847cbcaa6305f53a3c26c9e0d4ca5ee6e2ea934b1314e38d3bb7caa4a5f",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_intent.py": "93bf51c98614946d6706a56792c97e3c7aed339dee4a63c1e878a8f24c37ddbe",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_replan.py": "194b0e9976bfe05983b44904848fceb8ca5553eb00627aded002ad8ca74c7c74",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_runtime.py": "9c24a3a655b3f755faa9158782188357f4a877acd8e8978cfe5cdeafda1ed9e6",
+    "skills/sdm-module/sdm-lifecycle/scripts/research_worker.py": "44ac0f7db78786ddd74b714062bf584e919ccc12d456d97305ba6c9c3e858689",
+    "skills/sdm-module/sdm-lifecycle/scripts/review_guidance.py": "bf9b550e726e93ecd2c204cf0010a97d8949b161dfe3296d802ef3bdef82ef8f",
+    "skills/sdm-module/sdm-lifecycle/scripts/run_project_pipeline.py": "6b9eb75dfa5a000264573af8e768a6976d74147e8cba61cd854d1214a60d0aca",
+    "skills/sdm-module/sdm-lifecycle/scripts/specctl.py": "026fb371adeb2e829ba24cb2b893db5ecab6d8210731404f246d45d73487c333",
+    "skills/sdm-module/sdm-lifecycle/scripts/study_successor.py": "2103457c02ddd48341bb7ffc90044cede67fd90e9b4bb8fd87085d5ccc3a47a8",
+    "skills/sdm-module/sdm-lifecycle/scripts/windows_assets.py": "7b814c7523318f3131272b17284b2e971716ecc1ef59e07b5ea3a37d51d06a31",
+    "skills/sdm-module/sdm-lifecycle/scripts/worker_conversation.py": "418cffca21d2c92dc6c751857ec0fe270f46d2d6e3221a0d63196e9592aefcdd",
+    "skills/sdm-module/sdm-lifecycle/tests/test_component_submission_gate.py": "700405bf977fbaa9c48c4926e97276d8da151b1fb9b389fd5c5a056b08e4d901",
+    "skills/sdm-module/sdm-lifecycle/tests/test_implementation_feedback.py": "68dd06f459f7bff1fc6a1d4fcc31e34b16a8ab9d9729226c9a6e1177062e9cfd",
+    "skills/sdm-module/sdm-lifecycle/tests/test_prompt_compatibility.py": "66ca02eb150f44b27e5fa896f0600ad128fcbd5e776222c018bb4a49ae1d6052",
+    "skills/sdm-module/sdm-lifecycle/tests/test_sdm_governance.py": "2f3633875e3e9a4638a8d51e263e734377a9c3d41fe2358c31e88194954b8161",
+    "skills/sdm-module/sdm-lifecycle/scripts/tests/test_proposal_model_runner.py": "5e659da44fb1a58dd856b0f8b73436d11dbc2b1de6c9734a3bb947f32dd6bad8"
+  },
+  "additional_checks": {
+    "skill_creator_source_and_packaged_skill": "passed with UTF-8 process mode",
+    "dashboard_javascript_syntax": "passed",
+    "existing_lineage_checks": 3
+  },
+  "previous_projects": {
+    "protected_frozen_files_unchanged": 197,
+    "research_index_unchanged": true,
+    "installed_version": "0.3.0-rc6.37",
+    "installed_files_verified_unchanged": 294,
+    "installed_bundle_sha256": "8713b5675e9e6bb1bea2aa9b3b0a657300b25db242d7c1e4595c579a4955b6dd",
+    "candidate_installed": false,
+    "old_guard_request_identities_rewritten": false,
+    "timers_resumed": false,
+    "studies_migrated": false
+  },
+  "execution_scope": {
+    "real_model_calls": 0,
+    "ml_training_started": false,
+    "platform_writes": 0,
+    "research_control_actions": 0,
+    "git_committed": false,
+    "git_pushed": false,
+    "early_failed_test_read_attempts": 1,
+    "early_read_outcome": "Unmocked official CLI readonly query attempted; no usable platform result, remote outcome not verified. Mock fixed and final tests intercept live reads/writes."
+  }
+}

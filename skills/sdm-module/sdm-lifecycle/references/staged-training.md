@@ -1,7 +1,7 @@
 # Short training, longer comparisons and candidate confirmation
 
 Read when selecting training length, reviewing learning curves or deciding whether
-to spend more on a candidate. Apply within the existing five phases and research
+to spend more on a candidate. Apply within the existing project execution and research
 modes; these are experiment fidelities, not additional lifecycle nodes. Start with
 the least costly observation that can answer the current question. A requested
 normal/full experiment is not silently replaced by screening.

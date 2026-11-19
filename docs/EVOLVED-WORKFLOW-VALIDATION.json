@@ -1,0 +1,217 @@
+{
+  "schema": "sdm-evolved-workflow-validation/v1",
+  "date": "2026-11-15",
+  "source_candidate": "0.3.0-rc6.40",
+  "workflow": {
+    "current_activities": 13,
+    "current_phase_groups": 5,
+    "counts_are_fixed_requirements": false,
+    "origin": "Original SDM21; exact original IDs retained as provenance, not current IDs",
+    "original_steps_covered_this_release": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "original_duties_deleted_this_batch": [],
+    "merges": {
+      "1": [
+        1,
+        2
+      ],
+      "3": [
+        4,
+        5
+      ],
+      "5": [
+        7,
+        8
+      ],
+      "6": [
+        9,
+        10
+      ],
+      "7": [
+        11,
+        12
+      ],
+      "11": [
+        16,
+        17
+      ],
+      "12": [
+        18,
+        19
+      ],
+      "13": [
+        20,
+        21
+      ]
+    },
+    "step_contract": "Each activity explains inputs, execution, outputs, advancement boundary, failure return, source/reason and actual acceptance scope.",
+    "catalog_schema": "sdm-lifecycle-narrative/v2",
+    "view_schema": "sdm-lifecycle-view/v2",
+    "numbering": "researchpilot-workflow",
+    "runtime_acceptance_inferred": false,
+    "old_engine_reindexed": false,
+    "scientific_acceptance_added": false,
+    "validation_allows": "Added activity/new phase; deleted activity/regrouping; IDs and source references remain validated."
+  },
+  "tests": {
+    "pytest_passed": 123,
+    "pytest_skipped": 1,
+    "legacy_unit_passed": 86,
+    "total_passed": 209,
+    "skip": "Windows file-symlink creation privilege unavailable; not counted as rejection passed.",
+    "transports": "Isolated synthetic platform/model transports; live backend calls blocked.",
+    "xml_sha256": "e363c8ed90811204bd60d040b36ffaa1d8d22823741f9f4ec536ce05cccdd7fe",
+    "unit_receipt_sha256": "8616d8bdaf54bda2e7a2e948bd97f2b6723efa9409bf8e2d9082150b5af41fc2",
+    "additional": "Activity renderer current/target/pause/legacy/v1-v2 numbering/escaping; three original lineage checks; JS/Python syntax; Skill validation; packaged isolated engine/view and UTF-8 CLI."
+  },
+  "ui": {
+    "fixture": "Synthetic isolated project; no original research or controls used",
+    "viewports": [
+      [
+        1280,
+        900
+      ],
+      [
+        470,
+        850
+      ]
+    ],
+    "overflow": false,
+    "console_errors": 0,
+    "visible": "Current step 7 review/engineering acceptance, not original step 11; five current groups and no inferred pass marks.",
+    "temporary_viewport_reset": true,
+    "preview_stopped": true
+  },
+  "compatibility": {
+    "governance_effect_recovery_prompt_files_unchanged": [
+      "contracts.py",
+      "lifecycle_rules.py",
+      "research_intent.py",
+      "specctl.py",
+      "research_initialize.py",
+      "component_submission.py",
+      "component_pipeline.py",
+      "proposal_review.py",
+      "proposal_model_runner.py",
+      "research_runtime.py",
+      "research_event_service.py",
+      "lpai_manager.py",
+      "submission_guard.py",
+      "lpai_manager_backend.py",
+      "research_pause.py",
+      "research_restore.py",
+      "research_context.py",
+      "research_supervisor.py",
+      "component_event_source.py",
+      "component_results.py",
+      "journal.py",
+      "ledger.py",
+      "workspace.py",
+      "authority.py",
+      "proposal_dialogue.py",
+      "review_guidance.py"
+    ],
+    "normative_source_files_unchanged": 47,
+    "engine_digest": "sha256:cfdbe0ef07f3f1626c621857ae1df657bc65d25761e405a97a21e921ab1d6fe3",
+    "frozen_configuration_guidance_files_unchanged": 197,
+    "research_index_unchanged": true,
+    "installed_version": "0.3.0-rc6.37",
+    "installed_files_unchanged": 294,
+    "candidate_installed": false,
+    "old_studies_migrated": false,
+    "old_request_or_guard_identities_changed": false
+  },
+  "package": {
+    "files_verified": 326,
+    "normative_files": 26,
+    "bundle_sha256": "ff7be0b73e964991030c5502b92d32f6eb46d908dc505a3f7f3f56ff4399f0ac",
+    "archive_sha256": "d8fcefe6cd3a4aefc4c21b236b76ced647dc818ec46ad397e3e539a880e045df"
+  },
+  "editorial": {
+    "changed_text_inputs": {
+      "AGENTS.md": "15cfba145f5be43cdac6168c1b99ca09c2451538d1e54bfec1cf76d8ab8af608",
+      "README.md": "5acc5fff05bbc3f281abb4c7e106d8d268856c1316b4d24a4fc590dfcaca69ec",
+      "VERSION": "9b48351e2703d9fe58868576e16cd01dd30faf1deeb11771aa62505e44fb66d8",
+      "docs/ARCHITECTURE.md": "77889d8700a06a7fe5d88e54a184ff586def02a168a15880f0196a5ddb4b8fd0",
+      "docs/CHANGELOG.md": "4804f81cc91f77b6fc0ee809f00f5c4cee07a43b535928bcf31d265dbd45e3ba",
+      "docs/COMPARISON-WITH-BMAD-ML.zh-CN.md": "650cbb44bcce561ee5053dd5213ca6b9c1cf5e286755e4c8f7a067ee2f74a948",
+      "docs/EXECUTION.md": "159b5876903da462c27043c95f0c9faaba289283997e88b1513449761693a6af",
+      "docs/README.md": "2d0a3f75ef673ac4c17600d78b322e77cf1cc893b9e7117bbbc852d3523477af",
+      "docs/RESEARCH-CONTRACT.md": "1d64889b5d7a9c6217e3acc6400c4c0301d57781d3d24ad423c6a2c47edce71a",
+      "docs/SDM-REFACTOR-PROGRESS.zh-CN.md": "7b101e0627db76210c3f6c92325308cca2b8e3e48a864714277636639771ecdd",
+      "docs/SDM-REUSE-PLAN.zh-CN.md": "708610c58087e2dcafda2ffaaace1bb59c3b653e5c03cc8d68eaecdd0e3fbe03",
+      "docs/TERMINOLOGY.zh-CN.md": "ed05c55ff6e85a376278114887571e19e65042bbc94212f9478bce033baa02eb",
+      "docs/USER-GUIDE.zh-CN.md": "2c89013463cc1392b9b466c092ffe5a6791fd8bd12ad6d74b6d7695a84136f44",
+      "docs/WORKFLOW-GUIDE.zh-CN.md": "677ff6386c9be249a9f3d90b0d0fad8ad57bbf6d09886748950003f7a1a5e10e",
+      "scripts/build-sdm-trial.py": "cb0207619c53d79fd8405841843c5f2c73bf7ecc99c027e1ae18254b1a71a318",
+      "scripts/prepare-handover.py": "b6202ca654c17b7d4d6be0437a05e296db8d12a53264677041745723c94e3100",
+      "docs/delivery/ITERATION-GUIDANCE.md": "6bc0d6c2cb4a60690d50e3900f9a7bccecfc9eb94f05b4cfea1dbe510b6f74ca",
+      "docs/delivery/ITERATION-RELIABILITY.md": "dfabc2ecefc62c8188463ae9a7bae800360efe226bfe9c8bf84408bf3e0c45bb",
+      "docs/delivery/TRIAL-GUIDE.md": "6a18a5624c473e1e52b63af14c6a94a43946a25464ccda49ab51746a20029462",
+      "docs/sdm/PLANNER-EXECUTOR.zh-CN.md": "09ef224c3bc6b283a6350158d8b3c4fb2ca4a97677fa9ec4f4da09fd24e46da4",
+      "skills/bmad-ml/SKILL.md": "4cc4cecee161c7631ff9440c4e8d29f0110efa58f06c5559eca4f68b6302f1bf",
+      "skills/sdm-module/MODULE.md": "2d60f49ea35493042fc9c16a97b2487e07b178aad5128363b408bcdce3104969",
+      "skills/sdm-module/sdm-lifecycle/SKILL.md": "8cddd8148e01d2c0833307fc3ae31c4149bd55b73e5784330e865684a507f311",
+      "skills/sdm-module/sdm-lifecycle/references/component-pipeline.md": "0e6d9ddfee738849371e9e04d31201593ef8a2632951139e045064acfdfe7e48",
+      "skills/sdm-module/sdm-lifecycle/references/cross-cutting-capabilities.md": "49144f1029462a9d3b5e0f756917d781b5f45a58e40524d5f288f545b5e999c9",
+      "skills/sdm-module/sdm-lifecycle/references/execution-contracts.md": "cf7e0ee4f86d32dbcff80eae05242f219a8c383db3c82d930dc4f622fbc52106",
+      "skills/sdm-module/sdm-lifecycle/references/five-phase-orchestration.md": "87b1e9a8152ecfe24d843a297cfe731d3f06c39577d48b0758864f2d53dcca6e",
+      "skills/sdm-module/sdm-lifecycle/references/governed-lifecycle.md": "0eb67c948a030e95bf19d75051c202c52c2d8807ffb15c7c05eef49b8cdf6cca",
+      "skills/sdm-module/sdm-lifecycle/references/lifecycle-map.json": "251f0433d24a0c0fdee959aefeb6f322059157dfde13b4915e486bc1c7aada95",
+      "skills/sdm-module/sdm-lifecycle/references/lifecycle-protocol.md": "e901c8c77c6ebf11a0f65612567cd73b8a9752fa590fd725ecd8ff13ba65b587",
+      "skills/sdm-module/sdm-lifecycle/references/long-loop-dependencies.md": "ff6afa386b14c8efe4c1adeb4f46d7143ed646d68d6bc51e1b79799770ed9f58",
+      "skills/sdm-module/sdm-lifecycle/references/project-maintenance.md": "44304f811cf0e05e8db1a7112f39ddc822973ebd0092fa51234d8030e105eabc",
+      "skills/sdm-module/sdm-lifecycle/references/research-dashboard.md": "b93f803298fc9564be13abf7e4b8d245b8079fa7125e6b444797fc86d4604b36",
+      "skills/sdm-module/sdm-lifecycle/references/research-observation.md": "ea3c09ffc4338650205937e338787ea91c7320b655731b0fa99a0404f43d7fcb",
+      "skills/sdm-module/sdm-lifecycle/references/resource-investigation.md": "310281a51973f9781a2d4dd5fce8f01b2b0cf8e26133ddb4b328353c540aa8cd",
+      "skills/sdm-module/sdm-lifecycle/references/roadmodel-devspace.md": "8a9ca10aa5db639042985009e8485059d118b67b727d4e0e1baf6521e17e5514",
+      "skills/sdm-module/sdm-lifecycle/references/roadmodel-normal-driver.md": "ab2ac60578348e4a9ea8339acdbfe8bc4b6574a6e270342a3248c6d841c1e14f",
+      "skills/sdm-module/sdm-lifecycle/references/sdm-core.md": "0dd8ec912efb8350bff0fbb3b5c1f082de5a5cfa57e2e6dbc00f6c21b085d2cc",
+      "skills/sdm-module/sdm-lifecycle/references/sdm-governance.md": "c96f9015852bf784667d80da5d2e599c07be1653d72cc00ec155a672f5492025",
+      "skills/sdm-module/sdm-lifecycle/references/staged-training.md": "d2d91343a5e25543a1d1ef5aa0a99afcebb5e16bac04c3658801441d056210d2",
+      "skills/sdm-module/sdm-lifecycle/references/submission-gate.md": "409aa10edbad95b5ddb6de404c0f16752543dfd76fa1506d4c34f22cd3ffb207",
+      "skills/sdm-module/sdm-lifecycle/references/task-event-consumer.md": "be424fe61b958fbb95b640e331f891347ad4a535be495921dade5662137c8e3e",
+      "skills/sdm-module/sdm-lifecycle/references/task-modes.md": "a6c4a898652fd6e49e940971cf10dc9244cd6ed6596e019248771442b13f21f9",
+      "skills/sdm-module/sdm-lifecycle/references/task-pipeline.md": "bdcf354e332d1ce80fe1bac035f6cb5ec3531c9228ea08c95299c4ecf12be9b0",
+      "skills/sdm-module/sdm-lifecycle/references/training-operations.md": "ccf6558bd6478e754c6e5933ada18f227a0277502341bfe6ca843fe9ac1beed4",
+      "skills/sdm-module/sdm-lifecycle/references/trigger-execution.md": "ccfa8a9c2f35a7433c7cbc151add8698397d701ae9d25aafa757ecd326ace9c9",
+      "skills/sdm-module/sdm-lifecycle/references/work-packages.md": "98ae1077a59aa7c3fe54bd00551dd3367b7e067c236d099b4420ce32d99b9e65",
+      "skills/sdm-module/sdm-lifecycle/scripts/lifecycle_view.py": "50467e2fe4c3bcc1c70cc309fd9cc0789cd9269ceec2a65f73c91b2ba065acb6",
+      "skills/sdm-module/sdm-lifecycle/scripts/research_progress.py": "6a22b152c2dbb59c44cf5729ed6bc2488fa203c0dbe512af369eeae5ca5e0217",
+      "skills/sdm-module/sdm-lifecycle/tests/test_lifecycle_view.py": "b08d5cfc86866dd471bc4132fc2e9b3e4aec7d0aaac82e489eda172a91f23ca7",
+      "skills/sdm-module/sdm-lifecycle/references/dashboard/dashboard.js": "787e7d03ba55949a949ddd3488c1d6cd151856387f84094b62f0a724c4f16d84"
+    },
+    "resolved_changed_document_links": 275,
+    "current_original_numbering": "Explicitly distinguished; original audit/verification snapshots retain their historical versions."
+  },
+  "operations": {
+    "real_model_calls": 0,
+    "platform_calls": 0,
+    "new_training": false,
+    "research_control_actions": 0,
+    "timers_resumed": false,
+    "git_committed": false,
+    "git_pushed": false
+  }
+}

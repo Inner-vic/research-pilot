@@ -1,0 +1,219 @@
+{
+  "schema": "researchpilot-unified-workflow-validation/v1",
+  "date": "2026-11-15",
+  "status": "accepted-in-qualified-component-scope",
+  "core_activities": 13,
+  "qualification": "ordinary univariate binary fixed-validation component adapter",
+  "original_rule_reuse": {
+    "original_step_semantics_unchanged": true,
+    "original_decision_ast_equivalent_after_shared_validator_inlining": true,
+    "original_E01_ast_equivalent_after_shared_kernel_inlining": true
+  },
+  "software_controls": [
+    {
+      "suite": "unified-accepted",
+      "tests": 23,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "report_sha256": "fa4edf15217e76f88c21f24478133f6f5fca1ebac67303b9529fb3723f7eefc0",
+      "scope": "Local software controls with explicit model/platform transport substitutes; no real ML experiment."
+    },
+    {
+      "suite": "run-kernel-accepted",
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "report_sha256": "b35ee8926e54afd4a733f08e2e1b68b13621ee4d0fee70821f294a07bb0184e3",
+      "scope": "Local software controls with explicit model/platform transport substitutes; no real ML experiment."
+    },
+    {
+      "suite": "compatibility-final",
+      "tests": 124,
+      "skipped": 1,
+      "failures": 0,
+      "errors": 0,
+      "report_sha256": "63b677f5f542806c841fb84b0687201780c4ca8f8fff05e08325145651653792",
+      "scope": "Local software controls with explicit model/platform transport substitutes; no real ML experiment."
+    },
+    {
+      "suite": "guidance-accepted",
+      "tests": 12,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "report_sha256": "60bb78db292dbc72c2c2209524976d0921d25a8855f25faf2388bd4ed9cd9461",
+      "scope": "Local software controls with explicit model/platform transport substitutes; no real ML experiment."
+    }
+  ],
+  "prior_project_preservation": {
+    "protected_original_files": 197,
+    "all_unchanged": true,
+    "original_project_index_unchanged": true,
+    "git_index_unchanged": true,
+    "git_index_sha256": "c4a5194753e8aee35d9f8b1bd8cf4c55294096f797b7485072622fd4e495c701",
+    "old_studies_or_timers_resumed": false
+  },
+  "entry_delivery": {
+    "active": true,
+    "bundle": {
+      "path": "[private local reference retained by maintainer]",
+      "sha256": "8dbe0f31b48e18f3a997c95a84bf94d368b73b02f85503fb93917789cc97c565"
+    },
+    "source_and_installed_files_match": true
+  },
+  "real_research": {
+    "authorized": true,
+    "accepted": true,
+    "scope": "Univariate binary fixed-validation component; two-task CPU workflow smoke acceptance.",
+    "tasks": 2,
+    "epochs_each": 10,
+    "cpu": 1,
+    "memory_gib": 4,
+    "gpu": 0,
+    "total_preflight_updates": 15,
+    "macro_f1": [
+      0.8190750059908938,
+      0.849265579692922
+    ],
+    "scientific_outcome": "inconclusive",
+    "quality_goal_met": false,
+    "same_pending_plan_handoff": true,
+    "uninterrupted_autonomy_claimed": false,
+    "supervisor_completed": true
+  },
+  "formal_qualification_claimed": false,
+  "reviewed_startup_fix": {
+    "tests": 25,
+    "failures": 0,
+    "report_sha256": "272ff2e0650981ed30b2f8623d5bcf4c28de0f2f1a8f25c4182c7b4e600f6a87",
+    "defect": "Function-local random import shadowed an earlier seed call in emitted training code.",
+    "fix": "Use the already bound global import; static symbol-table regression; isolated supervisor bootstrap tested with -I -S --help."
+  },
+  "workbench": {
+    "status": "active-current-runtime",
+    "runtime_digest": "a361ff9b36a8faf966fa4704da9a9d56666554ecea383fa7907f33b4bfeaa4d9",
+    "source_chat_bound": true,
+    "codex_sidebar_open_verified": true,
+    "approximately_592px_panel_verified": true,
+    "core_steps": [
+      {
+        "step": 1,
+        "status": "verified"
+      },
+      {
+        "step": 2,
+        "status": "verified"
+      },
+      {
+        "step": 3,
+        "status": "operational-verified"
+      },
+      {
+        "step": 4,
+        "status": "verified"
+      },
+      {
+        "step": 5,
+        "status": "operational-verified"
+      },
+      {
+        "step": 6,
+        "status": "operational-verified"
+      },
+      {
+        "step": 7,
+        "status": "operational-verified"
+      },
+      {
+        "step": 8,
+        "status": "operational-verified"
+      },
+      {
+        "step": 9,
+        "status": "operational-verified"
+      },
+      {
+        "step": 10,
+        "status": "operational-verified"
+      },
+      {
+        "step": 11,
+        "status": "operational-verified"
+      },
+      {
+        "step": 12,
+        "status": "operational-verified"
+      },
+      {
+        "step": 13,
+        "status": "operational-verified"
+      }
+    ],
+    "expanded_narrow_panel": {
+      "verified": true,
+      "phase_text_width_px": 480,
+      "container_width_px": 517.2,
+      "actual_browser_viewport_approximately_px": 592,
+      "evidence_rows_wrapped": true,
+      "details_own_block": true
+    }
+  },
+  "final_verification": {
+    "path": "[private local reference retained by maintainer]",
+    "sha256": "7fdc1f8df8874ab33874731450077b301b8910caa79e43e8bf4367bd58cf6534"
+  },
+  "final_software_reports": [
+    {
+      "suite": "reviewed-startup",
+      "tests": 25,
+      "skipped": 0,
+      "report": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "272ff2e0650981ed30b2f8623d5bcf4c28de0f2f1a8f25c4182c7b4e600f6a87"
+      }
+    },
+    {
+      "suite": "compatibility-final",
+      "tests": 124,
+      "skipped": 1,
+      "report": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "63b677f5f542806c841fb84b0687201780c4ca8f8fff05e08325145651653792"
+      }
+    },
+    {
+      "suite": "retained-submit-regression",
+      "tests": 20,
+      "skipped": 0,
+      "report": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "c6ae8f77d6bc6acd2728d580cc17869a33058c6846bb372d2c8abbf987310275"
+      }
+    },
+    {
+      "suite": "retained-owner-final",
+      "tests": 8,
+      "skipped": 0,
+      "report": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "edf6b5a5a1b097510fef096c7ebca4a32a9e960863324105c160f5ca17f15590"
+      }
+    },
+    {
+      "suite": "final-flow",
+      "tests": 26,
+      "skipped": 0,
+      "report": {
+        "path": "[private local reference retained by maintainer]",
+        "sha256": "033a47417e46630ee2505f4814b46b66c3511c7b2de012f540702c9d0798e855"
+      }
+    }
+  ],
+  "publication": {
+    "form": "portable summary",
+    "original_record_sha256": "77f57eb466b80114a78b11e5fbe1958c364d308dd346f7d5852cf64bfe6dbc53",
+    "raw_records": "Retained privately; digests identify unchanged originals."
+  }
+}

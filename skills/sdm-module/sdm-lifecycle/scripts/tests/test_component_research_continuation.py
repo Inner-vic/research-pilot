@@ -132,7 +132,7 @@ def test_original_replan_routes_component_raw_evidence_to_original_ab_gate(tmp_p
     assert not request['execution_authority']
 
 
-@pytest.mark.parametrize('ending',['diagnose','goal-met'])
+@pytest.mark.parametrize('ending',['diagnose','refine-current','revise-plan','continue-plan','stop-research','goal-met'])
 def test_failed_component_can_enter_original_diagnosis_without_inventing_a_round(tmp_path,ending):
     policy=required(tmp_path);failure=tmp_path/'failure.json'
     atomic_json(failure,{'schema':'sdm-component-diagnosis-ready/v1','valid_training_round':False,
@@ -143,6 +143,7 @@ def test_failed_component_can_enter_original_diagnosis_without_inventing_a_round
     output=tmp_path/'replan'
     def approved(cfg,root,query):
         revision=direction(ending)
+        if ending=='refine-current':revision['change_level']='tuning'
         path=root/'accepted.json';atomic_json(path,{'approved':True,'proposal':{'research_revision':revision,
             'comparison':'retain original evaluation','outcome_actions':'no fit counts until verified'},'response':{'verdict':'approve'}})
         return {'status':'proposal-approved','receipt':str(path)}
@@ -151,10 +152,11 @@ def test_failed_component_can_enter_original_diagnosis_without_inventing_a_round
             with pytest.raises(ValueError,match='goal_not_reached'):research_replan.advance(config,output)
         else:
             value=research_replan.advance(config,output)
-            assert value['status']=='research-plan-approved-awaiting-diagnosis'
+            assert value['status']==research_replan.DIRECTION_STATUSES[ending]
             assert value['goal_assessment']['valid_training_rounds']==0
             assert value['goal_assessment']['baseline_primary_metric'] is None
             assert not value['research_complete']
+            assert (output/'implementation-request.json').exists()==(ending in research_replan.IMPLEMENTATION_ACTIONS)
 
 
 def implementation_fixture(root):

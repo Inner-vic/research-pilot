@@ -5,17 +5,46 @@ description: 'Use BMAD ML / SDM to start or continue ML research, onboard users,
 
 # Specification-Driven ML Lifecycle
 
-## Overview
+Evolve the workflow from original SDM, explaining actual activities step by
+step: inputs, execution, outputs, advancement boundaries and failure returns.
+The current 13-step lifecycle is the project core for planning, implementation,
+acceptance work, recovery and UI. Evolve its directory through justified,
+versioned changes with synchronized implementation, compatibility and evidence;
+no step/phase count is fixed forever. Reuse valid evidence or state actual
+inapplicability within a task, preserving applicable duties and boundaries.
+Preserve applicable evidence and authority. Original SDM IDs are provenance,
+not the current activity numbers. Read [the current lifecycle](references/sdm-core.md).
+Integrate execution, collaboration, recovery and UI in this flow; work packages
+and runtime states are implementation views.
+Read [the 13-to-21 evolution and gap analysis](references/sdm21-to-13-evolution.zh-CN.md) when explaining
+provenance, merge choices, actual acceptance or remaining work. Core workflow
+definition is not proof that every normative gate is already integrated.
 
-Coordinate the native BMAD ML / SDM module across project training, evaluation,
-reproduction and iterative experiments using configured execution backends.
-Local CPU examples are verification tools, not a CPU-only product mode. LPAI
-integration has partial real evidence and remains subject to route-specific
-acceptance; do not infer platform qualification from the generic capability list.
+Prefer original contracts, validators, evidence, authority and transition logic.
+[Shared governance](references/sdm-governance.md) binds the 13-step component flow to original
+S01/S02, applicable G contracts, B01, the projected original experiment kernel, S10 review
+and the original scientific decision evaluator. New qualified studies use initialization
+v3/workload v2; execution, recovery and Web consume core-authored evidence. Preserve
+legacy frozen policies; never downgrade a new study to bypass missing evidence.
+These integrated checks do not issue signed formal transitions or qualify every
+original artifact and workload. For operational first/successor writes use the same
+[submission gate](references/submission-gate.md); retain Manager/Guard and
+unknown-request reconciliation. Never migrate or relabel old frozen studies.
 
-Coordinate the user's project through the public entrypoint. Preserve existing
-project state, accepted evidence and frozen runs. Load only the references needed
-for the current route; internal checks are not a mandatory call checklist.
+Name collaboration **生成—质询审议（Generator–Critic）**; roles are 方案生成者 and
+独立质询者. Preserve legacy a/b keys and versioned historical prompts. Distinguish
+record validation, review acceptance, execution authorization, platform success,
+valid results, metric target and D05 scientific decision. A runtime stage only
+indicates associated SDM duties; it cannot mark other steps accepted.
+
+Local examples and offline controls do not qualify all platforms/task types.
+Load only the applicable references and reuse known project inputs.
+
+For current project/platform/evaluator separation read [project integration](references/project-integration.md).
+Project-owned entrypoints and metrics use the same 13-step controller and original
+SDM acceptance/Manager/Guard; do not create a second loop or call the binary
+example a universal model ABI. Discover project facts and local capabilities
+before requesting missing information.
 
 ## On Activation
 
@@ -32,11 +61,15 @@ an onboarding interview. Users need not fill internal JSON or walk all nodes.
    [the fixed Native proof protocol](references/native-fixed-proof.md). Validate
    its fixed request, guard, nonce and exact module-owned command before execution;
    do not enter ordinary project or qualification routes.
-2. Training, evaluation, baseline reproduction and result collection use
-   `scripts/run_project_pipeline.py --project PROJECT --output RUN` with the
-   applicable mode below. Resolve the installed Skill root and project configuration;
+2. New research uses `research_initialize.py` and the frozen
+   `research_launch.py --config CONFIG --project-root CURRENT_PROJECT`, selecting the project workload and execution
+   adapter from actual current-project facts. The project integration guide
+   covers generic project entrypoints; the binary adapter remains available.
+   Existing configured legacy work can use
+   `scripts/run_project_pipeline.py --project PROJECT --output RUN` with its
+   bound mode and original records. Resolve the installed Skill root and project configuration;
    start from the existing project workspace and inputs;
-   do not force sequential completion of historical 21-step qualification.
+   preserve applicable SDM duties without forcing all steps in every iteration.
 3. Explicit formal qualification, lifecycle create/advance/validate/migrate and
    governed S12/S13 handoffs use [the governed protocol](references/governed-lifecycle.md).
    Its exact JSON completion contract applies only to that route. Validation is
@@ -88,10 +121,15 @@ submits the first task as well as successors. Audit a real continuous chain with
 `scripts/research_chain.py --config CONFIG`. Reproduction evidence, incoming
 tasks and adaptive successor evidence are reported separately; none imposes a
 trial-count stopping rule. IterLab is not a prerequisite for this core route.
-For a new managed host, launch the frozen `scripts/research_supervisor.py
---config CONFIG`. It owns a single resident and recovers only proved durable
-boundaries under the same config/Guard/Context. Inspect recovery with
-`--inspect-recovery`; unknown effects never become retry permission. Public
+For a fresh managed host, use its frozen `scripts/research_launch.py
+--config CONFIG --project-root CURRENT_PROJECT`. It starts the original supervisor,
+registers this study and verifies the original live research-worker identity.
+Require `automatic_iteration_active=true` before handing off as automatic research.
+Use this entry with `--inspect` for a read-only check. Existing stopped or unknown
+launches use the original restore/reconciliation path, never a new launch.
+The original `research_supervisor.py --config CONFIG --inspect-recovery` inspects
+recovery boundaries under the same config/Guard/Context; unknown effects never
+become retry permission. Public
 service `--control overview` projects read-only frontend state. Workload v2
 declares optional training-loss hooks and allowed seeds while retaining protected
 validation. See [integrated host and workload operation](references/component-pipeline.md#integrated-host-and-workload-operation).
@@ -211,7 +249,7 @@ call, restart computation or silently change an active runtime.
 The result review must assess intervention scale through
 `next_step.research_direction`; closing or exhausting a Study is not project
 success. The original worker consumes/archives the result, then automatically
-uses the existing A/B gate for a required plan revision. On
+uses the existing Generator–Critic gate for a required plan revision. On
 `agent_continuation_required:true`, the execution Agent continues implementation
 or diagnosis, freezes and reviews the new execution profile, dispatches through
 the original resource Guard and repeats result assessment. A plan document is an
@@ -247,9 +285,9 @@ execution reviews. The independent research-dashboard remains a read-only compan
 | Repeat experiments from actual results | Development-space Study in the same project, or the configured generic Loop in [project-loop.md](references/project-loop.md). See [execution-modes.md](references/execution-modes.md) and [long-loop-dependencies.md](references/long-loop-dependencies.md). |
 | Diagnose or reconcile cleanup without retraining | [cleanup-reconciliation.md](references/cleanup-reconciliation.md), [experiment-identity.md](references/experiment-identity.md), [session-history-recovery.md](references/session-history-recovery.md). |
 | Discover resources and construct the user's proposal | [resource-capability.md](references/resource-capability.md), [resource-investigation.md](references/resource-investigation.md). Investigation does not acquire resources. |
-| Review a queued/expensive proposal or a result | [proposal-deliberation.md](references/proposal-deliberation.md). Use distinct models A/B with shared original evidence, bounded investigation and explicit advice applicability. Pro is optional; read its dialogue/contracts only when that backend is selected. |
+| Review a queued/expensive proposal or a result | [proposal-deliberation.md](references/proposal-deliberation.md). Use distinct models Generator–Critic with shared original evidence, bounded investigation and explicit advice applicability. Pro is optional; read its dialogue/contracts only when that backend is selected. |
 | Prepare normal RoadModel execution | [roadmodel-normal-driver.md](references/roadmodel-normal-driver.md). Use the public export/prepare/bind modes; component auto-start may run only the preflight wait gate until node15 releases training. |
-| Run a small real RoadModel GPU Study on an existing development space | `--prepare-roadmodel-devspace` compiles the installed profile, then `--devspace-execution` routes each round through the existing five-phase DAG. See [roadmodel-devspace.md](references/roadmodel-devspace.md). Do not create per-case workload/controller scripts. |
+| Run a small real RoadModel GPU Study on an existing development space | `--prepare-roadmodel-devspace` compiles the installed profile, then `--devspace-execution` routes each round through the existing generic project DAG. See [roadmodel-devspace.md](references/roadmodel-devspace.md). Do not create per-case workload/controller scripts. |
 | Compare candidates or promote short-run results | [experiment-comparison.md](references/experiment-comparison.md), [staged-training.md](references/staged-training.md), [research-strategy.md](references/research-strategy.md). |
 | Workspace ownership, version isolation or driver packaging | [project-ownership.md](references/project-ownership.md), [worktree-isolation.md](references/worktree-isolation.md), [project-driver-packages.md](references/project-driver-packages.md). |
 | Inspect actual overhead in a retained Study | `--study-accounting`; [devspace-execution.md](references/devspace-execution.md). Unknown human effort and missing events stay unknown; speedup requires a matched baseline. |
@@ -284,7 +322,7 @@ Only deploy resident collection and continuation for the exact user-authorized b
 Installing this Skill does not start daemons or restore old monitors. See
 [task-event-collector.md](references/task-event-collector.md).
 
-New projects may select `research_worker` for independent observation and A/B
+New projects may select `research_worker` for independent observation and Generator–Critic
 result decisions through `--devspace-execution --research-worker`. It uses the
 shared executor and actual read-only Codex calls; chat delivery/read receipts do
 not gate continuation. Public execution validates the bound approved response,
@@ -294,7 +332,7 @@ durable approval, exact model-call receipts and shared-executor acceptance allow
 completed work to be reconciled without repeating model calls or computation.
 Unknown outcomes remain held. Keep older attempts frozen; select a new version
 only in a new attempt. New v5 attempts may explicitly select the ModelRunner
-result-review pilot with purpose schemas and the same bound raw evidence for A/B.
+result-review pilot with purpose schemas and the same bound raw evidence for Generator–Critic.
 Do not configure chat wakeup alongside it. Read
 [the continuation contract](references/task-event-consumer.md) for setup and
 verified limits. Missing proposal context, a selected Pro transport, uncertain
@@ -332,7 +370,7 @@ condition-driven dialogue, without a fixed minimum or maximum turn count. Read
 evidence/proposal bindings and restart contract. A useful negative result can
 justify a task; repeated unsupported exploration cannot.
 
-Use distinct models A/B to challenge an expensive proposal before submission,
+Use distinct models Generator–Critic to challenge an expensive proposal before submission,
 revise decisive weaknesses and reassess the exact final version. Record actual
 model IDs and call sources; role labels or declared metadata alone do not prove
 that independent model calls happened. Pro is one optional backend, not a
@@ -357,8 +395,10 @@ what remains waiting, and an actionable next step; never claim an unrun node pas
 
 ## References
 
-- [five-phase-orchestration.md](references/five-phase-orchestration.md) owns the
-  current11-work-package responsibilities and detailed phase/dependency diagrams.
+- [sdm-core.md](references/sdm-core.md) describes the current SDM-derived activity
+  lifecycle and original provenance, actual integration and scientific/operational acceptance boundaries.
+- [five-phase-orchestration.md](references/five-phase-orchestration.md) documents
+  the generic driver work-package aggregation and dependencies, not a lifecycle.
 - [governed-lifecycle.md](references/governed-lifecycle.md) owns explicit21-step
   qualification; it does not replace ordinary project routing.
 - [execution-modes.md](references/execution-modes.md) covers conditional research,

@@ -45,37 +45,34 @@ independently deployed services. They confer no platform execution or signing
 authority. Resolve installed siblings through host configuration rather than
 importing a sibling by a relative source path.
 
-## Two execution routes
+## One SDM lifecycle, multiple execution interfaces
 
-### Project execution and iteration
+The current 13-step lifecycle is the ResearchPilot project core and evolves from SDM. Activities
+and groups may be added, removed, split, merged or reordered when justified by
+actual inputs, outputs and dependencies. Read [the lifecycle](sdm-lifecycle/references/sdm-core.md).
+Original 21-step engine IDs remain stable provenance, not a fixed current directory.
+See [the evolution analysis](sdm-lifecycle/references/sdm21-to-13-evolution.zh-CN.md) for each
+merge, actual code/gate scope, observed effects and remaining integration gaps.
 
-Ordinary tasks use `sdm-lifecycle/scripts/run_project_pipeline.py` and project-owned
-configuration. RoadModel generators default to `legacy`. Explicit `exploration`
-revision2 repairs the withdrawn rc3 design: retain original operational drivers
-and conditional policies; group only four pairs of record-only checks, preserving
-original validators, producers and durable acceptance. Local differential tests
-do not establish real-platform qualification. Preserve duties and
-conditional checks while reducing repeated material/display work. See
-the [34-node audit](../../docs/delivery/NODE-CONSOLIDATION-AUDIT-20261026.md) for each decision.
-Formal 21-step qualification remains a separate, explicitly selected route.
+`research_initialize.py` and ComponentPipeline supply current continuous-study
+execution; `run_project_pipeline.py` dispatches project-specific modes and drivers;
+`specctl.py` retains the full governed ledger/authority/anchor protocol. These are
+execution interfaces under the same scientific framework. They do not yet share
+all acceptance transitions: new component studies consume original S01/S02 checks,
+while integration of original SDM steps 3–21 remains pending. Full ledger execution requires
+the original supported host and authority/trust configuration.
 
-Read lifecycle's `references/five-phase-orchestration.md` for detailed phase1→5
-diagrams, five responsibility tables and R/W/V numbering. Its stages are:
-问题定义与需求梳理 → 方案设计与实验规划 → 实验开发与训练验证 →
-结果评估与评审 → 结论输出与迭代决策.
+Generator–Critic deliberation supports problem/protocol, code and evidence work.
+Manager/Guard implements authorized effects and original-request reconciliation;
+Context, inbox, supervision and recovery preserve execution continuity. The UI
+projects the same facts. D05 remains distinct from automation completion or a
+metric target. Frozen semantic changes and successors retain original rules.
 
-### Explicit governed qualification
-
-`specctl.py` retains the original21-step qualification protocol, immutable
-artifacts, signed S12/S13 handoffs, pinned authority and replay. It is selected
-when governed qualification is requested, not a prerequisite to every parameter
-experiment. The ordinary workflow does not rewrite a pinned21-step ledger.
-Their numeric IDs are different namespaces; ordinary nodes22–25 do not restore
-the retired release/deployment activities of an older governed engine.
-
-D05 support/rejection/inconclusive/invalid outcomes remain separate from automation
-completion. Successor research and authorized archive/close preserve original
-protocols. Deployment constraints remain research inputs, not a deployment service.
+The eleven project work packages and legacy graph IDs are delivery/driver views,
+not a replacement lifecycle. RoadModel keeps its default legacy graph; explicit
+exploration revision2 merges four record-only pairs and retains original drivers.
+Their numeric IDs must not be interpreted as SDM step IDs. Details remain in
+[the implementation view](sdm-lifecycle/references/five-phase-orchestration.md).
 
 ## Platform boundaries
 

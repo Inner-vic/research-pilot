@@ -120,6 +120,12 @@ def completed(folder, expected):
             from model_context import verify
             if saved['binding']!=expected:raise ValueError('model_context_request_binding_changed')
             verify(saved['config'],saved['request'],folder,expected,value)
+        if 'planner_context' in saved['request']:
+            from planner_session import verify_completion
+            verify_completion(saved['config'],saved['request'],Path(folder),expected,value)
+        if 'working_session' in saved['request']:
+            from working_sessions import verify
+            verify(saved['config'],saved['request'],Path(folder),expected,value)
     return value
 
 
@@ -128,6 +134,12 @@ class ModelRunner:
         self.config = configuration(config)
 
     def run(self, value, folder, validator, *, launcher=None):
+        from working_sessions import using
+        request(value)
+        with using(self.config, value, folder):
+            return self._run(value, folder, validator, launcher=launcher)
+
+    def _run(self, value, folder, validator, *, launcher=None):
         """Return a known completed reply only after the caller's purpose validator.
 
         output_schema constrains transport shape; the domain validator still

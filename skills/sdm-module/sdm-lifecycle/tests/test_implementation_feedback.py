@@ -102,7 +102,11 @@ def test_unknown_or_changed_protection_never_becomes_a_correction_prompt(tmp_pat
         value=read_json(workspace/'implementation.json');value['files'][1]['sha256']=ref(workspace/'parameters.json')['sha256']
         atomic_json(workspace/'implementation.json',value)
     if defect=='symlink':
-        (workspace/'model.py').unlink();(workspace/'model.py').symlink_to(tmp_path/'evaluator.py')
+        (workspace/'model.py').unlink()
+        try:(workspace/'model.py').symlink_to(tmp_path/'evaluator.py')
+        except OSError as error:
+            if getattr(error,'winerror',None)==1314:pytest.skip('Host lacks file-symlink creation privilege; no rejection claim')
+            raise
     with pytest.raises(ValueError):implementation.freeze(cfg,root)
     assert not (root/'validation-result.json').exists()
 

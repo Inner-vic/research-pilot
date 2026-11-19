@@ -21,7 +21,7 @@ from component_payload import ref,harness,task_request
 from component_pipeline import ComponentPipeline
 from research_event_service import Inbox,sdk_execute,digest
 from research_context import Context
-from review_storage import atomic_json,read_json
+from review_storage import atomic_json,read_json,native_path
 from task_pipeline import digest as record_digest
 
 
@@ -364,17 +364,21 @@ def test_interrupted_submission_reconciles_same_guard_without_second_apply(tmp_p
 
 
 @pytest.mark.parametrize('newline',[b'\n',b'\r\n'])
-def test_frozen_payload_preserves_exact_lf_or_crlf_reviewed_bytes(tmp_path,newline):
+@pytest.mark.parametrize('deep',[False,True])
+def test_frozen_payload_preserves_exact_lf_or_crlf_reviewed_bytes(tmp_path,newline,deep):
     import base64
     import gzip
     import re
-    folder=tmp_path/'frozen';folder.mkdir()
+    folder=tmp_path/'frozen'
+    if deep:
+        while len(str(folder))<300:folder=folder/('nested-profile-'+'x'*40)
+    native_path(folder).mkdir(parents=True)
     trainer=tmp_path/'trainer.py';trainer.write_bytes(b'# protected'+newline)
     original={'model.py':b'def build_model(config):'+newline+b'    raise AssertionError("control")'+newline}
     params={'training':{'epochs':20,'lr':.001,'batch_size':64,'seed':42,'threads':1,'round':2,
         'expected_minutes':10,'model':'control'}}
     original['parameters.json']=json.dumps(params,indent=2).encode().replace(b'\n',newline)
-    for name,raw in original.items():(folder/name).write_bytes(raw)
+    for name,raw in original.items():native_path(folder/name).write_bytes(raw)
     profile={'root':str(folder),'files':{name:hashlib.sha256(raw).hexdigest() for name,raw in original.items()}}
     contract=tmp_path/'contract.json';atomic_json(contract,{'protected_inputs':[ref(trainer)],
         'comparison_identity':{'protocol':'control','source_sha256':'a'*64,'split_sha256':'b'*64}})
@@ -386,3 +390,41 @@ def test_frozen_payload_preserves_exact_lf_or_crlf_reviewed_bytes(tmp_path,newli
     assert files['trainer.py'].encode()==trainer.read_bytes()
     assert request['data']['lpai_task']['roles'][0]['resource']=={'Cpu':1}
     assert expected['code_sha256']==manifest['code_sha256']
+
+def test_resident_run_loop_dispatches_successors_without_frontend_step_calls(tmp_path):
+    """The actual resident loop owns routing; effects remain explicit substitutes."""
+    inbox,first=fixture(tmp_path)
+    rows=[first,result(tmp_path,2,[0,0,1,0]),result(tmp_path,3,[0,0,1,1])]
+    native=[];observed=[];ticks=[]
+    FakeManager.phases={};FakeManager.submitted=[]
+    def cycle(source):
+        observed.append(source.binding)
+        source.deliver({'state':{'result_ready':rows[len(observed)-1]['result']}})
+        return 'delivered',None
+    pipeline=ComponentPipeline(inbox);errors=[];original_step=pipeline.step
+    def observed_step(state):
+        try:return original_step(state)
+        except Exception as error:
+            errors.append(__import__('traceback').format_exc());raise
+    def background_executor(timeout=None):
+        assert not errors,errors
+        ticks.append(timeout)
+        assert len(ticks)<80,'resident failed to route the registered next stage'
+        state=pipeline.load()
+        job=state['attempts'][-1].get('job')
+        if job:finish_job(inbox,job,native)
+    with patch('component_event_source.ComponentSource.cycle',new=cycle),\
+         patch('proposal_review.gate',side_effect=approve),\
+         patch('event_coordinator.run',side_effect=coordinator),\
+         patch('lpai_manager.Manager',FakeManager),\
+         patch('research_recovery.checkpoint',return_value={'scope':'control-only checkpoint substitute'}),\
+         patch('research_chain.audit',return_value={'scope':'control-only effects; no scientific acceptance'}),\
+         patch.object(pipeline,'step',side_effect=observed_step),\
+         patch.object(inbox.condition,'wait',side_effect=background_executor):
+        pipeline.run()
+    final=pipeline.load()
+    assert final['status']=='research-goal-met' and len(final['rounds'])==3
+    assert len(FakeManager.submitted)==len(set(FakeManager.submitted))==2
+    assert native==['same-thread','same-thread'] and len(observed)==3
+    assert final['attempts'][0]['result_handoff']['model_requested'] is True
+    assert Context(inbox.cfg).load()['pending_job'] is None

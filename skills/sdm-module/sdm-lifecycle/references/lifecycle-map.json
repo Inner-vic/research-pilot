@@ -1,0 +1,340 @@
+{
+  "schema": "sdm-lifecycle-narrative/v2",
+  "numbering": "researchpilot-workflow",
+  "basis": "Evolved from original SDM lifecycle; current activities, not fixed original numbering or acceptance",
+  "source_step_count": 21,
+  "phases": [
+    {
+      "id": 1,
+      "title": "问题、契约与比较基础",
+      "short_title": "问题与比较基础",
+      "steps": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": 2,
+      "title": "实验设计与准备",
+      "short_title": "实验准备",
+      "steps": [
+        4,
+        5
+      ]
+    },
+    {
+      "id": 3,
+      "title": "工程实现与验收",
+      "short_title": "实现与验收",
+      "steps": [
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "id": 4,
+      "title": "运行与评价",
+      "short_title": "运行与评价",
+      "steps": [
+        9,
+        10,
+        11
+      ]
+    },
+    {
+      "id": 5,
+      "title": "证据、结论与后继",
+      "short_title": "证据与后继",
+      "steps": [
+        12,
+        13
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "phase": 1,
+      "title": "明确目标与可证伪问题",
+      "sdm_steps": [
+        1,
+        2
+      ],
+      "inputs": "用户目标、约束、非目标、现有结果和问题来源",
+      "outputs": "需求 S01 与研究简报 S02；目标、假设、机制、反证和不确定性",
+      "execution": "项目发现和渐进引导准备实际输入；research_intent 构造原 S01/S02，初始化、方案/代码审议、回放和共同提交调用同一原校验。",
+      "advance_boundary": "原 S01/S02 schema、步骤语义和原行 gate 均通过才接受该记录；transition_accepted:false，仍不产生训练授权或正式转移。",
+      "failure_route": "问题不清则澄清，假设/反证不足则修订；不以模型同意覆盖缺项。",
+      "code": [
+        "research_initialize.py",
+        "research_intent.py",
+        "proposal_model_runner.py"
+      ],
+      "evolution": "合并原问题提出和研究问题定义：它们共用一份需求背景，在同一研究意图准备活动中交付。",
+      "acceptance_scope": "原记录检查已接入；完整生命周期转移不由本步骤投影产生。"
+    },
+    {
+      "step": 2,
+      "phase": 1,
+      "title": "核对数据、评价契约与执行范围",
+      "sdm_steps": [
+        3
+      ],
+      "inputs": "研究问题、系统/数据事实、划分、评价器、平台能力和用户授权",
+      "outputs": "适用契约、数据与评价身份、资源/权限范围及未闭合项",
+      "execution": "复用原 G 契约规则；当前组件固定数据来源、划分、比较身份和评价保护。官方 Skill/SDK 的能力与真实用户范围分别核验。",
+      "advance_boundary": "沿原契约所有者核对适用事实；配置完整不等于数据事实、科学可比性或用户授权已成立。",
+      "failure_route": "缺契约/数据事实先补齐；范围变化重新核对，不能用“当前未实现”代替“不适用”。",
+      "code": [
+        "contracts.py",
+        "component_pipeline.py",
+        "required_skills.py",
+        "component_submission.py"
+      ],
+      "evolution": "保留原契约步骤，将平台能力和执行范围的现有实现纳入同一准备活动；权限仍贯穿后续。",
+      "acceptance_scope": "适用G01/G02/G03/G07/G08/G09/G10/G13经原schema、语义和引用闭包核验；其他契约按真实适用范围供证。"
+    },
+    {
+      "step": 3,
+      "phase": 1,
+      "title": "明确比较起点与基线依据",
+      "sdm_steps": [
+        4,
+        5
+      ],
+      "inputs": "研究问题、已有代码/权重/结果（可暂缺）、数据与评价约定、历史候选和复现材料",
+      "outputs": "可追溯的探索起点与比较约定；已有结果的实际比较对象；阶段基线的证据状态与待验证项",
+      "execution": "先固定起始配方、数据和评价身份；没有历史结果时允许经步骤4–11取得首个有效探索结果。每个后继由原方案审议选择有效候选作为实际比较对象，实施前核对原接受决定、结果和配方一致。探索后按原基线规则处理阶段基线选择、复现、锁定或替换。",
+      "advance_boundary": "原B01承担比较定义；首轮分数、指标最优或候选选用不自动完成B02锁定、B03复现。探索不要求预先拥有稳定高分基线；适用的原证据和执行授权仍须满足。",
+      "failure_route": "结果无效先诊断，不计作候选；不可比则补证或版本化。比较对象与已接受方案不一致时阻断实施；不能自动退回首轮或最新结果。",
+      "code": [
+        "component_candidates.py",
+        "component_pipeline.py",
+        "component_research.py",
+        "research_acceptance.py"
+      ],
+      "evolution": "承接原SDM 4/5的比较定义与基线管理职责，拆清探索起点、实际比较对象和阶段基线；复现与锁定按证据进展完成，可由步骤13回到本步，不要求第一次训练即确立稳定基线。",
+      "acceptance_scope": "原B01与模型/数据/评价绑定继续核验；后继沿原接受决定核对比较候选及原配方。完整B02/B03正式资格不由普通结果或选择标签推定。"
+    },
+    {
+      "step": 4,
+      "phase": 2,
+      "title": "设计实验与运行计划",
+      "sdm_steps": [
+        6
+      ],
+      "inputs": "研究问题、适用契约、探索起点或已核验比较对象、历史证据与预算",
+      "outputs": "干预、对照、预期观察、判断规则、搜索/确认运行及成本计划",
+      "execution": "生成—质询审议在共同证据上形成可证伪方案；指明实际基线、竞争解释、结果分支和变更影响。",
+      "advance_boundary": "调用既有方案语义、异议闭合与确切回执校验；原 E01/E03/E04 和变更政策继续作为规范依据。审议接受不签发权限。",
+      "failure_route": "拒绝或缺证据时修订/补证；问题、契约或基线不成立时回到步骤 1–3。",
+      "code": [
+        "research_replan.py",
+        "proposal_review.py",
+        "proposal_model_runner.py",
+        "contracts.py"
+      ],
+      "evolution": "保留原实验设计边界；将生成—质询作为其协作实现，不单列新的科学阶段。",
+      "acceptance_scope": "每Run固定本轮已接受假设和干预，复用原E01科学内核与第6步行门禁；完整E01锚定及E03/E04专项资格另行供证。"
+    },
+    {
+      "step": 5,
+      "phase": 2,
+      "title": "检查就绪并固定实验依据",
+      "sdm_steps": [
+        7,
+        8
+      ],
+      "inputs": "待执行方案、数据/方法就绪事实、预算及需固定的版本",
+      "outputs": "就绪结果、固定协议依据及冻结运行时引用；各自接受范围单列",
+      "execution": "检查数据、方法和平台条件，固定确切方案/代码/指引/规范摘要。原 26 份规范依赖进入新冻结。科学协议接受、运行时冻结和实施后预检分别记录。 初始化固定执行代码可先于模型审议；这属于宿主启动准备，不表示科学协议已接受。本步的科学就绪与协议接受仍按各自实际证据判断。",
+      "advance_boundary": "沿原 E02/S04 及协议冻结规则判断；当前运行时能冻结不等于原 E01.frozen 已接受或已外部锚定。",
+      "failure_route": "缺就绪事实返回对应所有者；固定后的语义变更按原变更/后继规则处理，不改旧冻结。",
+      "code": [
+        "research_runtime.py",
+        "research_intent.py",
+        "component_pipeline.py",
+        "specctl.py"
+      ],
+      "evolution": "合并就绪和冻结为一次执行准备交付，保留“先就绪、再固定”的内部依赖；不将两种接受混成一个布尔值。",
+      "acceptance_scope": "方案、代码、原规范与每Run科学依据均固定到真实字节；原E02/S04正式授权与平台签名不由冻结动作生成。"
+    },
+    {
+      "step": 6,
+      "phase": 3,
+      "title": "准备上下文并实施变更",
+      "sdm_steps": [
+        9,
+        10
+      ],
+      "inputs": "确切方案、受保护接口、允许文件、已有 Context 和验收要求",
+      "outputs": "实施任务/上下文、实际代码差异、版本与变更交付",
+      "execution": "从方案准备受限实施合同，复用原 Context，由官方 Codex SDK 原生实施线程产出实际改动并交付；不以审议文字冒充代码。",
+      "advance_boundary": "保持文件/能力边界及确切方案绑定；原 S05/S06/E05 的任务、上下文和变更职责不因合并消失。",
+      "failure_route": "上下文不足先补齐，实施失败返回对应任务；能力缺口由原反馈路由处理。未改代码时复用仍有效的实施证据。",
+      "code": [
+        "research_implementation.py",
+        "research_context.py",
+        "implementation_validation.py"
+      ],
+      "evolution": "合并任务拆分与编码：它们在同一实施作业中衔接，准备和实际完成仍分别可追溯。",
+      "acceptance_scope": "原Context、确切方案、受限原生实施和真实完成回执已接；完整S05/S06/E05正式工件资格不冒称完成。"
+    },
+    {
+      "step": 7,
+      "phase": 3,
+      "title": "审查代码并完成工程验收",
+      "sdm_steps": [
+        11,
+        12
+      ],
+      "inputs": "实际差异、确切科学方案、接口契约、历史异议和验收证据",
+      "outputs": "代码审议回执、确定性工程验收结果和待处理问题",
+      "execution": "独立质询核对方案忠实性和变更影响，必要的确定性检查提供实际行为证据；工程 CI 与代码审议分别记录。",
+      "advance_boundary": "共同提交会回放确切代码审议；原 S07/S08 的验收职责仍需真实供证，模型 approve 或 compile 不能代替完整验收。",
+      "failure_route": "重大异议未闭合返回步骤 6；缺检查先补证，不用审议接受覆盖失败。",
+      "code": [
+        "proposal_model_runner.py",
+        "component_submission.py",
+        "implementation_validation.py",
+        "scm_ci.py"
+      ],
+      "evolution": "合并工程交付的审查和验收，保留审议判断与确定性事实两个证据来源。",
+      "acceptance_scope": "确切独立代码审议、实际载荷解码/接口/静态检查共用提交边界；功能通过仍需第8步真实远端证据。"
+    },
+    {
+      "step": 8,
+      "phase": 3,
+      "title": "执行实施后预检",
+      "sdm_steps": [
+        13
+      ],
+      "inputs": "实际代码/配置、固定方案、执行环境及适用功能/恢复要求",
+      "outputs": "适用的张量、有限值、微型运行、恢复与平台准备证据",
+      "execution": "先完成提交前静态/平台检查；在授权远端任务内先运行功能预检，恢复初态后才进入正式拟合。真实证明回收前不标记第8步通过。",
+      "advance_boundary": "远端张量/有限值/微型拟合/检查点接续与初态恢复须有实际证明；平台任务分配不代表预检通过，预检失败不得进入正式拟合。",
+      "failure_route": "预检失败先修复；影响协议则回到步骤4/5，新代码重新核验并沿原总预算处理，不直接进入正式拟合。",
+      "code": [
+        "research_implementation.py",
+        "component_payload.py",
+        "lpai_manager.py",
+        "component_submission.py"
+      ],
+      "evolution": "保留独立的实施后边界，因为它依赖实际实现和环境，不能在方案讨论时预先通过。",
+      "acceptance_scope": "适用张量、有限值、梯度、微型拟合和同环境检查点接续进入真实结果原件；缺证据保持待补，正式S09签名未伪造。"
+    },
+    {
+      "step": 9,
+      "phase": 4,
+      "title": "登记运行并受控提交",
+      "sdm_steps": [
+        14
+      ],
+      "inputs": "固定运行计划、当前实现、提交前检查、固化的远端功能预检、确切审议回执和真实授权",
+      "outputs": "Run/Attempt 与确切提交身份；平台读回或待对账状态",
+      "execution": "首轮和后继进入同一 component_submission 边界，核对意图、审议、载荷和授权，再由 Manager/Guard 处理平台效果。",
+      "advance_boundary": "适用原科学内核、真实载荷、确切审议、用户范围和非续期预算均须闭合；Run/Attempt先登记，Guard非new时只沿原身份对账。",
+      "failure_route": "缺前置事实阻断；结果未知禁止换 key/通道重提，也不为未知旧请求补一轮新审议后重发。",
+      "code": [
+        "component_submission.py",
+        "lpai_manager.py",
+        "submission_guard.py"
+      ],
+      "evolution": "保留提交身份边界，与长时间观察分开，避免把提交请求、平台 UID 和训练完成混为一谈。",
+      "acceptance_scope": "Run/Attempt在Manager.apply之前持久登记；首轮和后继共用原审议/授权/预算及Guard，每计划独立回执，失败/未知不返还预算。"
+    },
+    {
+      "step": 10,
+      "phase": 4,
+      "title": "观察训练并回收执行结果",
+      "sdm_steps": [
+        15
+      ],
+      "inputs": "同一平台 UID、原请求/Attempt、预算和执行计划",
+      "outputs": "平台终态、原始产物、失败/取消/未知证据及唯一结果交接",
+      "execution": "官方 SDK 与原事件源观察同一任务，持久退避，终态后回收产物并登记分析作业；监督、收件、在途排空和恢复在此保障连续性。",
+      "advance_boundary": "精确身份、原授权和预算保持；搜索、训练、复现与独立确认分别核验。宿主存活不证明研究进展。",
+      "failure_route": "暂时读取失败退避；未知先对账；已知准备失败进入修复，不赋低分或伪装有效训练结果。用户暂停阻止新派发。",
+      "code": [
+        "component_event_source.py",
+        "lpai_manager.py",
+        "research_supervisor.py",
+        "component_pipeline.py"
+      ],
+      "evolution": "展开原训练编排的真实等待、回收和恢复能力；这些是职责内部扩展，不另设科学通过标准。",
+      "acceptance_scope": "原Manager观察与回收、完成回执恢复和已知任务等待恢复保留；受控工程接续不作为无人介入或断电恢复的证明。"
+    },
+    {
+      "step": 11,
+      "phase": 4,
+      "title": "核验评价与适用专项结果",
+      "sdm_steps": [
+        16,
+        17
+      ],
+      "inputs": "实际 checkpoint/产物、规定数据和评价器、适用场景/稳健性要求",
+      "outputs": "有身份和协议边界的评价结果、专项结果、无效项及限制",
+      "execution": "当前标准生产器核验四项结果产物并重算固定验证集二分类指标；专项和稳健性按任务与结论要求核验，未支持的类型明确说明。",
+      "advance_boundary": "平台 succeeded 不等于有效结果；原锁定评价与稳健性规则决定需要哪些事实，未测不能写成通过。",
+      "failure_route": "产物/协议无效则保留无效证据；需补测则回到相应运行工作；不适用须有依据，不为凑步骤重复评测。",
+      "code": [
+        "component_results.py",
+        "contracts.py",
+        "specctl.py"
+      ],
+      "evolution": "合并评价交付：常规与专项可在同次结果核验中说明，但各自适用性与证据不能互相替代。",
+      "acceptance_scope": "固定验证集二分类四产物、身份与指标核验已接；独立TEST、多类/分割及通用专项资格不能由此推定。"
+    },
+    {
+      "step": 12,
+      "phase": 5,
+      "title": "汇总证据并开展独立审查",
+      "sdm_steps": [
+        18,
+        19
+      ],
+      "inputs": "全部计划运行/尝试、有效与无效结果、失败/取消/偏差和不确定性",
+      "outputs": "完整证据索引、独立审查、重大异议及结论限制",
+      "execution": "汇总原始引用、配方、失败与历史反馈；生成—质询用于检视解释和后继方案。原 D01–D04/S10 的完整性、适用审查视角与职责分离继续作为依据。",
+      "advance_boundary": "全部科学计划和实际 Attempt 须落账；不能仅汇总成功或最好结果，也不能从模型角色存在推定完整 S10 已完成。",
+      "failure_route": "缺证据补证，矛盾/无效证据按原规则处理；重大异议未闭合不补标通过。",
+      "code": [
+        "component_results.py",
+        "component_research.py",
+        "proposal_review.py",
+        "review_guidance.py",
+        "contracts.py"
+      ],
+      "evolution": "合并证据准备与审查为一个证据交付步骤，保留“先汇总、后独立审查”和各自证据身份。",
+      "acceptance_scope": "全部计划Run及实际Attempt终态核账，真实独立质询生成原S10五视角对象并复用第19步行检查；完整出版证据包另行供证。"
+    },
+    {
+      "step": 13,
+      "phase": 5,
+      "title": "形成结论并决定后继或归档",
+      "sdm_steps": [
+        20,
+        21
+      ],
+      "inputs": "已审证据、固定判断规则、目标/预算、授权和用户最新指示",
+      "outputs": "科学结论及限制；继续、补证、修订、回退、停止或归档的明确决定与血缘",
+      "execution": "保留原科学裁决；原候选规则选择实际比较对象及下一行动，积累证据后可提出阶段基线，按适用的原复现、锁定和替换规则回到步骤3。后继沿同一Context/Guard接续，不将当前最优直接晋级为正式基线。",
+      "advance_boundary": "支持、否定、证据不足和实验无效分别判断；goal-met 只代表登记目标策略，不自动产生 D05。单项 Study 完成与项目目标完成分开。",
+      "failure_route": "需要后继回到步骤 1–5 中受影响环节，必要时补测；范围或授权变化重新核对，归档/关闭按原规则。无固定轮数自动停/续。",
+      "code": [
+        "contracts.py",
+        "component_candidates.py",
+        "research_replan.py",
+        "component_pipeline.py",
+        "dashboard_lineage.py"
+      ],
+      "evolution": "合并结论和行动交付，使决定有紧邻的证据依据；科学裁决、目标状态和后继授权仍分别保留。",
+      "acceptance_scope": "复用原科学裁决函数，证据结论、目标与预算终止分别记录，再进入同一后继链；不生成正式D05签名、发布或外部锚定。"
+    }
+  ],
+  "count_policy": "13 steps are the current project core. Future versioned changes may add/remove/split/merge/reorder with rationale, evidence, compatibility and synchronized documentation; no fixed count forever.",
+  "role": "current-core-lifecycle",
+  "definition_scope": "Project core lifecycle for planning, implementation, acceptance work, recovery and UI. Actual gate decisions remain with original SDM validators and effect owners; this metadata never grants acceptance."
+}

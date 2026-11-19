@@ -56,7 +56,7 @@ The project supplies metric units and targets; do not invent a universal score,
 trial count or stop after a fixed number of near-identical results. A missing
 target can be clarified while planning/implementation continues.
 
-In the existing result A/B, `next_step.research_direction` chooses
+In the existing result Generator–Critic, `next_step.research_direction` chooses
 `continue-plan`, `refine-current`, `revise-plan`, `diagnose`, `goal-met` or `stop-research`, with
 registered evidence, the questioned assumption, intervention level and expected
 decision value. Assess comparable diminishing returns, train/validation behavior,
@@ -80,7 +80,7 @@ the project as completed because a proposal or local Study was archived.
 
 Use `--research-replan` with a fresh read-only replan configuration to reassess
 already consumed historical results without changing their frozen runs. The same
-original A/B, shared sources, supplements, receipts and conditional exits apply.
+original Generator–Critic, shared sources, supplements, receipts and conditional exits apply.
 `agent_continuation_required:true` directs implementation, not a new user approval
 or a platform permission. Actual metric checks reject a claimed goal-met below a
 declared target. A stop with an unmet goal must retain its factual reason (for
@@ -113,7 +113,7 @@ longer trajectory cannot provide a reachable deterioration test by itself.
 Use metric resolution when implementing inclusive thresholds, and keep invalid
 execution separate from an otherwise valid but nonmatching prefix.
 
-For A/B controls, a valid JSON response and a real call receipt are insufficient
+For Generator–Critic controls, a valid JSON response and a real call receipt are insufficient
 if the Schema accidentally constrains the rationale itself. Keep field-specific
 constraints independent of shared mutable Schema templates. Negative controls
 must isolate their intended rule from earlier integrity failures; otherwise a
@@ -214,10 +214,10 @@ still apply before dispatch. An unmet target does not imply a known mechanism.
 Initial plan requests, locally produced evidence requests and generic Loop
 analysis requests pin the common guidance as `planning_prompt_version` and
 `planning_guidance`. Fresh offline/optional Pro prompts use
-`sdm-research-review/v6`; historical requests and v1/v2/v3/v4/v5 bundles retain their
+`sdm-research-review/v7`; historical requests and v1/v2/v3/v4/v5/v6 bundles retain their
 original prompt bytes. The code binds instructions and factual provenance; it
 does not determine scientific truth or certify that a suggested experiment is
-valuable. Pro is one optional model backend. Use real model A/B calls and their
+valuable. Pro is one optional model backend. Use real model Generator–Critic calls and their
 sources for proposal critique; a saved Pro binding does not select it. Choose
 the backend for a fresh attempt and keep that choice during its dialogue.
 

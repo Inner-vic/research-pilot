@@ -1,7 +1,8 @@
 """Read-only scientific ancestry and complete registered activity projection."""
 import hashlib
 from pathlib import Path
-from dashboard_language import brief,verdict
+from dashboard_language import brief
+from dashboard_review_history import history as review_history
 
 def identity(path):return hashlib.sha256(str(Path(path).resolve()).encode()).hexdigest()[:20]
 
@@ -21,10 +22,10 @@ def mainline(study):
   if not row:missing=anchor;break
   chain.append(row['uid']);anchor=row.get('base_uid')
  return {'round_uids':list(reversed(chain)),'head':head,'missing_upstream_uid':missing,
-  'basis':'按当前方案或最新实验实际选用的基线追溯；结果触发关系另行展示，不伪造顺序因果。'}
+  'basis':'按当前方案或最新实验实际选用的比较对象追溯；结果触发关系另行展示，不伪造顺序因果。'}
 
 def project(data,cfg,root,state,study):
- sid=study['id'];nodes=[];edges=[];known=set();details={};plan_owners={}
+ sid=study['id'];nodes=[];edges=[];known=set();details={};plan_owners={};review_issues=[]
  for original in state.get('rounds',[]):
   if original.get('accepted_plan'):
    try:
@@ -42,7 +43,7 @@ def project(data,cfg,root,state,study):
   uid=row['uid'];pid='plan:'+uid;tid='trial:'+uid;rid='result:'+uid
   node(pid,'plan','实验'+str(row['number'])+'方案：'+row['zh']['title'],row['zh']['description'],'approved',milestone=True,round_uid=uid,round_number=row['number'])
   node(tid,'trial','实验'+str(row['number'])+' · 训练执行','实际任务已完成，使用原任务编号核对。','completed',milestone=False,round_uid=uid,detail_group=pid)
-  node(rid,'result','实验'+str(row['number'])+' · 宏平均 F1 '+format(row['metric'],'.4f'),row['zh']['comparison'],'completed',milestone=True,round_uid=uid,
+  node(rid,'result','实验'+str(row['number'])+' · '+study.get('metric',{}).get('label','主要指标')+' '+format(row['metric'],'.4f'),row['zh']['comparison'],'completed',milestone=True,round_uid=uid,
    round_number=row['number'],conclusion='刷新历史最优' if row['new_best'] else '保留本次实际结果，未替换更优候选')
   edge('result:'+row['base_uid'] if row.get('base_uid') in by_uid else root_id,pid,'branches');edge(pid,tid,'executes');edge(tid,rid,'produces')
   if row.get('plan') and row['plan'].get('parent_uid') in by_uid and row['plan']['parent_uid']!=row.get('base_uid'):
@@ -53,18 +54,17 @@ def project(data,cfg,root,state,study):
   p=Path(original.get('result',{}).get('path',''))
   if len(p.parents)>3 and p.parents[2].name=='component-pipeline':roots.add(p.parents[3])
  def reviews(review_root,parent,label,owner):
-  if not review_root:return
-  for accepted in sorted(Path(review_root).glob('proposal-review/*/round-*/accepted.json')):
-   try:
-    raw=data.read(accepted);response=raw['response'];proposal=raw['proposal'];id='review:'+identity(accepted)
-    ref=data.evidence_file(accepted,'原始'+label+'记录');v=response.get('verdict')
-    text=brief(data.project,proposal.get('research_revision',{}).get('intervention',proposal.get('hypothesis','')),label)
-    node(id,'plan_review',label+' · 第'+str(proposal.get('revision','?'))+'版 · '+verdict(v),
-      text['title']+'。审议结论为“'+verdict(v)+'”；已记录 '+str(len(response.get('challenges',[])))+' 项质疑。原始记录保留。',
-      {'approve':'approved','revise':'request_changes','needs-evidence':'awaiting_input','reject':'rejected','stalled':'blocked'}.get(v,'recorded'),
-      milestone=False,evidence=ref,review_verdict=v,detail_group=owner)
-    edge(parent,id,'reviewed');details[id]={'node':next(n for n in nodes if n['id']==id),'record':{'审议结论':verdict(v),'质疑数量':len(response.get('challenges',[]))}}
-   except (OSError,ValueError,KeyError,TypeError):continue
+  records,issues=review_history(data,review_root,label);review_issues.extend({**i,'owner':owner} for i in issues)
+  for record in records:
+   id='review:'+identity(record['path'])
+   if id in known:continue
+   status=('pending' if record['pending'] else 'approved' if record['approved'] else
+    {'revise':'request_changes','needs-evidence':'awaiting_input','reject':'rejected','stalled':'blocked'}.get(record['verdict'],'recorded'))
+   node(id,'plan_review',label+' · 第'+str(record['round'])+'轮 · '+('代码提案第' if label=='代码评审' else '方案第')+str(record['revision'] or '?')+'版 · '+record['disposition'],
+    record['rationale'] or record['intervention'] or record['hypothesis'] or record['disposition'],
+    status,milestone=False,evidence=record['evidence'],review_verdict=record['verdict'],detail_group=owner,
+    review_round=record['round'],proposal_revision=record['revision'])
+   edge(parent,id,'reviewed');details[id]={'node':next(n for n in nodes if n['id']==id),'review':record}
  for store in sorted(roots):
   try:previous=data.read(store/'component-pipeline/pipeline.json')
   except (OSError,ValueError):continue
@@ -88,8 +88,17 @@ def project(data,cfg,root,state,study):
       ('实验'+str(by_uid[uid]['number'])+'结果后' if uid in by_uid else '执行准备')+'的方案迭代',
       '本组记录该结果触发的后继方案、审议与实施，不表示此前实验使用了这些后继改动。','recorded',milestone=False,detail_group=owner)
     edge(parent,group,'evolves')
-   reviews(attempt.get('replan_root'),group,'后继方案审议',owner)
-   reviews(attempt.get('code_review_root'),group,'后继代码审议',owner)
+   initial_owner='plan:'+uid if uid in by_uid else owner
+   initial_folder=store/'component-pipeline'/attempt.get('id','initial')
+   reviews(initial_folder/'initial-science-review',root_id,'方案评审',initial_owner)
+   reviews(initial_folder/'initial-code-review',root_id,'代码评审',initial_owner)
+   bindings=attempt.get('submission_reviews') or {}
+   science_root=(bindings.get('science') or {}).get('root')
+   bound_owner=plan_owners.get(str(Path(science_root).resolve())) if science_root else None
+   for phase,label in [('science','方案评审'),('code','代码评审')]:
+    reviews((bindings.get(phase) or {}).get('root'),group,label,bound_owner or initial_owner)
+   reviews(attempt.get('replan_root'),group,'方案评审',owner)
+   reviews(attempt.get('code_review_root'),group,'代码评审',owner)
    for field,label,kind in [('analysis','结果分析','assessment'),('frozen_implementation','代码实施与冻结','run'),('diagnosis','失败诊断','investigation')]:
     ref=attempt.get(field)
     if not ref:continue
@@ -124,7 +133,7 @@ def project(data,cfg,root,state,study):
   edge(parent,focus,'branches')
   if plan.get('parent_uid') in by_uid and plan['parent_uid']!=plan.get('base_uid'):
    edge('result:'+plan['parent_uid'],focus,'informed_by',False)
- live='completed' if study['completed'] else 'paused' if study.get('paused') or study['needs_attention'] else 'waiting' if current['stage']=='watching' and task.get('platform_status')!='running' else 'running'
+ live='completed' if study['completed'] else 'paused' if study.get('paused') else 'waiting' if study['needs_attention'] else 'waiting' if current['stage']=='watching' and task.get('platform_status')!='running' else 'running'
  if study.get('engineering_takeovers'):
   id=node('engineering:'+sid,'correction','工程接管累计 '+str(study['engineering_takeovers'])+' 次',
     '这是登记索引中的工程介入累计数，不是新增实验，也不代表全程无人接管。','recorded',milestone=False)
@@ -135,7 +144,7 @@ def project(data,cfg,root,state,study):
   owner=item.get('detail_group',root_id)
   if owner not in known:owner=root_id
   item['detail_group']=owner;groups.setdefault(owner,[]).append(item['id'])
- return {'project_id':sid,'root_id':root_id,'nodes':nodes,'edges':edges,'details':details,'detail_groups':groups,
+ return {'project_id':sid,'root_id':root_id,'nodes':nodes,'edges':edges,'details':details,'detail_groups':groups,'review_issues':review_issues,
 
   'execution_location':{'state':live,'phase':current['stage'],'phase_label':current['label'],'summary':current['label'],
     'active_node_ids':[focus] if live=='running' else [],'focus_node_id':focus,

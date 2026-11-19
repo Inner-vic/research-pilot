@@ -304,7 +304,7 @@ def advance_checked(config, root, advance, *args, **kwargs):
 
 
 def review(config, root, state, caller=model_call, review_recovery=None):
-    """Condition-driven actual A/B loop; missing evidence and stalled work wait."""
+    """Condition-driven actual Generator-Critic loop; missing evidence and stalled work wait."""
     cfg = settings(config, root, review_recovery=review_recovery)
     if cfg is None:
         raise ValueError('research_worker_not_configured')
@@ -337,7 +337,7 @@ def review(config, root, state, caller=model_call, review_recovery=None):
     if config.get('agent_roles'):
         source=Path(__file__).with_name('agent_roles.py')
         sources[str(source)]='sha256:'+hashlib.sha256(source.read_bytes()).hexdigest()
-    if cfg.get('dialogue_version',1) in {2,3}:
+    if cfg.get('dialogue_version',1) in {2,3,4}:
         source=Path(__file__).with_name('proposal_dialogue.py')
         sources[str(source)]='sha256:'+hashlib.sha256(source.read_bytes()).hexdigest()
     steering = control(root)
@@ -351,7 +351,7 @@ def review(config, root, state, caller=model_call, review_recovery=None):
         with locked(root, '.research-control.lock'):
             committed = existing(config, root, job, response,review_recovery=review_recovery)
             if committed is not None:
-                # Completed A/B survives a missing response/cache projection.
+                # Completed Generator-Critic survives a missing response/cache projection.
                 # Recheck its semantics against this exact registered request.
                 recovered = materialize(config, root, committed)
                 validate_response(read_json(response), packet, state)
@@ -379,10 +379,14 @@ def review(config, root, state, caller=model_call, review_recovery=None):
         record.update(request_path=str(request), response_path=str(response))
     atomic_json(receipt, record)
     strategy=''
-    if cfg.get('dialogue_version',1) in {2,3}:
+    if cfg.get('dialogue_version',1) in {2,3,4}:
         from proposal_dialogue import STRATEGY
         strategy=STRATEGY
-        if cfg.get('dialogue_version')==3:
+        if cfg.get('dialogue_version')==4:
+            strategy=('Planner–Executor architecture. This read-only result judgment uses Generator–Critic '
+                      '(生成—质询审议): Generator proposes and Critic independently challenges. Assess actual '
+                      'Executor feedback against the goal; return a plan or stop decision, never execute it. ')+strategy
+        elif cfg.get('dialogue_version')==3:
             strategy=('Planner–Executor architecture. This read-only result judgment is the Planner’s '
                       'Generator–Critic loop: A is Generator, B is Critic. Assess actual Executor feedback '
                       'against the goal; return a revised plan or stop decision, never execute it. ')+strategy

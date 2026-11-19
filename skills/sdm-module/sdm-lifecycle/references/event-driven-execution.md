@@ -24,7 +24,7 @@ active v1 services in place or infer component qualification from its controls.
    serializes registered tasks. A condition variable wakes execution on arrival;
    no interval-based model invocation or front-chat message is involved.
 4. For research tasks, a locally registered `coordinator` invokes the original
-   public entry with frozen project/runtime digests. The original locks, A/B
+   public entry with frozen project/runtime digests. The original locks, Generator–Critic
    receipts, archive/consumption and Guard retain authority. A process-exit event
    cannot assert review completion or authorize another experiment. If another
    observer owns collection, preserve its identity and reconcile instead of
@@ -33,7 +33,7 @@ active v1 services in place or infer component qualification from its controls.
    through the official pinned Python SDK. Instructions come from local frozen
    registration, never the event. SDK `thread/turn` IDs and actual terminal events
    distinguish received/preparing/running/completed/failed/unknown. Code tasks
-   explicitly choose workspace-write; A/B ModelRunner remains read-only.
+   explicitly choose workspace-write; Generator–Critic ModelRunner remains read-only.
 6. The dashboard reads the operational delivery SQLite database in `mode=ro` and
    streams changes through SSE. It shows model IDs, current activity, final text,
    source errors and service availability. Its HTTP routes cannot execute work.

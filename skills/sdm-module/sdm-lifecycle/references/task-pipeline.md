@@ -1,6 +1,6 @@
 # Practical SDM task graph
 
-Ordinary execution uses the [five-phase,11-work-package workflow](five-phase-orchestration.md). Legacy IDs1–34 address internal checks and receipts.
+Generic execution uses the [legacy delivery-group/11-work-package view](five-phase-orchestration.md). Legacy IDs1–34 address internal checks and receipts.
 `orchestration_version: 2` records its version; omitted versions use the same graph.
 It preserves IDs 1–21, adds 22–34, validates
 method/resource/review records, waits for direct human resource confirmation,
@@ -56,7 +56,7 @@ numbered gates passed. The task journal is separate from the immutable SDM ledge
 
 ## Lightweight delivery using the current node mapping
 
-Read [task-modes.md](task-modes.md) for purpose-specific delivery and the five-phase
+Read [task-modes.md](task-modes.md) for purpose-specific delivery and the generic aggregation
 reporting view. The current graph contains 34 nodes with reworked dependencies; future
 consolidation is an explicit versioned implementation change with affected
 contracts/tests, not an obligation to keep every node forever or count it passed.

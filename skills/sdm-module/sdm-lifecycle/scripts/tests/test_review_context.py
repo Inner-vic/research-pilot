@@ -77,3 +77,18 @@ def test_invalid_investigation_and_review_are_rejected(tmp_path,bad):
 def test_new_policy_requires_context_but_old_policy_unchanged():
     assert r.default_policy()['context_required'] is True
     assert 'context_required' not in r.settings(config())
+
+def test_registered_long_path_keeps_original_type_size_and_digest_guards(tmp_path):
+    from review_context import FIELDS,validate_context
+    from review_storage import native_path
+    folder=tmp_path
+    while len(str(folder))<300:folder=folder/('review-evidence-'+'x'*40)
+    native_path(folder).mkdir(parents=True)
+    source=folder/'registered-source.py';native_path(source).write_bytes(b'# original evidence')
+    value={'schema':'sdm-review-context/v1','subject_digest':'subject',
+     **{key:'registered context' for key in FIELDS},
+     'sources':[{'id':'original','kind':'code','path':str(source),
+      'sha256':hashlib.sha256(b'# original evidence').hexdigest()}]}
+    assert validate_context(value,'subject')==value
+    native_path(source).write_bytes(b'# changed evidence')
+    with pytest.raises(ValueError,match='review_source_changed'):validate_context(value,'subject')
